@@ -48,10 +48,10 @@ import org.tinymediamanager.ui.UTF8Control;
 public class ExportLogAction extends TmmAction {
   private static final Logger         LOGGER           = LoggerFactory.getLogger(ExportLogAction.class);
   private static final long           serialVersionUID = -1578568721825387890L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public ExportLogAction() {
-    putValue(NAME, BUNDLE.getString("tmm.exportlogs")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("tmm.exportlogs"));
   }
 
   @Override
@@ -60,7 +60,7 @@ public class ExportLogAction extends TmmAction {
     Path file = null;
     try {
       String path = TmmProperties.getInstance().getProperty("exportlogs.path");
-      file = TmmUIHelper.saveFile(BUNDLE.getString("BugReport.savelogs"), path, "tmm_logs.zip", //$NON-NLS-1$
+      file = TmmUIHelper.saveFile(BUNDLE.getString("BugReport.savelogs"), path, "tmm_logs.zip",
           new FileNameExtensionFilter("Zip files", ".zip"));
       if (file != null) {
         writeLogsFile(file.toFile());

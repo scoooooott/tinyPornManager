@@ -48,7 +48,7 @@ import org.tinymediamanager.ui.renderer.RightAlignTableCellRenderer;
  * @author Manuel Laggner
  */
 public class MovieTableFormat extends TmmTableFormat<Movie> {
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public MovieTableFormat() {
 

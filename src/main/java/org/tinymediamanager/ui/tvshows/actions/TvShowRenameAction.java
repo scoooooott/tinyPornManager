@@ -51,11 +51,11 @@ import org.tinymediamanager.ui.tvshows.TvShowUIModule;
  */
 public class TvShowRenameAction extends TmmAction {
   private static final long           serialVersionUID = -8988748633666277616L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public TvShowRenameAction() {
-    putValue(NAME, BUNDLE.getString("tvshow.rename")); //$NON-NLS-1$
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.rename")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("tvshow.rename"));
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.rename"));
     putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK));
   }
 
@@ -79,23 +79,23 @@ public class TvShowRenameAction extends TmmAction {
     }
 
     if (selectedEpisodes.isEmpty() && selectedTvShows.isEmpty()) {
-      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected"));
       return;
     }
 
     // display warning and ask the user again
-    if (!TmmProperties.getInstance().getPropertyAsBoolean("tvshow.hiderenamehint")) { //$NON-NLS-1$
-      JCheckBox checkBox = new JCheckBox(BUNDLE.getString("tmm.donotshowagain")); //$NON-NLS-1$
+    if (!TmmProperties.getInstance().getPropertyAsBoolean("tvshow.hiderenamehint")) {
+      JCheckBox checkBox = new JCheckBox(BUNDLE.getString("tmm.donotshowagain"));
       TmmFontHelper.changeFont(checkBox, L1);
       checkBox.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
-      Object[] params = { BUNDLE.getString("tvshow.rename.desc"), checkBox }; //$NON-NLS-1$
+      Object[] params = { BUNDLE.getString("tvshow.rename.desc"), checkBox };
       Object[] options = { BUNDLE.getString("Button.yes"), BUNDLE.getString("Button.no") };
-      int answer = JOptionPane.showOptionDialog(MainWindow.getActiveInstance(), params, BUNDLE.getString("tvshow.rename"), //$NON-NLS-1$
+      int answer = JOptionPane.showOptionDialog(MainWindow.getActiveInstance(), params, BUNDLE.getString("tvshow.rename"),
           JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
 
       // the user don't want to show this dialog again
       if (checkBox.isSelected()) {
-        TmmProperties.getInstance().putProperty("tvshow.hiderenamehint", String.valueOf(checkBox.isSelected())); //$NON-NLS-1$ )
+        TmmProperties.getInstance().putProperty("tvshow.hiderenamehint", String.valueOf(checkBox.isSelected()));  )
       }
 
       if (answer != JOptionPane.YES_OPTION) {

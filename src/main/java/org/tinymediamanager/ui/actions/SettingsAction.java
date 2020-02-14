@@ -30,10 +30,10 @@ import org.tinymediamanager.ui.dialogs.SettingsDialog;
  */
 public class SettingsAction extends TmmAction {
   private static final long           serialVersionUID = 8930602755330446751L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public SettingsAction() {
-    putValue(NAME, BUNDLE.getString("tmm.settings")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("tmm.settings"));
   }
 
   @Override

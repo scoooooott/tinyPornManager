@@ -28,7 +28,7 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeChooserModel extends AbstractModelObject {
-  private static final ResourceBundle           BUNDLE      = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle           BUNDLE      = ResourceBundle.getBundle("messages", new UTF8Control());
   public static final TvShowEpisodeChooserModel emptyResult = new TvShowEpisodeChooserModel();
 
   private MediaScraper                          mediaScraper;
@@ -49,7 +49,7 @@ public class TvShowEpisodeChooserModel extends AbstractModelObject {
   }
 
   private TvShowEpisodeChooserModel() {
-    setTitle(BUNDLE.getString("chooser.nothingfound")); //$NON-NLS-1$
+    setTitle(BUNDLE.getString("chooser.nothingfound"));
   }
 
   public void setTitle(String title) {

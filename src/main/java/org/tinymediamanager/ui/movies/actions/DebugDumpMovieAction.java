@@ -31,11 +31,11 @@ import org.tinymediamanager.ui.movies.MovieUIModule;
 
 public class DebugDumpMovieAction extends TmmAction {
   private static final long           serialVersionUID = -8473181347332963044L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public DebugDumpMovieAction() {
-    putValue(NAME, BUNDLE.getString("debug.entity.dump")); //$NON-NLS-1$
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("debug.entity.dump.desc")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("debug.entity.dump"));
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("debug.entity.dump.desc"));
   }
 
   @Override
@@ -43,7 +43,7 @@ public class DebugDumpMovieAction extends TmmAction {
     List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
     if (selectedMovies.isEmpty()) {
-      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected"));
       return;
     }
 

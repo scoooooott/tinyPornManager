@@ -49,7 +49,7 @@ public class MovieMissingMetadataFilter extends AbstractMovieUIFilter {
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("movieextendedsearch.missingmetadata")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("movieextendedsearch.missingmetadata"));
   }
 
   @Override

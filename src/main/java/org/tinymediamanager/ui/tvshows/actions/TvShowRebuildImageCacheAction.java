@@ -41,18 +41,18 @@ import org.tinymediamanager.ui.tvshows.TvShowUIModule;
  */
 public class TvShowRebuildImageCacheAction extends TmmAction {
   private static final long           serialVersionUID = 3452373237085274937L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public TvShowRebuildImageCacheAction() {
-    putValue(NAME, BUNDLE.getString("tvshow.rebuildimagecache")); //$NON-NLS-1$
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.rebuildimagecache")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("tvshow.rebuildimagecache"));
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.rebuildimagecache"));
 
   }
 
   @Override
   protected void processAction(ActionEvent e) {
     if (!Globals.settings.isImageCache()) {
-      JOptionPane.showMessageDialog(null, BUNDLE.getString("tmm.imagecache.notactivated")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(null, BUNDLE.getString("tmm.imagecache.notactivated"));
       return;
     }
 
@@ -70,7 +70,7 @@ public class TvShowRebuildImageCacheAction extends TmmAction {
     }
 
     if (selectedEpisodes.isEmpty() && selectedTvShows.isEmpty()) {
-      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected"));
       return;
     }
 

@@ -47,7 +47,7 @@ public class MessageHistoryDialog extends TmmDialog implements ListEventListener
   private JPanel                      messagesPanel;
 
   private MessageHistoryDialog() {
-    super(MainWindow.getActiveInstance(), BUNDLE.getString("summarywindow.title"), "messageSummary"); //$NON-NLS-1$
+    super(MainWindow.getActiveInstance(), BUNDLE.getString("summarywindow.title"), "messageSummary");
 
     setModal(false);
     setModalityType(ModalityType.MODELESS);
@@ -68,7 +68,7 @@ public class MessageHistoryDialog extends TmmDialog implements ListEventListener
     panelContent.setLayout(new MigLayout("", "[300lp:600lp,grow]", "[200lp:400lp,grow]"));
     panelContent.add(scrollPane, "cell 0 0,grow, wmin 0");
 
-    JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
+    JButton btnClose = new JButton(BUNDLE.getString("Button.close"));
     btnClose.addActionListener(arg0 -> setVisible(false));
     addDefaultButton(btnClose);
 

@@ -35,12 +35,12 @@ import org.tinymediamanager.ui.UTF8Control;
  */
 public class FeedbackAction extends TmmAction {
   private static final long           serialVersionUID = 6615485711570687445L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
   private static final Logger         LOGGER           = LoggerFactory.getLogger(FeedbackAction.class);
 
   public FeedbackAction() {
-    putValue(NAME, BUNDLE.getString("Feedback")); //$NON-NLS-1$
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("Feedback")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("Feedback"));
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("Feedback"));
     putValue(SMALL_ICON, IconManager.FEEDBACK);
     putValue(LARGE_ICON_KEY, IconManager.FEEDBACK);
   }

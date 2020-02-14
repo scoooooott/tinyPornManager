@@ -80,7 +80,7 @@ public class MovieInformationPanel extends JPanel {
   private static final Logger         LOGGER           = LoggerFactory.getLogger(MovieInformationPanel.class);
   private static final long           serialVersionUID = -8527284262749511617L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private MovieSettings               settings         = MovieModuleManager.SETTINGS;
   private MovieSelectionModel         movieSelectionModel;
@@ -215,7 +215,7 @@ public class MovieInformationPanel extends JPanel {
       panelLeft.add(lblMoviePoster);
 
       lblMoviePoster.enableLightbox();
-      lblPosterSize = new JLabel(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
+      lblPosterSize = new JLabel(BUNDLE.getString("mediafiletype.poster"));
       panelLeft.add(lblPosterSize);
 
       panelLeft.add(Box.createVerticalStrut(20));
@@ -226,7 +226,7 @@ public class MovieInformationPanel extends JPanel {
 
       panelLeft.add(lblMovieFanart);
       lblMovieFanart.enableLightbox();
-      lblFanartSize = new JLabel(BUNDLE.getString("mediafiletype.fanart")); //$NON-NLS-1$
+      lblFanartSize = new JLabel(BUNDLE.getString("mediafiletype.fanart"));
       panelLeft.add(lblFanartSize);
     }
     {
@@ -257,7 +257,7 @@ public class MovieInformationPanel extends JPanel {
         panelTopDetails.setLayout(new MigLayout("insets 0", "[][grow][][grow 200]", "[]2lp[]2lp[]2lp[]"));
 
         {
-          JLabel lblYearT = new TmmLabel(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
+          JLabel lblYearT = new TmmLabel(BUNDLE.getString("metatag.year"));
           panelTopDetails.add(lblYearT, "cell 0 0");
 
           lblYear = new JLabel("");
@@ -265,7 +265,7 @@ public class MovieInformationPanel extends JPanel {
         }
 
         {
-          JLabel lblImdbIdT = new TmmLabel(BUNDLE.getString("metatag.imdb")); //$NON-NLS-1$
+          JLabel lblImdbIdT = new TmmLabel(BUNDLE.getString("metatag.imdb"));
           panelTopDetails.add(lblImdbIdT, "cell 2 0");
 
           lblImdbid = new LinkLabel("");
@@ -273,7 +273,7 @@ public class MovieInformationPanel extends JPanel {
         }
 
         {
-          JLabel lblCertificationT = new TmmLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
+          JLabel lblCertificationT = new TmmLabel(BUNDLE.getString("metatag.certification"));
           panelTopDetails.add(lblCertificationT, "cell 0 1");
 
           lblCertification = new JLabel("");
@@ -281,7 +281,7 @@ public class MovieInformationPanel extends JPanel {
         }
 
         {
-          JLabel lblTmdbIdT = new TmmLabel(BUNDLE.getString("metatag.tmdb")); //$NON-NLS-1$
+          JLabel lblTmdbIdT = new TmmLabel(BUNDLE.getString("metatag.tmdb"));
           panelTopDetails.add(lblTmdbIdT, "cell 2 1");
 
           lblTmdbid = new LinkLabel("");
@@ -289,7 +289,7 @@ public class MovieInformationPanel extends JPanel {
         }
 
         {
-          JLabel lblRunningTimeT = new TmmLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
+          JLabel lblRunningTimeT = new TmmLabel(BUNDLE.getString("metatag.runtime"));
           panelTopDetails.add(lblRunningTimeT, "cell 0 2");
 
           lblRunningTime = new JLabel("");
@@ -297,7 +297,7 @@ public class MovieInformationPanel extends JPanel {
         }
 
         {
-          JLabel lblOtherIdsT = new TmmLabel(BUNDLE.getString("metatag.otherids")); //$NON-NLS-1$
+          JLabel lblOtherIdsT = new TmmLabel(BUNDLE.getString("metatag.otherids"));
           panelTopDetails.add(lblOtherIdsT, "cell 2 2");
 
           lblOtherIds = new JLabel("");
@@ -305,7 +305,7 @@ public class MovieInformationPanel extends JPanel {
         }
 
         {
-          JLabel lblGenresT = new TmmLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
+          JLabel lblGenresT = new TmmLabel(BUNDLE.getString("metatag.genre"));
           panelTopDetails.add(lblGenresT, "cell 0 3");
 
           lblGenres = new JLabel("");
@@ -344,7 +344,7 @@ public class MovieInformationPanel extends JPanel {
       }
 
       {
-        JLabel lblTaglineT = new TmmLabel(BUNDLE.getString("metatag.tagline")); //$NON-NLS-1$
+        JLabel lblTaglineT = new TmmLabel(BUNDLE.getString("metatag.tagline"));
         panelTopRight.add(lblTaglineT, "cell 0 9 2 1,alignx left,aligny top");
 
         lblTagline = new JLabel();
@@ -352,7 +352,7 @@ public class MovieInformationPanel extends JPanel {
       }
 
       {
-        JLabel lblPlotT = new TmmLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
+        JLabel lblPlotT = new TmmLabel(BUNDLE.getString("metatag.plot"));
         panelTopRight.add(lblPlotT, "cell 0 11 2 1,alignx left,aligny top");
 
         JScrollPane scrollPane = new JScrollPane();
@@ -380,10 +380,10 @@ public class MovieInformationPanel extends JPanel {
     lblMoviePoster.setImagePath(movie.getArtworkFilename(MediaFileType.POSTER));
     Dimension posterSize = movie.getArtworkDimension(MediaFileType.POSTER);
     if (posterSize.width > 0 && posterSize.height > 0) {
-      lblPosterSize.setText(BUNDLE.getString("mediafiletype.poster") + " - " + posterSize.width + "x" + posterSize.height); //$NON-NLS-1$
+      lblPosterSize.setText(BUNDLE.getString("mediafiletype.poster") + " - " + posterSize.width + "x" + posterSize.height);
     }
     else {
-      lblPosterSize.setText(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
+      lblPosterSize.setText(BUNDLE.getString("mediafiletype.poster"));
     }
   }
 
@@ -392,10 +392,10 @@ public class MovieInformationPanel extends JPanel {
     lblMovieFanart.setImagePath(movie.getArtworkFilename(MediaFileType.FANART));
     Dimension fanartSize = movie.getArtworkDimension(MediaFileType.FANART);
     if (fanartSize.width > 0 && fanartSize.height > 0) {
-      lblFanartSize.setText(BUNDLE.getString("mediafiletype.fanart") + " - " + fanartSize.width + "x" + fanartSize.height); //$NON-NLS-1$
+      lblFanartSize.setText(BUNDLE.getString("mediafiletype.fanart") + " - " + fanartSize.width + "x" + fanartSize.height);
     }
     else {
-      lblFanartSize.setText(BUNDLE.getString("mediafiletype.fanart")); //$NON-NLS-1$
+      lblFanartSize.setText(BUNDLE.getString("mediafiletype.fanart"));
     }
   }
 

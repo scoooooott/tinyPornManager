@@ -40,7 +40,7 @@ import org.tinymediamanager.ui.components.tree.TmmTreeNode;
  * @author Manuel Laggner
  */
 public class TvShowTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
-  protected static final ResourceBundle BUNDLE         = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  protected static final ResourceBundle BUNDLE         = ResourceBundle.getBundle("messages", new UTF8Control());
   private TmmTreeNode                   root           = new TmmTreeNode(new Object(), this);
   private RuleBasedCollator             stringCollator = (RuleBasedCollator) RuleBasedCollator.getInstance();
 

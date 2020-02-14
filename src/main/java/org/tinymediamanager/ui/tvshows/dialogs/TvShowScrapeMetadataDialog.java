@@ -152,7 +152,7 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
       }
     }
     {
-      JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+      JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel"));
       btnCancel.setIcon(IconManager.CANCEL_INV);
       btnCancel.addActionListener(e -> {
         startScrape = false;
@@ -160,7 +160,7 @@ public class TvShowScrapeMetadataDialog extends TmmDialog {
       });
       addButton(btnCancel);
 
-      JButton btnStart = new JButton(BUNDLE.getString("scraper.start")); //$NON-NLS-1$
+      JButton btnStart = new JButton(BUNDLE.getString("scraper.start"));
       btnStart.setIcon(IconManager.APPLY_INV);
       btnStart.addActionListener(e -> {
         startScrape = true;

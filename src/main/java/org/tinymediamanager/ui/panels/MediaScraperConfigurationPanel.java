@@ -54,7 +54,7 @@ import net.miginfocom.swing.MigLayout;
 public class MediaScraperConfigurationPanel extends JPanel {
   private static final long           serialVersionUID = -4120483383064864579L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());      //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
   private static final Logger         LOGGER           = LoggerFactory.getLogger(MediaScraperConfigurationPanel.class);
 
   private IMediaProvider              mediaProvider;
@@ -70,7 +70,7 @@ public class MediaScraperConfigurationPanel extends JPanel {
     JPanel panelHead = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 0));
     add(panelHead, BorderLayout.NORTH);
 
-    JLabel lblScraperOptions = new TmmLabel(BUNDLE.getString("Settings.scraper.options"), 1.2); //$NON-NLS-1$
+    JLabel lblScraperOptions = new TmmLabel(BUNDLE.getString("Settings.scraper.options"), 1.2);
     panelHead.add(lblScraperOptions);
 
     configPanel = createConfigPanel();
@@ -112,7 +112,7 @@ public class MediaScraperConfigurationPanel extends JPanel {
 
       // label
       // try different ways to get a meaningful key description
-      String keyDescription = getStringFromBundle("scraper." + mediaProvider.getProviderInfo().getId() + "." + entry.getKey());//$NON-NLS-1$
+      String keyDescription = getStringFromBundle("scraper." + mediaProvider.getProviderInfo().getId() + "." + entry.getKey());
       if (StringUtils.isBlank(keyDescription)) {
         keyDescription = getStringFromBundle(entry.getValue().getKeyDescription());
       }
@@ -177,7 +177,7 @@ public class MediaScraperConfigurationPanel extends JPanel {
 
       // add a hint if a long text has been found
       try {
-        String desc = getStringFromBundle("scraper." + mediaProvider.getProviderInfo().getId() + "." + entry.getKey() + ".desc"); //$NON-NLS-1$
+        String desc = getStringFromBundle("scraper." + mediaProvider.getProviderInfo().getId() + "." + entry.getKey() + ".desc");
         if (StringUtils.isNotBlank(desc)) {
           JLabel lblHint = new JLabel(IconManager.HINT);
           lblHint.setToolTipText(desc);

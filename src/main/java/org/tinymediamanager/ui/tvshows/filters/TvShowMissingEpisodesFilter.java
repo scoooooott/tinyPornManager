@@ -58,7 +58,7 @@ public class TvShowMissingEpisodesFilter extends AbstractTvShowUIFilter {
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("tvshowextendedsearch.missingepisodes")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("tvshowextendedsearch.missingepisodes"));
   }
 
   @Override

@@ -74,7 +74,7 @@ public class MovieProductionCompanyFilter extends AbstractMovieUIFilter {
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("movieextendedsearch.productioncompany")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("movieextendedsearch.productioncompany"));
   }
 
   @Override

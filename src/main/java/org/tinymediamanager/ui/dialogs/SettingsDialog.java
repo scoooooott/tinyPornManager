@@ -58,7 +58,7 @@ import net.miginfocom.swing.MigLayout;
 public class SettingsDialog extends TmmDialog {
   private static final long              serialVersionUID = 2435834806519338339L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle    BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle    BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
   private static JDialog                 instance;
 
   private TmmTree<TmmTreeNode>           tree;
@@ -78,7 +78,7 @@ public class SettingsDialog extends TmmDialog {
   }
 
   private SettingsDialog() {
-    super(BUNDLE.getString("tmm.settings"), "settings"); //$NON-NLS-1$
+    super(BUNDLE.getString("tmm.settings"), "settings");
 
     initComponents();
 
@@ -162,7 +162,7 @@ public class SettingsDialog extends TmmDialog {
       panelButtons.setBorder(new EmptyBorder(4, 4, 4, 4));
       southPanel.add(panelButtons, "cell 1 1,alignx left,aligny top");
 
-      JButton okButton = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
+      JButton okButton = new JButton(BUNDLE.getString("Button.close"));
       panelButtons.add(okButton);
       okButton.setAction(new CloseAction());
       getRootPane().setDefaultButton(okButton);
@@ -173,7 +173,7 @@ public class SettingsDialog extends TmmDialog {
     private static final long serialVersionUID = 2386371884117941373L;
 
     CloseAction() {
-      putValue(NAME, BUNDLE.getString("Button.close")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("Button.close"));
       putValue(SMALL_ICON, IconManager.APPLY_INV);
       putValue(LARGE_ICON_KEY, IconManager.APPLY_INV);
     }

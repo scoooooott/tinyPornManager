@@ -35,16 +35,16 @@ import org.tinymediamanager.ui.moviesets.MovieSetUIModule;
  */
 public class MovieSetRemoveAction extends TmmAction {
   private static final long           serialVersionUID = -9030996266835702009L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   /**
    * Instantiates a new removes the movie set action.
    */
   public MovieSetRemoveAction() {
-    putValue(NAME, BUNDLE.getString("movieset.remove.desc")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("movieset.remove.desc"));
     putValue(LARGE_ICON_KEY, IconManager.DELETE);
     putValue(SMALL_ICON, IconManager.DELETE);
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.remove.desc")); //$NON-NLS-1$
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.remove.desc"));
   }
 
   @Override
@@ -52,7 +52,7 @@ public class MovieSetRemoveAction extends TmmAction {
     List<MovieSet> selectedMovieSets = MovieSetUIModule.getInstance().getSelectionModel().getSelectedMovieSets();
 
     if (selectedMovieSets.isEmpty()) {
-      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected"));
       return;
     }
 

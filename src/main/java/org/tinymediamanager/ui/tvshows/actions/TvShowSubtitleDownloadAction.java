@@ -38,13 +38,13 @@ import org.tinymediamanager.ui.tvshows.dialogs.TvShowDownloadSubtitleDialog;
  */
 public class TvShowSubtitleDownloadAction extends TmmAction {
   private static final long           serialVersionUID = -6002932119900795735L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public TvShowSubtitleDownloadAction() {
-    putValue(NAME, BUNDLE.getString("tvshow.download.subtitle")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("tvshow.download.subtitle"));
     putValue(SMALL_ICON, IconManager.SUBTITLE);
     putValue(LARGE_ICON_KEY, IconManager.SUBTITLE);
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.download.subtitle")); //$NON-NLS-1$
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.download.subtitle"));
   }
 
   @Override
@@ -52,11 +52,11 @@ public class TvShowSubtitleDownloadAction extends TmmAction {
     List<TvShowEpisode> episodes = TvShowUIModule.getInstance().getSelectionModel().getSelectedEpisodes();
 
     if (episodes.isEmpty()) {
-      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected"));
       return;
     }
 
-    TvShowDownloadSubtitleDialog dialog = new TvShowDownloadSubtitleDialog(BUNDLE.getString("tvshow.download.subtitle")); //$NON-NLS-1$
+    TvShowDownloadSubtitleDialog dialog = new TvShowDownloadSubtitleDialog(BUNDLE.getString("tvshow.download.subtitle"));
     dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
     dialog.setVisible(true);
 

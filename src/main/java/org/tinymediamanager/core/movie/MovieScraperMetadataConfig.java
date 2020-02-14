@@ -67,7 +67,7 @@ public enum MovieScraperMetadataConfig implements ScraperMetadataConfig {
   EXTRAFANART(Type.ARTWORK),
   EXTRATHUMB(Type.ARTWORK);
 
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private Type                        type;
   private String                      description;

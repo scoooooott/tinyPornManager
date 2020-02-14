@@ -32,11 +32,11 @@ import org.tinymediamanager.ui.actions.TmmAction;
  */
 public class TvShowSyncWatchedTraktTvAction extends TmmAction {
   private static final long           serialVersionUID = 6640292090443882545L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public TvShowSyncWatchedTraktTvAction() {
-    putValue(NAME, BUNDLE.getString("tvshow.synctraktwatched")); //$NON-NLS-1$
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.synctraktwatched.desc")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("tvshow.synctraktwatched"));
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.synctraktwatched.desc"));
     putValue(SMALL_ICON, IconManager.SYNC);
     putValue(LARGE_ICON_KEY, IconManager.SYNC);
   }

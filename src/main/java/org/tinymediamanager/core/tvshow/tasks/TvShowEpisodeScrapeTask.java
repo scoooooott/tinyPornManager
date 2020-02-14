@@ -49,7 +49,7 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class TvShowEpisodeScrapeTask extends TmmTask {
-  private static final ResourceBundle                    BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle                    BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());
   private static final Logger                            LOGGER = LoggerFactory.getLogger(TvShowEpisodeScrapeTask.class);
 
   private final List<TvShowEpisode>                      episodes;

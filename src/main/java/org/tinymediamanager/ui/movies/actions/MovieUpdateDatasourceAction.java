@@ -36,13 +36,13 @@ import org.tinymediamanager.ui.actions.TmmAction;
  */
 public class MovieUpdateDatasourceAction extends TmmAction {
   private static final long           serialVersionUID = 6885253964781733478L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public MovieUpdateDatasourceAction() {
-    putValue(NAME, BUNDLE.getString("update.datasource")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("update.datasource"));
     putValue(SMALL_ICON, IconManager.REFRESH);
     putValue(LARGE_ICON_KEY, IconManager.REFRESH);
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("update.datasource")); //$NON-NLS-1$
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("update.datasource"));
     putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK));
   }
 

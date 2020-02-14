@@ -39,11 +39,11 @@ import org.tinymediamanager.ui.movies.MovieUIModule;
  */
 public class MovieAssignMovieSetAction extends TmmAction {
   private static final long           serialVersionUID = -4213315298837335636L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public MovieAssignMovieSetAction() {
-    putValue(NAME, BUNDLE.getString("movie.assignmovieset")); //$NON-NLS-1$
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.assignmovieset.desc")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("movie.assignmovieset"));
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.assignmovieset.desc"));
     putValue(SMALL_ICON, IconManager.SEARCH);
     putValue(LARGE_ICON_KEY, IconManager.SEARCH);
   }
@@ -53,7 +53,7 @@ public class MovieAssignMovieSetAction extends TmmAction {
     List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
     if (selectedMovies.isEmpty()) {
-      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected"));
       return;
     }
 

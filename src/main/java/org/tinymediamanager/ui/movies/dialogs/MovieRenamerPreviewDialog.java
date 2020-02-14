@@ -79,7 +79,7 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
   private JLabel                                  lblFolderNew;
 
   public MovieRenamerPreviewDialog(final List<Movie> selectedMovies) {
-    super(BUNDLE.getString("movie.renamerpreview"), "movieRenamerPreview"); //$NON-NLS-1$
+    super(BUNDLE.getString("movie.renamerpreview"), "movieRenamerPreview");
 
     oldMediaFileEventList = GlazedLists.eventList(new ArrayList<>());
     newMediaFileEventList = GlazedLists.eventList(new ArrayList<>());
@@ -129,21 +129,21 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
             panelDetails.add(lblTitle, "cell 0 0 3 1,growx");
           }
           {
-            JLabel lblDatasourceT = new TmmLabel(BUNDLE.getString("metatag.datasource")); //$NON-NLS-1$
+            JLabel lblDatasourceT = new TmmLabel(BUNDLE.getString("metatag.datasource"));
             panelDetails.add(lblDatasourceT, "cell 0 2");
 
             lblDatasource = new JLabel("");
             panelDetails.add(lblDatasource, "cell 2 2,growx,aligny center");
           }
           {
-            JLabel lblFolderOldT = new TmmLabel(BUNDLE.getString("renamer.oldfolder")); //$NON-NLS-1$
+            JLabel lblFolderOldT = new TmmLabel(BUNDLE.getString("renamer.oldfolder"));
             panelDetails.add(lblFolderOldT, "cell 0 4");
 
             lblFolderOld = new JLabel("");
             panelDetails.add(lblFolderOld, "cell 2 4,growx,aligny center");
           }
           {
-            JLabel lblFolderNewT = new TmmLabel(BUNDLE.getString("renamer.newfolder")); //$NON-NLS-1$
+            JLabel lblFolderNewT = new TmmLabel(BUNDLE.getString("renamer.newfolder"));
             panelDetails.add(lblFolderNewT, "cell 0 5");
 
             lblFolderNew = new JLabel("");
@@ -154,10 +154,10 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
             panelDetails.add(panelMediaFiles, "cell 0 7 3 1,grow");
             panelMediaFiles.setLayout(new MigLayout("", "[grow][grow]", "[15px][grow]"));
             {
-              JLabel lblOldfilesT = new TmmLabel(BUNDLE.getString("renamer.oldfiles")); //$NON-NLS-1$
+              JLabel lblOldfilesT = new TmmLabel(BUNDLE.getString("renamer.oldfiles"));
               panelMediaFiles.add(lblOldfilesT, "cell 0 0,alignx center");
 
-              JLabel lblNewfilesT = new TmmLabel(BUNDLE.getString("renamer.newfiles")); //$NON-NLS-1$
+              JLabel lblNewfilesT = new TmmLabel(BUNDLE.getString("renamer.newfiles"));
               panelMediaFiles.add(lblNewfilesT, "cell 1 0,alignx center");
             }
             {
@@ -184,8 +184,8 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
       }
     }
     {
-      JButton btnRename = new JButton(BUNDLE.getString("Button.rename")); //$NON-NLS-1$
-      btnRename.setToolTipText(BUNDLE.getString("movie.rename")); //$NON-NLS-1$
+      JButton btnRename = new JButton(BUNDLE.getString("Button.rename"));
+      btnRename.setToolTipText(BUNDLE.getString("movie.rename"));
       btnRename.addActionListener(arg0 -> {
         List<Movie> selectedMovies1 = new ArrayList<>();
         List<MovieRenamerPreviewContainer> selectedResults = new ArrayList<>(resultSelectionModel.selectedResults);
@@ -200,7 +200,7 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
       });
       addButton(btnRename);
 
-      JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
+      JButton btnClose = new JButton(BUNDLE.getString("Button.close"));
       btnClose.addActionListener(arg0 -> setVisible(false));
       addDefaultButton(btnClose);
     }
@@ -223,7 +223,7 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
     public String getColumnName(int column) {
       switch (column) {
         case 0:
-          return BUNDLE.getString("metatag.movie"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.movie");
       }
 
       throw new IllegalStateException();
@@ -253,7 +253,7 @@ public class MovieRenamerPreviewDialog extends TmmDialog {
           return "";
 
         case 1:
-          return BUNDLE.getString("metatag.filename"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.filename");
       }
 
       throw new IllegalStateException();

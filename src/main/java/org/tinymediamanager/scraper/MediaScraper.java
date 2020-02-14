@@ -41,7 +41,7 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class MediaScraper {
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE  = ResourceBundle.getBundle("messages", new UTF8Control());
   private String id = "";
   private String                      version = "";
   private String                      name    = "";

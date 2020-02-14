@@ -81,7 +81,7 @@ import net.miginfocom.swing.MigLayout;
 public class TvShowTreePanel extends TmmListPanel implements ITmmTabItem {
   private static final long           serialVersionUID = 5889203009864512935L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private TvShowList                  tvShowList       = TvShowList.getInstance();
 
@@ -124,8 +124,8 @@ public class TvShowTreePanel extends TmmListPanel implements ITmmTabItem {
     final TmmTreeTextFilter<TmmTreeNode> searchField = new TvShowTreeTextFilter<>();
     add(searchField, "cell 0 0,growx");
 
-    btnFilter = new JButton(BUNDLE.getString("movieextendedsearch.filter")); //$NON-NLS-1$
-    btnFilter.setToolTipText(BUNDLE.getString("movieextendedsearch.options")); //$NON-NLS-1$
+    btnFilter = new JButton(BUNDLE.getString("movieextendedsearch.filter"));
+    btnFilter.setToolTipText(BUNDLE.getString("movieextendedsearch.options"));
     btnFilter.addActionListener(e -> TvShowUIModule.getInstance().setFilterDialogVisible(true));
     add(btnFilter, "cell 1 0");
 
@@ -316,26 +316,26 @@ public class TvShowTreePanel extends TmmListPanel implements ITmmTabItem {
     add(separator, "cell 0 2 2 1,growx");
 
     {
-      JLabel lblTvShowCount = new JLabel(BUNDLE.getString("tmm.tvshows") + ":"); //$NON-NLS-1$
+      JLabel lblTvShowCount = new JLabel(BUNDLE.getString("tmm.tvshows") + ":");
       add(lblTvShowCount, "flowx,cell 0 3 2 1");
 
       lblTvShowCountFiltered = new JLabel("");
       add(lblTvShowCountFiltered, "cell 0 3 2 1");
 
-      JLabel lblTvShowCountOf = new JLabel(BUNDLE.getString("tmm.of")); //$NON-NLS-1$
+      JLabel lblTvShowCountOf = new JLabel(BUNDLE.getString("tmm.of"));
       add(lblTvShowCountOf, "cell 0 3 2 1");
 
       lblTvShowCountTotal = new JLabel("");
       add(lblTvShowCountTotal, "cell 0 3 2 1");
     }
     {
-      JLabel lblEpisodeCount = new JLabel(BUNDLE.getString("metatag.episodes") + ":"); //$NON-NLS-1$
+      JLabel lblEpisodeCount = new JLabel(BUNDLE.getString("metatag.episodes") + ":");
       add(lblEpisodeCount, "flowx,cell 0 4 2 1");
 
       lblEpisodeCountFiltered = new JLabel("");
       add(lblEpisodeCountFiltered, "cell 0 4 2 1");
 
-      JLabel lblEpisodeCountOf = new JLabel(BUNDLE.getString("tmm.of")); //$NON-NLS-1$
+      JLabel lblEpisodeCountOf = new JLabel(BUNDLE.getString("tmm.of"));
       add(lblEpisodeCountOf, "cell 0 4 2 1");
 
       lblEpisodeCountTotal = new JLabel("");
@@ -460,7 +460,7 @@ public class TvShowTreePanel extends TmmListPanel implements ITmmTabItem {
     private static final long serialVersionUID = -1444530142931061317L;
 
     public CollapseAllAction() {
-      putValue(NAME, BUNDLE.getString("tree.collapseall")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("tree.collapseall"));
     }
 
     @Override
@@ -475,7 +475,7 @@ public class TvShowTreePanel extends TmmListPanel implements ITmmTabItem {
     private static final long serialVersionUID = 6191727607109012198L;
 
     public ExpandAllAction() {
-      putValue(NAME, BUNDLE.getString("tree.expandall")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("tree.expandall"));
     }
 
     @Override

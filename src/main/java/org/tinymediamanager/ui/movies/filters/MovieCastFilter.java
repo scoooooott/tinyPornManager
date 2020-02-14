@@ -107,7 +107,7 @@ public class MovieCastFilter extends AbstractMovieUIFilter {
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("movieextendedsearch.cast")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("movieextendedsearch.cast"));
   }
 
   @Override

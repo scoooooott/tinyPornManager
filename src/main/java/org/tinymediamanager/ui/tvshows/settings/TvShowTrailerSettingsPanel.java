@@ -77,7 +77,7 @@ import net.miginfocom.swing.MigLayout;
 
 public class TvShowTrailerSettingsPanel extends JPanel {
 
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle                     BUNDLE   = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private TvShowSettings settings = TvShowModuleManager.SETTINGS;
   private List<TvShowTrailerSettingsPanel.TrailerScraper> scrapers = ObservableCollections.observableList(new ArrayList<>());
@@ -208,7 +208,7 @@ public class TvShowTrailerSettingsPanel extends JPanel {
     {
       JPanel panelScraper = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][grow]", "[][shrink 0][]"));
 
-      JLabel lblScraper = new TmmLabel(BUNDLE.getString("scraper.trailer"), H3); //$NON-NLS-1$
+      JLabel lblScraper = new TmmLabel(BUNDLE.getString("scraper.trailer"), H3);
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelScraper, lblScraper, true);
       add(collapsiblePanel, "cell 0 0,wmin 0,grow");
       {
@@ -236,31 +236,31 @@ public class TvShowTrailerSettingsPanel extends JPanel {
     {
       JPanel panelOptions = SettingsPanelFactory.createSettingsPanel();
 
-      JLabel lblOptionsT = new TmmLabel(BUNDLE.getString("Settings.advancedoptions"), H3); //$NON-NLS-1$
+      JLabel lblOptionsT = new TmmLabel(BUNDLE.getString("Settings.advancedoptions"), H3);
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelOptions, lblOptionsT, true);
       add(collapsiblePanel, "cell 0 2,growx, wmin 0");
       {
-        checkBox = new JCheckBox(BUNDLE.getString("Settings.trailer.preferred")); //$NON-NLS-1$
+        checkBox = new JCheckBox(BUNDLE.getString("Settings.trailer.preferred"));
         panelOptions.add(checkBox, "cell 1 0 2 1");
 
-        JLabel lblTrailerSource = new JLabel(BUNDLE.getString("Settings.trailer.source")); //$NON-NLS-1$
+        JLabel lblTrailerSource = new JLabel(BUNDLE.getString("Settings.trailer.source"));
         panelOptions.add(lblTrailerSource, "cell 2 1");
 
         cbTrailerSource = new JComboBox();
         cbTrailerSource.setModel(new DefaultComboBoxModel<>(TrailerSources.values()));
         panelOptions.add(cbTrailerSource, "cell 2 1");
 
-        JLabel lblTrailerQuality = new JLabel(BUNDLE.getString("Settings.trailer.quality")); //$NON-NLS-1$
+        JLabel lblTrailerQuality = new JLabel(BUNDLE.getString("Settings.trailer.quality"));
         panelOptions.add(lblTrailerQuality, "cell 2 2");
 
         cbTrailerQuality = new JComboBox();
         cbTrailerQuality.setModel(new DefaultComboBoxModel<>(TrailerQuality.values()));
         panelOptions.add(cbTrailerQuality, "cell 2 2");
 
-        chckbxAutomaticTrailerDownload = new JCheckBox(BUNDLE.getString("Settings.trailer.automaticdownload")); //$NON-NLS-1$
+        chckbxAutomaticTrailerDownload = new JCheckBox(BUNDLE.getString("Settings.trailer.automaticdownload"));
         panelOptions.add(chckbxAutomaticTrailerDownload, "cell 1 3 2 1");
 
-        JLabel lblAutomaticTrailerDownloadHint = new JLabel(BUNDLE.getString("Settings.trailer.automaticdownload.hint")); //$NON-NLS-1$
+        JLabel lblAutomaticTrailerDownloadHint = new JLabel(BUNDLE.getString("Settings.trailer.automaticdownload.hint"));
         panelOptions.add(lblAutomaticTrailerDownloadHint, "cell 2 4");
         TmmFontHelper.changeFont(lblAutomaticTrailerDownloadHint, L2);
 
@@ -268,10 +268,10 @@ public class TvShowTrailerSettingsPanel extends JPanel {
         panelOptions.add(panelTrailerFilenames, "cell 1 5 2 1");
         panelTrailerFilenames.setLayout(new MigLayout("insets 0", "[][]", "[][]"));
 
-        JLabel lblTrailerFileNaming = new JLabel(BUNDLE.getString("Settings.trailerFileNaming")); //$NON-NLS-1$
+        JLabel lblTrailerFileNaming = new JLabel(BUNDLE.getString("Settings.trailerFileNaming"));
         panelTrailerFilenames.add(lblTrailerFileNaming, "cell 0 0");
 
-        cbTrailerFilename1 = new JCheckBox("tvshow-trailer.ext"); //$NON-NLS-1$
+        cbTrailerFilename1 = new JCheckBox("tvshow-trailer.ext");
         panelTrailerFilenames.add(cbTrailerFilename1, "cell 1 0");
       }
     }
@@ -367,7 +367,7 @@ public class TvShowTrailerSettingsPanel extends JPanel {
       // first try to get the localized version
       String description = null;
       try {
-        description = BUNDLE.getString("scraper." + scraper.getId() + ".hint"); //$NON-NLS-1$
+        description = BUNDLE.getString("scraper." + scraper.getId() + ".hint");
       } catch (Exception ignored) {
       }
 

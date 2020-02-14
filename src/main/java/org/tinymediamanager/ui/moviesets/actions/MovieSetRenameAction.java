@@ -39,12 +39,12 @@ import org.tinymediamanager.ui.moviesets.MovieSetUIModule;
  * 
  */
 public class MovieSetRenameAction extends TmmAction {
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
   private static final long           serialVersionUID = 1677285197819210130L;
 
   public MovieSetRenameAction() {
-    putValue(NAME, BUNDLE.getString("movie.rename")); //$NON-NLS-1$
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.rename")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("movie.rename"));
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.rename"));
   }
 
   @Override
@@ -62,7 +62,7 @@ public class MovieSetRenameAction extends TmmAction {
     }
 
     if (selectedMovies.isEmpty()) {
-      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected"));
       return;
     }
 

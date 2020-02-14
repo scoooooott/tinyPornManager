@@ -52,7 +52,7 @@ public class TvShowEmptyFilter extends AbstractTvShowUIFilter {
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("tvshowextendedsearch.empty")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("tvshowextendedsearch.empty"));
   }
 
   @Override

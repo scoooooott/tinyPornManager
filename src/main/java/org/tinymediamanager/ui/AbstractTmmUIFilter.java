@@ -44,7 +44,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author Manuel Laggner
  */
 public abstract class AbstractTmmUIFilter<E> implements ITmmUIFilter<E> {
-  protected static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  protected static final ResourceBundle BUNDLE                = ResourceBundle.getBundle("messages", new UTF8Control());
   /**
    * an object mapper which can be used to transform filters via/to JSON
    */
@@ -61,7 +61,7 @@ public abstract class AbstractTmmUIFilter<E> implements ITmmUIFilter<E> {
 
   public AbstractTmmUIFilter() {
     this.checkBox = new TriStateCheckBox();
-    this.checkBox.setToolTipText(BUNDLE.getString("filter.hint")); //$NON-NLS-1$
+    this.checkBox.setToolTipText(BUNDLE.getString("filter.hint"));
     this.label = createLabel();
     this.filterComponent = createFilterComponent();
 

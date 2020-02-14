@@ -57,7 +57,7 @@ import net.miginfocom.swing.MigLayout;
 class TvShowSourcePanel extends JPanel {
   private static final long           serialVersionUID = -7126616245313008341L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private final TvShowSettings        settings         = TvShowModuleManager.SETTINGS;
 
@@ -83,7 +83,7 @@ class TvShowSourcePanel extends JPanel {
     add(panelTvShowDataSources, "cell 0 1,grow");
     panelTvShowDataSources.setLayout(new MigLayout("", "[grow][]", "[][grow][]"));
 
-    JTextArea tpDatasourceHint = new ReadOnlyTextArea(BUNDLE.getString("wizard.datasource.hint")); //$NON-NLS-1$
+    JTextArea tpDatasourceHint = new ReadOnlyTextArea(BUNDLE.getString("wizard.datasource.hint"));
     panelTvShowDataSources.add(tpDatasourceHint, "cell 0 0 2 1,growx");
 
     JScrollPane scrollPaneDataSources = new JScrollPane();
@@ -92,16 +92,16 @@ class TvShowSourcePanel extends JPanel {
     listDataSources = new JList<>();
     scrollPaneDataSources.setViewportView(listDataSources);
 
-    cbDvdOrder = new JCheckBox(BUNDLE.getString("Settings.dvdorder")); //$NON-NLS-1$
+    cbDvdOrder = new JCheckBox(BUNDLE.getString("Settings.dvdorder"));
     panelTvShowDataSources.add(cbDvdOrder, "flowx,cell 0 2");
 
     JButton btnAdd = new JButton(IconManager.ADD_INV);
     panelTvShowDataSources.add(btnAdd, "flowy,cell 1 1,aligny top");
-    btnAdd.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+    btnAdd.setToolTipText(BUNDLE.getString("Button.add"));
     btnAdd.setMargin(new Insets(2, 2, 2, 2));
     btnAdd.addActionListener(arg0 -> {
       String path = TmmProperties.getInstance().getProperty("tvshow.datasource.path");
-      Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.tvshowdatasource.folderchooser"), path); //$NON-NLS-1$
+      Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.tvshowdatasource.folderchooser"), path);
       if (file != null && Files.isDirectory(file)) {
         settings.addTvShowDataSources(file.toAbsolutePath().toString());
         TmmProperties.getInstance().putProperty("tvshow.datasource.path", file.toAbsolutePath().toString());
@@ -110,16 +110,16 @@ class TvShowSourcePanel extends JPanel {
 
     JButton btnRemove = new JButton(IconManager.REMOVE_INV);
     panelTvShowDataSources.add(btnRemove, "cell 1 1");
-    btnRemove.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
+    btnRemove.setToolTipText(BUNDLE.getString("Button.remove"));
     btnRemove.setMargin(new Insets(2, 2, 2, 2));
     btnRemove.addActionListener(arg0 -> {
       int row = listDataSources.getSelectedIndex();
       if (row != -1) { // nothing selected
         String path = settings.getTvShowDataSource().get(row);
-        String[] choices = { BUNDLE.getString("Button.continue"), BUNDLE.getString("Button.abort") }; //$NON-NLS-1$
+        String[] choices = { BUNDLE.getString("Button.continue"), BUNDLE.getString("Button.abort") };
         int decision = JOptionPane.showOptionDialog(null, String.format(BUNDLE.getString("Settings.tvshowdatasource.remove.info"), path),
             BUNDLE.getString("Settings.datasource.remove"), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, choices,
-            BUNDLE.getString("Button.abort")); //$NON-NLS-1$
+            BUNDLE.getString("Button.abort"));
         if (decision == JOptionPane.YES_OPTION) {
           setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
           settings.removeTvShowDataSources(path);

@@ -50,7 +50,7 @@ import org.tinymediamanager.ui.tvshows.TvShowEpisodeSelectionModel;
 public class TvShowEpisodeMediaInformationPanel extends MediaInformationPanel {
   private static final long           serialVersionUID = 2513029074142934502L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private TvShowEpisodeSelectionModel selectionModel;
 
@@ -150,10 +150,10 @@ public class TvShowEpisodeMediaInformationPanel extends MediaInformationPanel {
         container.audioStream = audioStream;
 
         if (mediaFile.getType() == MediaFileType.VIDEO) {
-          container.source = BUNDLE.getString("metatag.internal"); //$NON-NLS-1$
+          container.source = BUNDLE.getString("metatag.internal");
         }
         else {
-          container.source = BUNDLE.getString("metatag.external"); //$NON-NLS-1$
+          container.source = BUNDLE.getString("metatag.external");
         }
 
         audioStreamEventList.add(container);
@@ -176,10 +176,10 @@ public class TvShowEpisodeMediaInformationPanel extends MediaInformationPanel {
         container.subtitle = subtitle;
 
         if (mediaFile.getType() == MediaFileType.VIDEO) {
-          container.source = BUNDLE.getString("metatag.internal"); //$NON-NLS-1$
+          container.source = BUNDLE.getString("metatag.internal");
         }
         else {
-          container.source = BUNDLE.getString("metatag.external"); //$NON-NLS-1$
+          container.source = BUNDLE.getString("metatag.external");
         }
 
         subtitleEventList.add(container);

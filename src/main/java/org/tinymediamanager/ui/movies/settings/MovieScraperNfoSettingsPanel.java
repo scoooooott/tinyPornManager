@@ -56,7 +56,7 @@ import net.miginfocom.swing.MigLayout;
 class MovieScraperNfoSettingsPanel extends JPanel {
   private static final long                    serialVersionUID = -299825914193235308L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle          BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle          BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private MovieSettings                        settings         = MovieModuleManager.SETTINGS;
   private JComboBox<MovieConnectors>           cbNfoFormat;
@@ -163,11 +163,11 @@ class MovieScraperNfoSettingsPanel extends JPanel {
     {
       JPanel panelNfo = SettingsPanelFactory.createSettingsPanel();
 
-      JLabel lblNfoT = new TmmLabel(BUNDLE.getString("Settings.nfo"), H3); //$NON-NLS-1$
+      JLabel lblNfoT = new TmmLabel(BUNDLE.getString("Settings.nfo"), H3);
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelNfo, lblNfoT, true);
       add(collapsiblePanel, "cell 0 0,growx, wmin 0");
       {
-        JLabel lblNfoFormat = new JLabel(BUNDLE.getString("Settings.nfoFormat")); //$NON-NLS-1$
+        JLabel lblNfoFormat = new JLabel(BUNDLE.getString("Settings.nfoFormat"));
         panelNfo.add(lblNfoFormat, "cell 1 0 2 1");
 
         cbNfoFormat = new JComboBox(MovieConnectors.values());
@@ -178,17 +178,17 @@ class MovieScraperNfoSettingsPanel extends JPanel {
           panelNfo.add(panelNfoFormat, "cell 1 1 2 1");
           panelNfoFormat.setLayout(new MigLayout("insets 0", "[][]", "[][]"));
 
-          JLabel lblNfoFileNaming = new JLabel(BUNDLE.getString("Settings.nofFileNaming")); //$NON-NLS-1$
+          JLabel lblNfoFileNaming = new JLabel(BUNDLE.getString("Settings.nofFileNaming"));
           panelNfoFormat.add(lblNfoFileNaming, "cell 0 0");
 
-          cbMovieNfoFilename1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + ".nfo"); //$NON-NLS-1$
+          cbMovieNfoFilename1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + ".nfo");
           panelNfoFormat.add(cbMovieNfoFilename1, "cell 1 0");
 
-          cbMovieNfoFilename2 = new JCheckBox("movie.nfo"); //$NON-NLS-1$
+          cbMovieNfoFilename2 = new JCheckBox("movie.nfo");
           panelNfoFormat.add(cbMovieNfoFilename2, "cell 1 1");
         }
 
-        chckbxWriteCleanNfo = new JCheckBox(BUNDLE.getString("Settings.writecleannfo")); //$NON-NLS-1$
+        chckbxWriteCleanNfo = new JCheckBox(BUNDLE.getString("Settings.writecleannfo"));
         panelNfo.add(chckbxWriteCleanNfo, "cell 1 2 2 1");
 
         JLabel lblNfoDatefield = new JLabel(BUNDLE.getString("Settings.dateadded"));
@@ -197,16 +197,16 @@ class MovieScraperNfoSettingsPanel extends JPanel {
         cbDatefield = new JComboBox(DateField.values());
         panelNfo.add(cbDatefield, "cell 1 4");
 
-        JLabel lblNfoLanguage = new JLabel(BUNDLE.getString("Settings.nfolanguage")); //$NON-NLS-1$
+        JLabel lblNfoLanguage = new JLabel(BUNDLE.getString("Settings.nfolanguage"));
         panelNfo.add(lblNfoLanguage, "cell 1 5 2 1");
 
         cbNfoLanguage = new JComboBox(MediaLanguages.valuesSorted());
         panelNfo.add(cbNfoLanguage, "cell 1 5");
 
-        JLabel lblNfoLanguageDesc = new JLabel(BUNDLE.getString("Settings.nfolanguage.desc")); //$NON-NLS-1$
+        JLabel lblNfoLanguageDesc = new JLabel(BUNDLE.getString("Settings.nfolanguage.desc"));
         panelNfo.add(lblNfoLanguageDesc, "cell 2 6");
 
-        JLabel lblCertificationStyle = new JLabel(BUNDLE.getString("Settings.certificationformat")); //$NON-NLS-1$
+        JLabel lblCertificationStyle = new JLabel(BUNDLE.getString("Settings.certificationformat"));
         panelNfo.add(lblCertificationStyle, "flowx,cell 1 7 2 1");
 
         cbCertificationStyle = new JComboBox();

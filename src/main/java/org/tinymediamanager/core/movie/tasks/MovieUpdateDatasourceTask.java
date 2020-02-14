@@ -86,7 +86,7 @@ import com.sun.jna.Platform;
  */
 public class MovieUpdateDatasourceTask extends TmmThreadPool {
   private static final Logger         LOGGER         = LoggerFactory.getLogger(MovieUpdateDatasourceTask.class);
-  private static final ResourceBundle BUNDLE         = ResourceBundle.getBundle("messages", new UTF8Control());                                  //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE         = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private static long                 preDir         = 0;
   private static long                 postDir        = 0;

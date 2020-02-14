@@ -68,7 +68,7 @@ class MovieScraperPanel extends JPanel {
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private final MovieSettings         settings         = MovieModuleManager.SETTINGS;
   private final List<MovieScraper>    scrapers         = ObservableCollections.observableList(new ArrayList<>());
@@ -199,21 +199,21 @@ class MovieScraperPanel extends JPanel {
       panelScraperDetails.add(panelScraperOptions, "cell 0 1,growx,aligny top");
     }
 
-    JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); //$NON-NLS-1$
+    JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage"));
     panelMovieScrapers.add(lblScraperLanguage, "cell 0 1");
 
     cbScraperLanguage = new JComboBox();
     cbScraperLanguage.setModel(new DefaultComboBoxModel<>(MediaLanguages.valuesSorted()));
     panelMovieScrapers.add(cbScraperLanguage, "cell 1 1");
 
-    JLabel lblCountry = new JLabel(BUNDLE.getString("Settings.certificationCountry")); //$NON-NLS-1$
+    JLabel lblCountry = new JLabel(BUNDLE.getString("Settings.certificationCountry"));
     panelMovieScrapers.add(lblCountry, "cell 0 2");
 
     cbCertificationCountry = new JComboBox(CountryCode.values());
     cbCertificationCountry.setModel(new DefaultComboBoxModel<>(CountryCode.values()));
     panelMovieScrapers.add(cbCertificationCountry, "cell 1 2");
 
-    chckbxScraperFallback = new JCheckBox(BUNDLE.getString("Settings.scraperfallback")); //$NON-NLS-1$
+    chckbxScraperFallback = new JCheckBox(BUNDLE.getString("Settings.scraperfallback"));
     panelMovieScrapers.add(chckbxScraperFallback, "cell 0 3 2 1");
     {
       JLabel lblNfoFormat = new JLabel("NFO format");
@@ -240,7 +240,7 @@ class MovieScraperPanel extends JPanel {
       JTextPane textPane = new JTextPane();
       textPane.setOpaque(false);
       textPane.setEditable(false);
-      textPane.setText(BUNDLE.getString("wizard.nfo.hint")); //$NON-NLS-1$
+      textPane.setText(BUNDLE.getString("wizard.nfo.hint"));
       panelMovieScrapers.add(textPane, "cell 2 6,growx,aligny top");
     }
   }

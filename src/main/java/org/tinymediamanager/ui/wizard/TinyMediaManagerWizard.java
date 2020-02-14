@@ -48,7 +48,7 @@ public class TinyMediaManagerWizard extends TmmDialog {
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private List<JPanel>                panels;
   private int                         activePanelIndex = 0;
@@ -121,7 +121,7 @@ public class TinyMediaManagerWizard extends TmmDialog {
     private static final long serialVersionUID = -510135441507847318L;
 
     public BackAction() {
-      putValue(NAME, BUNDLE.getString("wizard.back")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("wizard.back"));
     }
 
     @Override
@@ -141,7 +141,7 @@ public class TinyMediaManagerWizard extends TmmDialog {
     private static final long serialVersionUID = -7813935881525980050L;
 
     public NextAction() {
-      putValue(NAME, BUNDLE.getString("wizard.next")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("wizard.next"));
     }
 
     @Override
@@ -162,7 +162,7 @@ public class TinyMediaManagerWizard extends TmmDialog {
     private static final long serialVersionUID = 8047070989186510289L;
 
     public FinishAction() {
-      putValue(NAME, BUNDLE.getString("wizard.finish")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("wizard.finish"));
     }
 
     @Override

@@ -29,11 +29,11 @@ import org.tinymediamanager.ui.UTF8Control;
  */
 public class LaunchUpdaterAction extends TmmAction {
   private static final long           serialVersionUID = 3046686017542572465L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public LaunchUpdaterAction() {
-    putValue(NAME, BUNDLE.getString("tmm.launchupdater")); //$NON-NLS-1$
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tmm.launchupdater.desc")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("tmm.launchupdater"));
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tmm.launchupdater.desc"));
   }
 
   @Override

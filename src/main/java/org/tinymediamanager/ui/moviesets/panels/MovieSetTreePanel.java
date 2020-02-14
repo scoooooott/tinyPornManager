@@ -73,7 +73,7 @@ import net.miginfocom.swing.MigLayout;
 public class MovieSetTreePanel extends TmmListPanel implements ITmmTabItem {
   private static final long           serialVersionUID = 5889203009864512935L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private TmmTreeTable                tree;
 
@@ -101,8 +101,8 @@ public class MovieSetTreePanel extends TmmListPanel implements ITmmTabItem {
     final TmmTreeTextFilter<TmmTreeNode> searchField = new TmmTreeTextFilter<>();
     add(searchField, "cell 0 0,growx");
 
-    btnFilter = new JButton(BUNDLE.getString("movieextendedsearch.filter")); //$NON-NLS-1$
-    btnFilter.setToolTipText(BUNDLE.getString("movieextendedsearch.options")); //$NON-NLS-1$
+    btnFilter = new JButton(BUNDLE.getString("movieextendedsearch.filter"));
+    btnFilter.setToolTipText(BUNDLE.getString("movieextendedsearch.options"));
     btnFilter.addActionListener(e -> MovieSetUIModule.getInstance().setFilterDialogVisible(true));
     add(btnFilter, "cell 1 0");
 
@@ -247,26 +247,26 @@ public class MovieSetTreePanel extends TmmListPanel implements ITmmTabItem {
     JSeparator separator = new JSeparator();
     add(separator, "cell 0 2 2 1,growx");
     {
-      JLabel lblMovieSetCount = new JLabel(BUNDLE.getString("tmm.moviesets") + ":"); //$NON-NLS-1$
+      JLabel lblMovieSetCount = new JLabel(BUNDLE.getString("tmm.moviesets") + ":");
       add(lblMovieSetCount, "flowx,cell 0 3 2 1");
 
       lblMovieSetCountFiltered = new JLabel("");
       add(lblMovieSetCountFiltered, "cell 0 3 2 1");
 
-      JLabel lblMovieSetCountOf = new JLabel(BUNDLE.getString("tmm.of")); //$NON-NLS-1$
+      JLabel lblMovieSetCountOf = new JLabel(BUNDLE.getString("tmm.of"));
       add(lblMovieSetCountOf, "cell 0 3 2 1");
 
       lblMovieSetCountTotal = new JLabel("");
       add(lblMovieSetCountTotal, "cell 0 3 2 1");
     }
     {
-      JLabel lblMovieCount = new JLabel(BUNDLE.getString("tmm.movies") + ":"); //$NON-NLS-1$
+      JLabel lblMovieCount = new JLabel(BUNDLE.getString("tmm.movies") + ":");
       add(lblMovieCount, "flowx,cell 0 4 2 1");
 
       lblMovieCountFiltered = new JLabel("");
       add(lblMovieCountFiltered, "cell 0 4 2 1");
 
-      JLabel lblMovieCountOf = new JLabel(BUNDLE.getString("tmm.of")); //$NON-NLS-1$
+      JLabel lblMovieCountOf = new JLabel(BUNDLE.getString("tmm.of"));
       add(lblMovieCountOf, "cell 0 4 2 1");
 
       lblMovieCountTotal = new JLabel("");
@@ -345,7 +345,7 @@ public class MovieSetTreePanel extends TmmListPanel implements ITmmTabItem {
     private static final long serialVersionUID = -1444530142931061317L;
 
     public CollapseAllAction() {
-      putValue(NAME, BUNDLE.getString("tree.collapseall")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("tree.collapseall"));
     }
 
     @Override
@@ -360,7 +360,7 @@ public class MovieSetTreePanel extends TmmListPanel implements ITmmTabItem {
     private static final long serialVersionUID = 6191727607109012198L;
 
     public ExpandAllAction() {
-      putValue(NAME, BUNDLE.getString("tree.expandall")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("tree.expandall"));
     }
 
     @Override

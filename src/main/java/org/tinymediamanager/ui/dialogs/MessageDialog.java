@@ -86,7 +86,7 @@ public class MessageDialog extends TmmDialog {
       }
     }
     {
-      JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
+      JButton btnClose = new JButton(BUNDLE.getString("Button.close"));
       btnClose.addActionListener(arg0 -> setVisible(false));
       addDefaultButton(btnClose);
     }
@@ -115,12 +115,12 @@ public class MessageDialog extends TmmDialog {
   }
 
   public static void showExceptionWindow(Throwable ex) {
-    MessageDialog dialog = new MessageDialog(null, BUNDLE.getString("tmm.problemdetected")); //$NON-NLS-1$
+    MessageDialog dialog = new MessageDialog(null, BUNDLE.getString("tmm.problemdetected"));
 
     dialog.setImage(IconManager.ERROR);
     String msg = ex.getLocalizedMessage();
     dialog.setText(msg != null ? msg : "");
-    dialog.setDescription(BUNDLE.getString("tmm.uicrash")); //$NON-NLS-1$
+    dialog.setDescription(BUNDLE.getString("tmm.uicrash"));
     dialog.setDetails(stackStraceAsString(ex));
     dialog.setAlwaysOnTop(true);
     dialog.setVisible(true);

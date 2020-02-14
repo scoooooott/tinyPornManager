@@ -43,12 +43,12 @@ import org.tinymediamanager.ui.tvshows.TvShowUIModule;
  */
 public class TvShowMediaInformationAction extends TmmAction {
   private static final long           serialVersionUID = -1274423130095036944L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public TvShowMediaInformationAction() {
-    putValue(NAME, BUNDLE.getString("tvshow.updatemediainfo")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("tvshow.updatemediainfo"));
     putValue(SMALL_ICON, IconManager.MEDIAINFO);
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.updatemediainfo")); //$NON-NLS-1$
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.updatemediainfo"));
     putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_M, InputEvent.CTRL_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK));
   }
 
@@ -68,7 +68,7 @@ public class TvShowMediaInformationAction extends TmmAction {
     }
 
     if (selectedEpisodes.isEmpty() && selectedTvShows.isEmpty()) {
-      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected"));
       return;
     }
 

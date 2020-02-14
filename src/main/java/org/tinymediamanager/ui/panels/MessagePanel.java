@@ -41,7 +41,7 @@ import net.miginfocom.swing.MigLayout;
 public class MessagePanel extends JPanel {
   private static final long           serialVersionUID = -7224510527137312686L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private JLabel                      lblTitle;
   private JTextArea                   taMessage;

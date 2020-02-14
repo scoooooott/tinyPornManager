@@ -27,25 +27,25 @@ import org.tinymediamanager.ui.settings.TmmSettingsNode;
  * @author Manuel Laggner
  */
 public class MovieSettingsNode extends TmmSettingsNode {
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public MovieSettingsNode() {
-    super(BUNDLE.getString("Settings.movies"), new MovieSettingsPanel()); //$NON-NLS-1$
+    super(BUNDLE.getString("Settings.movies"), new MovieSettingsPanel());
 
-    addChild(new TmmSettingsNode(BUNDLE.getString("Settings.source"), new MovieDatasourceSettingsPanel())); //$NON-NLS-1$
+    addChild(new TmmSettingsNode(BUNDLE.getString("Settings.source"), new MovieDatasourceSettingsPanel()));
 
-    TmmSettingsNode scraperSettingsNode = new TmmSettingsNode(BUNDLE.getString("Settings.scraper"), new MovieScraperSettingsPanel()); //$NON-NLS-1$
-    scraperSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.scraper.options"), new MovieScraperOptionsSettingsPanel()));//$NON-NLS-1$
-    scraperSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.nfo"), new MovieScraperNfoSettingsPanel()));//$NON-NLS-1$
+    TmmSettingsNode scraperSettingsNode = new TmmSettingsNode(BUNDLE.getString("Settings.scraper"), new MovieScraperSettingsPanel());
+    scraperSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.scraper.options"), new MovieScraperOptionsSettingsPanel()));
+    scraperSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.nfo"), new MovieScraperNfoSettingsPanel()));
     addChild(scraperSettingsNode);
 
-    TmmSettingsNode imageSettingsNode = new TmmSettingsNode(BUNDLE.getString("Settings.images"), new MovieImageSettingsPanel());//$NON-NLS-1$
-    imageSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.artwork.naming"), new MovieImageTypeSettingsPanel()));//$NON-NLS-1$
-    imageSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.extraartwork"), new MovieImageExtraPanel()));//$NON-NLS-1$
+    TmmSettingsNode imageSettingsNode = new TmmSettingsNode(BUNDLE.getString("Settings.images"), new MovieImageSettingsPanel());
+    imageSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.artwork.naming"), new MovieImageTypeSettingsPanel()));
+    imageSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.extraartwork"), new MovieImageExtraPanel()));
     addChild(imageSettingsNode);
 
-    addChild(new TmmSettingsNode(BUNDLE.getString("Settings.trailer"), new MovieTrailerSettingsPanel()));//$NON-NLS-1$
-    addChild(new TmmSettingsNode(BUNDLE.getString("Settings.subtitle"), new MovieSubtitleSettingsPanel()));//$NON-NLS-1$
-    addChild(new TmmSettingsNode(BUNDLE.getString("Settings.renamer"), new MovieRenamerSettingsPanel()));//$NON-NLS-1$
+    addChild(new TmmSettingsNode(BUNDLE.getString("Settings.trailer"), new MovieTrailerSettingsPanel()));
+    addChild(new TmmSettingsNode(BUNDLE.getString("Settings.subtitle"), new MovieSubtitleSettingsPanel()));
+    addChild(new TmmSettingsNode(BUNDLE.getString("Settings.renamer"), new MovieRenamerSettingsPanel()));
   }
 }

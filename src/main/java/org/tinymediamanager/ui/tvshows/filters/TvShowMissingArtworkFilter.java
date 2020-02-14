@@ -66,7 +66,7 @@ public class TvShowMissingArtworkFilter extends AbstractTvShowUIFilter {
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("movieextendedsearch.missingartwork")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("movieextendedsearch.missingartwork"));
   }
 
   @Override

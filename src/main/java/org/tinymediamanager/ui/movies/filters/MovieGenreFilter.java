@@ -62,7 +62,7 @@ public class MovieGenreFilter extends AbstractCheckComboBoxMovieUIFilter<MediaGe
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("movieextendedsearch.genre")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("movieextendedsearch.genre"));
   }
 
   private void buildAndInstallMediaGenres() {

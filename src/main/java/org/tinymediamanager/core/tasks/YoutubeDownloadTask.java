@@ -58,7 +58,7 @@ public class YoutubeDownloadTask extends TmmTask {
   private static final Logger LOGGER = LoggerFactory.getLogger(YoutubeDownloadTask.class);
   private static final char[] ILLEGAL_FILENAME_CHARACTERS = {'/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"',
       ':' };
-  private static final ResourceBundle BUNDLE                      = ResourceBundle.getBundle("messages", new UTF8Control());                      //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE                      = ResourceBundle.getBundle("messages", new UTF8Control());
   private MediaTrailer mediaTrailer;
   private MediaEntity mediaEntity;
   private YoutubeMedia mediaDetails;

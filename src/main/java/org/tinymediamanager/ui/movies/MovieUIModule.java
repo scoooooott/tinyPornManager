@@ -15,7 +15,17 @@
  */
 package org.tinymediamanager.ui.movies;
 
-import net.miginfocom.swing.MigLayout;
+import java.awt.CardLayout;
+
+import javax.swing.Action;
+import javax.swing.JMenu;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
+
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
@@ -67,15 +77,7 @@ import org.tinymediamanager.ui.movies.settings.MovieSettingsNode;
 import org.tinymediamanager.ui.settings.TmmSettingsNode;
 import org.tinymediamanager.ui.thirdparty.KodiRPCMenu;
 
-import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
-import java.awt.CardLayout;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The class MovieUIModule is the general access point to all movie related UI operations
@@ -124,11 +126,11 @@ public class MovieUIModule extends AbstractTmmUIModule {
       }
     };
 
-    tabbedPane.add(BUNDLE.getString("metatag.details"), new MovieInformationPanel(selectionModel)); //$NON-NLS-1$
-    tabbedPane.add(BUNDLE.getString("metatag.cast"), new MovieCastPanel(selectionModel)); //$NON-NLS-1$
-    tabbedPane.add(BUNDLE.getString("metatag.mediafiles"), new MovieMediaInformationPanel(selectionModel)); //$NON-NLS-1$
-    tabbedPane.add(BUNDLE.getString("metatag.artwork"), new MovieArtworkPanel(selectionModel)); //$NON-NLS-1$
-    tabbedPane.add(BUNDLE.getString("metatag.trailer"), new TrailerPanel(selectionModel)); //$NON-NLS-1$
+    tabbedPane.add(BUNDLE.getString("metatag.details"), new MovieInformationPanel(selectionModel));
+    tabbedPane.add(BUNDLE.getString("metatag.cast"), new MovieCastPanel(selectionModel));
+    tabbedPane.add(BUNDLE.getString("metatag.mediafiles"), new MovieMediaInformationPanel(selectionModel));
+    tabbedPane.add(BUNDLE.getString("metatag.artwork"), new MovieArtworkPanel(selectionModel));
+    tabbedPane.add(BUNDLE.getString("metatag.trailer"), new TrailerPanel(selectionModel));
     dataPanel.add(tabbedPane);
 
     movieFilterDialog = new MovieFilterDialog(selectionModel);
@@ -220,7 +222,7 @@ public class MovieUIModule extends AbstractTmmUIModule {
     popupMenu.add(createAndRegisterAction(MovieDeleteAction.class));
 
     if (Globals.isDebug()) {
-      final JMenu debugMenu = new JMenu("Debug"); //$NON-NLS-1$
+      final JMenu debugMenu = new JMenu("Debug");
       debugMenu.add(new DebugDumpMovieAction());
       popupMenu.addSeparator();
       popupMenu.add(debugMenu);
@@ -324,7 +326,7 @@ public class MovieUIModule extends AbstractTmmUIModule {
 
   @Override
   public String getTabTitle() {
-    return BUNDLE.getString("tmm.movies"); //$NON-NLS-1$ )
+    return BUNDLE.getString("tmm.movies");  )
   }
 
   @Override

@@ -46,7 +46,7 @@ import net.miginfocom.swing.MigLayout;
 class MiscSettingsPanel extends JPanel {
   private static final long           serialVersionUID = 500841588272296493L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private Settings                    settings         = Settings.getInstance();
   private JComboBox                   cbImageCacheQuality;
@@ -67,20 +67,20 @@ class MiscSettingsPanel extends JPanel {
     {
       JPanel panelMisc = SettingsPanelFactory.createSettingsPanel();
 
-      JLabel lblMiscT = new TmmLabel(BUNDLE.getString("Settings.misc"), H3); //$NON-NLS-1$
+      JLabel lblMiscT = new TmmLabel(BUNDLE.getString("Settings.misc"), H3);
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelMisc, lblMiscT, true);
       add(collapsiblePanel, "cell 0 0,growx, wmin 0");
       {
-        chckbxImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecache")); //$NON-NLS-1$
+        chckbxImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecache"));
         panelMisc.add(chckbxImageCache, "cell 1 0 2 1");
 
-        JLabel lblImageCacheQuality = new JLabel(BUNDLE.getString("Settings.imagecachetype")); //$NON-NLS-1$
+        JLabel lblImageCacheQuality = new JLabel(BUNDLE.getString("Settings.imagecachetype"));
         panelMisc.add(lblImageCacheQuality, "cell 2 1");
 
         cbImageCacheQuality = new JComboBox(ImageCache.CacheType.values());
         panelMisc.add(cbImageCacheQuality, "cell 2 1");
 
-        chckbxDeleteTrash = new JCheckBox(BUNDLE.getString("Settings.deletetrash")); //$NON-NLS-1$
+        chckbxDeleteTrash = new JCheckBox(BUNDLE.getString("Settings.deletetrash"));
         panelMisc.add(chckbxDeleteTrash, "cell 1 2 2 1");
       }
     }

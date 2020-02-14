@@ -15,6 +15,14 @@
  */
 package org.tinymediamanager.ui.movies;
 
+import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
+import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
+import static org.tinymediamanager.core.entities.Person.Type.PRODUCER;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,21 +59,13 @@ import org.tinymediamanager.scraper.interfaces.IMovieTrailerProvider;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.ui.UTF8Control;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-
-import static org.tinymediamanager.core.entities.Person.Type.ACTOR;
-import static org.tinymediamanager.core.entities.Person.Type.DIRECTOR;
-import static org.tinymediamanager.core.entities.Person.Type.PRODUCER;
-
 /**
  * The Class MovieChooserModel.
  *
  * @author Manuel Laggner
  */
 public class MovieChooserModel extends AbstractModelObject {
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle   BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
   private static final Logger LOGGER = LoggerFactory.getLogger(MovieChooserModel.class);
   public static final MovieChooserModel emptyResult = new MovieChooserModel();
 
@@ -111,7 +111,7 @@ public class MovieChooserModel extends AbstractModelObject {
    * create the empty search result.
    */
   private MovieChooserModel() {
-    setTitle(BUNDLE.getString("chooser.nothingfound")); //$NON-NLS-1$
+    setTitle(BUNDLE.getString("chooser.nothingfound"));
     movieToScrape = null;
     combinedName = title;
   }

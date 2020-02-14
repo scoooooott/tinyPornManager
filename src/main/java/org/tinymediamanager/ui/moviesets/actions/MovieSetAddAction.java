@@ -34,21 +34,21 @@ import org.tinymediamanager.ui.actions.TmmAction;
  */
 public class MovieSetAddAction extends TmmAction {
   private static final long           serialVersionUID = 819724436270051906L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   /**
    * Instantiates a new adds the movie set action.
    */
   public MovieSetAddAction() {
-    putValue(NAME, BUNDLE.getString("movieset.add.desc")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("movieset.add.desc"));
     putValue(LARGE_ICON_KEY, IconManager.ADD);
     putValue(SMALL_ICON, IconManager.ADD);
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.add.desc")); //$NON-NLS-1$
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movieset.add.desc"));
   }
 
   @Override
   protected void processAction(ActionEvent e) {
-    String name = JOptionPane.showInputDialog(MainWindow.getActiveInstance(), BUNDLE.getString("movieset.title"), "", JOptionPane.QUESTION_MESSAGE); //$NON-NLS-1$
+    String name = JOptionPane.showInputDialog(MainWindow.getActiveInstance(), BUNDLE.getString("movieset.title"), "", JOptionPane.QUESTION_MESSAGE);
     if (StringUtils.isNotEmpty(name)) {
       MovieSet movieSet = new MovieSet(name);
       movieSet.saveToDb();

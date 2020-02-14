@@ -27,7 +27,7 @@ import org.tinymediamanager.ui.dialogs.SettingsDialog;
  * @author Myron Boyle
  */
 public class PreloadTask extends TmmTask {
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public PreloadTask() {
     super(BUNDLE.getString("task.othertasks"), 0, TaskType.BACKGROUND_TASK);

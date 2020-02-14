@@ -52,7 +52,7 @@ public class TvShowStatusFilter extends AbstractCheckComboBoxTvShowUIFilter<Medi
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("metatag.status")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("metatag.status"));
   }
 
   private void buildAndInstallCertificationArray() {

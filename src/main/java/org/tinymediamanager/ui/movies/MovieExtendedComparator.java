@@ -32,7 +32,7 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class MovieExtendedComparator implements Comparator<Movie> {
-  private static final ResourceBundle BUNDLE         = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE         = ResourceBundle.getBundle("messages", new UTF8Control());
   private static final Logger         LOGGER         = LoggerFactory.getLogger(MovieExtendedComparator.class);
 
   private SortColumn                  sortColumn;
@@ -40,16 +40,16 @@ public class MovieExtendedComparator implements Comparator<Movie> {
   private RuleBasedCollator           stringCollator = (RuleBasedCollator) RuleBasedCollator.getInstance();
 
   public enum SortColumn {
-    TITLE(BUNDLE.getString("metatag.title")), //$NON-NLS-1$ ,
-    SORT_TITLE(BUNDLE.getString("metatag.sorttitle")), //$NON-NLS-1$ ,
-    YEAR(BUNDLE.getString("metatag.year")), //$NON-NLS-1$ ,
-    DATE_ADDED(BUNDLE.getString("metatag.dateadded")), //$NON-NLS-1$ ,
-    RELEASE_DATE(BUNDLE.getString("metatag.releasedate")), //$NON-NLS-1$ ,
-    WATCHED(BUNDLE.getString("metatag.watched")), //$NON-NLS-1$ ,
-    RATING(BUNDLE.getString("metatag.rating")), //$NON-NLS-1$ ,
-    RUNTIME(BUNDLE.getString("metatag.runtime")), //$NON-NLS-1$ ,
-    VIDEO_BITRATE(BUNDLE.getString("metatag.videobitrate")), //$NON-NLS-1$ ,
-    FRAME_RATE(BUNDLE.getString("metatag.framerate")); //$NON-NLS-1$ ,
+    TITLE(BUNDLE.getString("metatag.title")),  ,
+    SORT_TITLE(BUNDLE.getString("metatag.sorttitle")),  ,
+    YEAR(BUNDLE.getString("metatag.year")),  ,
+    DATE_ADDED(BUNDLE.getString("metatag.dateadded")),  ,
+    RELEASE_DATE(BUNDLE.getString("metatag.releasedate")),  ,
+    WATCHED(BUNDLE.getString("metatag.watched")),  ,
+    RATING(BUNDLE.getString("metatag.rating")),  ,
+    RUNTIME(BUNDLE.getString("metatag.runtime")),  ,
+    VIDEO_BITRATE(BUNDLE.getString("metatag.videobitrate")),  ,
+    FRAME_RATE(BUNDLE.getString("metatag.framerate"));  ,
 
     private String title;
 
@@ -64,8 +64,8 @@ public class MovieExtendedComparator implements Comparator<Movie> {
   }
 
   public enum WatchedFlag {
-    WATCHED(BUNDLE.getString("metatag.watched")), //$NON-NLS-1$ ,
-    NOT_WATCHED(BUNDLE.getString("metatag.notwatched")); //$NON-NLS-1$ ,
+    WATCHED(BUNDLE.getString("metatag.watched")),  ,
+    NOT_WATCHED(BUNDLE.getString("metatag.notwatched"));  ,
 
     private String title;
 
@@ -80,8 +80,8 @@ public class MovieExtendedComparator implements Comparator<Movie> {
   }
 
   public enum SortOrder {
-    ASCENDING(BUNDLE.getString("sort.ascending")), //$NON-NLS-1$
-    DESCENDING(BUNDLE.getString("sort.descending")); //$NON-NLS-1$
+    ASCENDING(BUNDLE.getString("sort.ascending")),
+    DESCENDING(BUNDLE.getString("sort.descending"));
 
     private String title;
 
@@ -96,8 +96,8 @@ public class MovieExtendedComparator implements Comparator<Movie> {
   }
 
   public enum MovieInMovieSet {
-    IN_MOVIESET(BUNDLE.getString("movie.inmovieset")), //$NON-NLS-1$
-    NOT_IN_MOVIESET(BUNDLE.getString("movie.notinmovieset")); //$NON-NLS-1$
+    IN_MOVIESET(BUNDLE.getString("movie.inmovieset")),
+    NOT_IN_MOVIESET(BUNDLE.getString("movie.notinmovieset"));
 
     private String title;
 
@@ -112,8 +112,8 @@ public class MovieExtendedComparator implements Comparator<Movie> {
   }
 
   public enum OfflineMovie {
-    OFFLINE(BUNDLE.getString("movie.offline")), //$NON-NLS-1$
-    NOT_OFFLINE(BUNDLE.getString("movie.online")); //$NON-NLS-1$
+    OFFLINE(BUNDLE.getString("movie.offline")),
+    NOT_OFFLINE(BUNDLE.getString("movie.online"));
 
     private String title;
 

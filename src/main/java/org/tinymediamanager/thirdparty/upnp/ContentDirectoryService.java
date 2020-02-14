@@ -69,7 +69,7 @@ public class ContentDirectoryService extends AbstractContentDirectoryService {
   }
 
   private static final Logger         LOGGER = LoggerFactory.getLogger(ContentDirectoryService.class);
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());
 
   @Override
   public BrowseResult browse(String objectID, BrowseFlag browseFlag, String filter, long firstResult, long maxResults, SortCriterion[] orderby)

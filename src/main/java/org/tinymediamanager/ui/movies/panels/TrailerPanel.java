@@ -70,7 +70,7 @@ public class TrailerPanel extends JPanel {
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
   private static final Logger         LOGGER           = LoggerFactory.getLogger(TrailerPanel.class);
 
   private MovieSelectionModel         movieSelectionModel;
@@ -173,19 +173,19 @@ public class TrailerPanel extends JPanel {
           return "";
 
         case 2:
-          return BUNDLE.getString("metatag.nfo"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.nfo");
 
         case 3:
-          return BUNDLE.getString("metatag.name"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.name");
 
         case 4:
-          return BUNDLE.getString("metatag.source"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.source");
 
         case 5:
-          return BUNDLE.getString("metatag.quality"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.quality");
 
         case 6:
-          return BUNDLE.getString("metatag.format"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.format");
       }
 
       throw new IllegalStateException();

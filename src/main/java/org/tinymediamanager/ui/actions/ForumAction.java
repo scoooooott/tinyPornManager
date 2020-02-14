@@ -34,11 +34,11 @@ import org.tinymediamanager.ui.UTF8Control;
  */
 public class ForumAction extends TmmAction {
   private static final long           serialVersionUID = 1668251251156765161L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
   private static final Logger         LOGGER           = LoggerFactory.getLogger(ForumAction.class);
 
   public ForumAction() {
-    putValue(NAME, BUNDLE.getString("tmm.forum")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("tmm.forum"));
   }
 
   @Override

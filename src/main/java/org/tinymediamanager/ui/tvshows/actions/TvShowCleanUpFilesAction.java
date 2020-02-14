@@ -33,12 +33,12 @@ import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 
 public class TvShowCleanUpFilesAction extends TmmAction {
 
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public TvShowCleanUpFilesAction() {
 
-    putValue(NAME, BUNDLE.getString("cleanupfiles")); //$NON-NLS-1$
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("cleanupfiles.desc")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("cleanupfiles"));
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("cleanupfiles.desc"));
     putValue(SMALL_ICON, IconManager.DELETE);
     putValue(LARGE_ICON_KEY, IconManager.DELETE);
 
@@ -50,7 +50,7 @@ public class TvShowCleanUpFilesAction extends TmmAction {
     List<MediaEntity> selectedTvShows = new ArrayList<>(TvShowUIModule.getInstance().getSelectionModel().getSelectedTvShows());
 
     if (selectedTvShows.isEmpty()) {
-      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected"));
       return;
     }
 

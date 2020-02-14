@@ -52,7 +52,7 @@ import org.tinymediamanager.ui.dialogs.ImagePreviewDialog;
  */
 public class TmmUIHelper {
   private static final Logger           LOGGER = LoggerFactory.getLogger(TmmUIHelper.class);
-  protected static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  protected static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private TmmUIHelper() {
     // private constructor for utility classes

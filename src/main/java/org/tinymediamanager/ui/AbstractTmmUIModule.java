@@ -30,7 +30,7 @@ import javax.swing.KeyStroke;
 import org.tinymediamanager.ui.components.TmmListPanel;
 
 public abstract class AbstractTmmUIModule implements ITmmUIModule {
-  protected static final ResourceBundle BUNDLE       = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  protected static final ResourceBundle BUNDLE       = ResourceBundle.getBundle("messages", new UTF8Control());
 
   protected final Map<Class, Action>    actionMap    = new HashMap<>();
 

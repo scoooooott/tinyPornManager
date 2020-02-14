@@ -52,7 +52,8 @@ import net.miginfocom.swing.MigLayout;
 class MovieImageExtraPanel extends JPanel {
   private static final long           serialVersionUID = 7312645402037806284L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$ @wbp.nls.resourceBundle
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
+  @wbp.nls.resourceBundle
 
   private MovieSettings               settings         = MovieModuleManager.SETTINGS;
   private JCheckBox                   cbActorImages;
@@ -81,7 +82,7 @@ class MovieImageExtraPanel extends JPanel {
     // further initializations
     btnSelectFolder.addActionListener(arg0 -> {
       String path = TmmProperties.getInstance().getProperty("movieset.folderchooser.path");
-      Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.movieset.folderchooser"), path); //$NON-NLS-1$
+      Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.movieset.folderchooser"), path);
       if (file != null && Files.isDirectory(file)) {
         tfMovieSetArtworkFolder.setText(file.toAbsolutePath().toString());
         TmmProperties.getInstance().putProperty("movieset.folderchooser.path", file.toAbsolutePath().toString());
@@ -94,7 +95,7 @@ class MovieImageExtraPanel extends JPanel {
     {
       JPanel panelExtra = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][16lp!][grow]", ""));
 
-      JLabel lblExtra = new TmmLabel(BUNDLE.getString("Settings.extraartwork"), H3); //$NON-NLS-1$
+      JLabel lblExtra = new TmmLabel(BUNDLE.getString("Settings.extraartwork"), H3);
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelExtra, lblExtra, true);
       add(collapsiblePanel, "cell 0 0,growx, wmin 0");
       {
@@ -132,7 +133,7 @@ class MovieImageExtraPanel extends JPanel {
     {
       JPanel panelMovieSet = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][16lp!][grow]", "[][][grow]"));
 
-      JLabel lblTitle = new TmmLabel(BUNDLE.getString("Settings.movieset"), H3); //$NON-NLS-1$
+      JLabel lblTitle = new TmmLabel(BUNDLE.getString("Settings.movieset"), H3);
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelMovieSet, lblTitle, true);
       add(collapsiblePanel, "cell 0 1,growx, wmin 0");
       {

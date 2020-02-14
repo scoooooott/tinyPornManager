@@ -42,12 +42,12 @@ import org.tinymediamanager.ui.tvshows.TvShowUIModule;
  */
 public class TvShowDeleteAction extends TmmAction {
   private static final long           serialVersionUID = -2355545751433709417L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public TvShowDeleteAction() {
-    putValue(NAME, BUNDLE.getString("tvshow.delete")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("tvshow.delete"));
     putValue(SMALL_ICON, IconManager.DELETE_FOREVER);
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.delete.hint")); //$NON-NLS-1$
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.delete.hint"));
     putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, InputEvent.CTRL_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK));
   }
 
@@ -58,13 +58,13 @@ public class TvShowDeleteAction extends TmmAction {
     // display warning and ask the user again
     Object[] options = { BUNDLE.getString("Button.yes"), BUNDLE.getString("Button.no") };
     int answer = JOptionPane.showOptionDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tvshow.delete.desc"),
-        BUNDLE.getString("tvshow.delete"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null); //$NON-NLS-1$
+        BUNDLE.getString("tvshow.delete"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
     if (answer != JOptionPane.YES_OPTION) {
       return;
     }
 
     if (selectedObjects.isEmpty()) {
-      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected"));
       return;
     }
 

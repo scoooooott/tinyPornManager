@@ -61,7 +61,7 @@ public class MovieYearFilter extends AbstractCheckComboBoxMovieUIFilter<Integer>
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("metatag.year"));
   }
 
   @Override

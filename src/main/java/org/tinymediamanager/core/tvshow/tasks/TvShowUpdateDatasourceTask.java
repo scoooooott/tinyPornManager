@@ -78,7 +78,7 @@ import com.sun.jna.Platform;
 
 public class TvShowUpdateDatasourceTask extends TmmThreadPool {
   private static final Logger         LOGGER        = LoggerFactory.getLogger(TvShowUpdateDatasourceTask.class);
-  private static final ResourceBundle BUNDLE        = ResourceBundle.getBundle("messages", new UTF8Control());                                  //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE        = ResourceBundle.getBundle("messages", new UTF8Control());
 
   // constants
   private static final String         VIDEO_TS      = "VIDEO_TS";

@@ -37,12 +37,12 @@ import org.tinymediamanager.ui.tvshows.dialogs.TvShowChangeDatasourceDialog;
  */
 public class TvShowChangeDatasourceAction extends TmmAction {
   private static final long           serialVersionUID = -2731782311579049379L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public TvShowChangeDatasourceAction() {
     putValue(LARGE_ICON_KEY, IconManager.EDIT);
     putValue(SMALL_ICON, IconManager.EDIT);
-    putValue(NAME, BUNDLE.getString("tvshow.changedatasource")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("tvshow.changedatasource"));
   }
 
   @Override
@@ -50,7 +50,7 @@ public class TvShowChangeDatasourceAction extends TmmAction {
     List<TvShow> tvShows = new ArrayList<>(TvShowUIModule.getInstance().getSelectionModel().getSelectedTvShows());
 
     if (tvShows.isEmpty()) {
-      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected"));
       return;
     }
 

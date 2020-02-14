@@ -38,10 +38,10 @@ import org.tinymediamanager.ui.tvshows.TvShowUIModule;
  */
 public class TvShowClearImageCacheAction extends TmmAction {
   private static final long           serialVersionUID = 3452373237085274937L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public TvShowClearImageCacheAction() {
-    putValue(NAME, BUNDLE.getString("tvshow.clearimagecache")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("tvshow.clearimagecache"));
   }
 
   @Override
@@ -60,7 +60,7 @@ public class TvShowClearImageCacheAction extends TmmAction {
     }
 
     if (selectedEpisodes.isEmpty() && selectedTvShows.isEmpty()) {
-      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected"));
       return;
     }
 

@@ -40,7 +40,7 @@ import net.miginfocom.swing.MigLayout;
  */
 public class TaskListComponent extends JPanel {
   private static final long           serialVersionUID = -6088880093610800005L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private TmmTaskHandle               taskHandle;
 
@@ -107,20 +107,20 @@ public class TaskListComponent extends JPanel {
           dynaLabel.setText(taskHandle.getTaskDescription());
         }
         else {
-          dynaLabel.setText(BUNDLE.getString("task.running")); //$NON-NLS-1$
+          dynaLabel.setText(BUNDLE.getString("task.running"));
         }
         break;
 
       case QUEUED:
-        dynaLabel.setText(BUNDLE.getString("task.queued")); //$NON-NLS-1$
+        dynaLabel.setText(BUNDLE.getString("task.queued"));
         break;
 
       case CANCELLED:
-        dynaLabel.setText(BUNDLE.getString("task.cancelled")); //$NON-NLS-1$
+        dynaLabel.setText(BUNDLE.getString("task.cancelled"));
         break;
 
       case FINISHED:
-        dynaLabel.setText(BUNDLE.getString("task.finished")); //$NON-NLS-1$
+        dynaLabel.setText(BUNDLE.getString("task.finished"));
         break;
     }
 

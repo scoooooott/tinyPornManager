@@ -28,10 +28,10 @@ import org.tinymediamanager.ui.dialogs.WhatsNewDialog;
  */
 public class ShowChangelogAction extends TmmAction {
   private static final long           serialVersionUID = -6578562721885387890L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public ShowChangelogAction() {
-    putValue(NAME, BUNDLE.getString("whatsnew.title")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("whatsnew.title"));
   }
 
   @Override

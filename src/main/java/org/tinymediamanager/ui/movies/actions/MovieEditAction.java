@@ -40,23 +40,23 @@ import org.tinymediamanager.ui.movies.dialogs.MovieEditorDialog;
  */
 public class MovieEditAction extends TmmAction {
   private static final long           serialVersionUID = -8473181347332963044L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   @Deprecated
   public MovieEditAction(boolean withTitle) {
     if (withTitle) {
-      putValue(NAME, BUNDLE.getString("movie.edit")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("movie.edit"));
     }
     putValue(LARGE_ICON_KEY, IconManager.EDIT);
     putValue(SMALL_ICON, IconManager.EDIT);
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit")); //$NON-NLS-1$
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit"));
   }
 
   public MovieEditAction() {
-    putValue(NAME, BUNDLE.getString("movie.edit")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("movie.edit"));
     putValue(LARGE_ICON_KEY, IconManager.EDIT);
     putValue(SMALL_ICON, IconManager.EDIT);
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit")); //$NON-NLS-1$
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit"));
     putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK));
   }
 
@@ -68,7 +68,7 @@ public class MovieEditAction extends TmmAction {
     int index = 0;
 
     if (selectedMovies.isEmpty()) {
-      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected"));
       return;
     }
 

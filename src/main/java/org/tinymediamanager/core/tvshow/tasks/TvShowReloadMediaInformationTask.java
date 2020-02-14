@@ -39,7 +39,7 @@ import org.tinymediamanager.ui.UTF8Control;
  */
 public class TvShowReloadMediaInformationTask extends TmmThreadPool {
   private static final Logger         LOGGER = LoggerFactory.getLogger(TvShowReloadMediaInformationTask.class);
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());        //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private List<TvShow>                tvShows;
   private List<TvShowEpisode>         episodes;

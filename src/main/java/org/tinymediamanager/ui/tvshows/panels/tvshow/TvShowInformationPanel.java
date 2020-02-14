@@ -64,7 +64,7 @@ import net.miginfocom.swing.MigLayout;
 public class TvShowInformationPanel extends JPanel {
   private static final long           serialVersionUID = 1911808562993073590L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
   private StarRater                   panelRatingStars;
   private JLabel                      lblTvShowName;
   private JLabel                      lblRating;
@@ -144,7 +144,7 @@ public class TvShowInformationPanel extends JPanel {
       lblTvShowPoster.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       panelLeft.add(lblTvShowPoster);
       lblTvShowPoster.enableLightbox();
-      lblPosterSize = new JLabel(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
+      lblPosterSize = new JLabel(BUNDLE.getString("mediafiletype.poster"));
       panelLeft.add(lblPosterSize);
       panelLeft.add(Box.createVerticalStrut(20));
 
@@ -153,7 +153,7 @@ public class TvShowInformationPanel extends JPanel {
       lblTvShowBackground.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       panelLeft.add(lblTvShowBackground);
       lblTvShowBackground.enableLightbox();
-      lblFanartSize = new JLabel(BUNDLE.getString("mediafiletype.fanart")); //$NON-NLS-1$
+      lblFanartSize = new JLabel(BUNDLE.getString("mediafiletype.fanart"));
       panelLeft.add(lblFanartSize);
       panelLeft.add(Box.createVerticalStrut(20));
 
@@ -162,7 +162,7 @@ public class TvShowInformationPanel extends JPanel {
       lblTvShowBanner.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       panelLeft.add(lblTvShowBanner);
       lblTvShowBanner.enableLightbox();
-      lblBannerSize = new JLabel(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
+      lblBannerSize = new JLabel(BUNDLE.getString("mediafiletype.banner"));
       panelLeft.add(lblBannerSize);
     }
     {
@@ -230,10 +230,10 @@ public class TvShowInformationPanel extends JPanel {
     lblTvShowPoster.setImagePath(tvShow.getArtworkFilename(MediaFileType.POSTER));
     Dimension posterSize = tvShow.getArtworkDimension(MediaFileType.POSTER);
     if (posterSize.width > 0 && posterSize.height > 0) {
-      lblPosterSize.setText(BUNDLE.getString("mediafiletype.poster") + " - " + posterSize.width + "x" + posterSize.height); //$NON-NLS-1$
+      lblPosterSize.setText(BUNDLE.getString("mediafiletype.poster") + " - " + posterSize.width + "x" + posterSize.height);
     }
     else {
-      lblPosterSize.setText(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
+      lblPosterSize.setText(BUNDLE.getString("mediafiletype.poster"));
     }
   }
 
@@ -242,10 +242,10 @@ public class TvShowInformationPanel extends JPanel {
     lblTvShowBackground.setImagePath(tvShow.getArtworkFilename(MediaFileType.FANART));
     Dimension fanartSize = tvShow.getArtworkDimension(MediaFileType.FANART);
     if (fanartSize.width > 0 && fanartSize.height > 0) {
-      lblFanartSize.setText(BUNDLE.getString("mediafiletype.fanart") + " - " + fanartSize.width + "x" + fanartSize.height); //$NON-NLS-1$
+      lblFanartSize.setText(BUNDLE.getString("mediafiletype.fanart") + " - " + fanartSize.width + "x" + fanartSize.height);
     }
     else {
-      lblFanartSize.setText(BUNDLE.getString("mediafiletype.fanart")); //$NON-NLS-1$
+      lblFanartSize.setText(BUNDLE.getString("mediafiletype.fanart"));
     }
   }
 
@@ -254,10 +254,10 @@ public class TvShowInformationPanel extends JPanel {
     lblTvShowBanner.setImagePath(tvShow.getArtworkFilename(MediaFileType.BANNER));
     Dimension bannerSize = tvShow.getArtworkDimension(MediaFileType.BANNER);
     if (bannerSize.width > 0 && bannerSize.height > 0) {
-      lblBannerSize.setText(BUNDLE.getString("mediafiletype.banner") + " - " + bannerSize.width + "x" + bannerSize.height); //$NON-NLS-1$
+      lblBannerSize.setText(BUNDLE.getString("mediafiletype.banner") + " - " + bannerSize.width + "x" + bannerSize.height);
     }
     else {
-      lblBannerSize.setText(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
+      lblBannerSize.setText(BUNDLE.getString("mediafiletype.banner"));
     }
   }
 

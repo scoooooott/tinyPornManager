@@ -38,7 +38,7 @@ class EntrancePanel extends JPanel {
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public EntrancePanel() {
     initComponents();
@@ -50,7 +50,7 @@ class EntrancePanel extends JPanel {
   private void initComponents() {
     setLayout(new MigLayout("", "[50lp:50lp,grow][][10lp][][50lp:50lp,grow]", "[20lp:20lp,grow][][20lp:20lp][][50lp:50lp,grow]"));
 
-    final JTextPane tpGreetingHeader = new ReadOnlyTextPane(BUNDLE.getString("wizard.greeting.header")); //$NON-NLS-1$
+    final JTextPane tpGreetingHeader = new ReadOnlyTextPane(BUNDLE.getString("wizard.greeting.header"));
     tpGreetingHeader.setEditorKit(new HTMLEditorKit());
     add(tpGreetingHeader, "cell 0 1 5 1,alignx center");
 
@@ -58,7 +58,7 @@ class EntrancePanel extends JPanel {
     lblLogo.setIcon(new Logo(96));
     add(lblLogo, "cell 1 3,alignx right,aligny top");
 
-    JTextPane tpGreetingText = new ReadOnlyTextPane(BUNDLE.getString("wizard.greeting.text")); //$NON-NLS-1$
+    JTextPane tpGreetingText = new ReadOnlyTextPane(BUNDLE.getString("wizard.greeting.text"));
     add(tpGreetingText, "cell 3 3,grow");
   }
 }

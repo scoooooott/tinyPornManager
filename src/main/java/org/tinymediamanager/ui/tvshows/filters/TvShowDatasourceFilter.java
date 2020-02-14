@@ -59,7 +59,7 @@ public class TvShowDatasourceFilter extends AbstractCheckComboBoxTvShowUIFilter<
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("metatag.datasource")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("metatag.datasource"));
   }
 
   @Override

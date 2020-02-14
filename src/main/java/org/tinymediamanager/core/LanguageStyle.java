@@ -32,7 +32,7 @@ public enum LanguageStyle {
   LANG_EN,
   LANG_LOCALIZED;
 
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());
 
   @Override
   public String toString() {

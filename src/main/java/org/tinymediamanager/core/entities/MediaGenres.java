@@ -169,7 +169,7 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
         // and for invalid languages (like NB) it will be null
         continue;
       }
-      ResourceBundle b = ResourceBundle.getBundle("messages", loc, new UTF8Control()); //$NON-NLS-1$
+      ResourceBundle b = ResourceBundle.getBundle("messages", loc, new UTF8Control());
       try {
         alt.add(loc.getLanguage() + "-" + b.getString("Genres." + propName)); // just genres
       }

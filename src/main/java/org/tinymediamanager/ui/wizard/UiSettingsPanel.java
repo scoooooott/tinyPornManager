@@ -54,7 +54,7 @@ import net.miginfocom.swing.MigLayout;
 class UiSettingsPanel extends JPanel {
   private static final long           serialVersionUID   = -1241134514329815223L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control());
   private static final Logger         LOGGER             = LoggerFactory.getLogger(UiSettingsPanel.class);
 
   private static final Integer[]      DEFAULT_FONT_SIZES = { 12, 14, 16, 18, 20, 22, 24, 26, 28 };
@@ -122,21 +122,21 @@ class UiSettingsPanel extends JPanel {
   private void initComponents() {
     setLayout(new MigLayout("", "[20lp!][200lp,grow][200lp,grow]", "[][][10lp!][][10lp!][][grow][][10lp!][][][]"));
     {
-      JLabel lblUiSettings = new JLabel(BUNDLE.getString("wizard.ui"));//$NON-NLS-1$
+      JLabel lblUiSettings = new JLabel(BUNDLE.getString("wizard.ui"));
       TmmFontHelper.changeFont(lblUiSettings, 1.3333, Font.BOLD);
       add(lblUiSettings, "cell 0 0 3 1,growx");
     }
 
-    JTextArea taSettingsHint = new ReadOnlyTextArea(BUNDLE.getString("wizard.ui.hint")); //$NON-NLS-1$
+    JTextArea taSettingsHint = new ReadOnlyTextArea(BUNDLE.getString("wizard.ui.hint"));
     add(taSettingsHint, "cell 1 1 2 1,growx");
 
-    JLabel lblLanguageT = new JLabel(BUNDLE.getString("Settings.language")); //$NON-NLS-1$
+    JLabel lblLanguageT = new JLabel(BUNDLE.getString("Settings.language"));
     add(lblLanguageT, "flowx,cell 1 3 2 1");
 
     cbLanguage = new JComboBox(locales.toArray());
     add(cbLanguage, "cell 1 3 2 1");
 
-    JLabel lblThemeT = new JLabel(BUNDLE.getString("Settings.uitheme")); //$NON-NLS-1$
+    JLabel lblThemeT = new JLabel(BUNDLE.getString("Settings.uitheme"));
     add(lblThemeT, "cell 1 5");
 
     ImageLabel lblLight = new ImageLabel(false);
@@ -159,28 +159,28 @@ class UiSettingsPanel extends JPanel {
 
     ButtonGroup buttonGroup = new ButtonGroup();
 
-    rdbtnLight = new JRadioButton("Light"); //$NON-NLS-1$
+    rdbtnLight = new JRadioButton("Light");
     buttonGroup.add(rdbtnLight);
     add(rdbtnLight, "cell 1 7,alignx center");
 
-    rdbtnDark = new JRadioButton("Dark"); //$NON-NLS-1$
+    rdbtnDark = new JRadioButton("Dark");
     buttonGroup.add(rdbtnDark);
     add(rdbtnDark, "cell 2 7,alignx center");
 
-    JLabel lblFontT = new JLabel(BUNDLE.getString("Settings.font")); //$NON-NLS-1$
+    JLabel lblFontT = new JLabel(BUNDLE.getString("Settings.font"));
     add(lblFontT, "flowx,cell 1 9 2 1");
 
     GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
     cbFontFamily = new JComboBox(env.getAvailableFontFamilyNames());
     add(cbFontFamily, "cell 1 9 2 1");
 
-    JLabel lblSize = new JLabel(BUNDLE.getString("Settings.fontsize")); //$NON-NLS-1$
+    JLabel lblSize = new JLabel(BUNDLE.getString("Settings.fontsize"));
     add(lblSize, "flowx,cell 1 10");
 
     cbFontSize = new JComboBox(DEFAULT_FONT_SIZES);
     add(cbFontSize, "cell 1 10");
 
-    JTextArea taFontHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.fonts.hint")); //$NON-NLS-1$
+    JTextArea taFontHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.fonts.hint"));
     add(taFontHint, "cell 1 11 2 1,grow");
   }
 

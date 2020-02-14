@@ -48,7 +48,7 @@ import net.miginfocom.swing.MigLayout;
 class TvShowScraperOptionsSettingsPanel extends JPanel {
   private static final long           serialVersionUID = 4999827736720726395L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private TvShowSettings              settings         = TvShowModuleManager.SETTINGS;
   private JCheckBox                   chckbxAutomaticallyScrapeImages;
@@ -70,7 +70,7 @@ class TvShowScraperOptionsSettingsPanel extends JPanel {
     {
       JPanel panelOptions = SettingsPanelFactory.createSettingsPanel();
 
-      JLabel lblOptions = new TmmLabel(BUNDLE.getString("Settings.advancedoptions"), H3); //$NON-NLS-1$
+      JLabel lblOptions = new TmmLabel(BUNDLE.getString("Settings.advancedoptions"), H3);
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelOptions, lblOptions, true);
       add(collapsiblePanel, "cell 0 0,growx, wmin 0");
       {
@@ -93,7 +93,7 @@ class TvShowScraperOptionsSettingsPanel extends JPanel {
     {
       JPanel panelDefaults = SettingsPanelFactory.createSettingsPanel();
 
-      JLabel lblDefaultsT = new TmmLabel(BUNDLE.getString("scraper.metadata.defaults"), H3); //$NON-NLS-1$
+      JLabel lblDefaultsT = new TmmLabel(BUNDLE.getString("scraper.metadata.defaults"), H3);
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelDefaults, lblDefaultsT, true);
       add(collapsiblePanel, "cell 0 2,growx, wmin 0");
       {
@@ -104,11 +104,11 @@ class TvShowScraperOptionsSettingsPanel extends JPanel {
     {
       JPanel panelImages = SettingsPanelFactory.createSettingsPanel();
 
-      JLabel lblImagesT = new TmmLabel(BUNDLE.getString("Settings.images"), H3); //$NON-NLS-1$
+      JLabel lblImagesT = new TmmLabel(BUNDLE.getString("Settings.images"), H3);
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelImages, lblImagesT, true);
       add(collapsiblePanel, "cell 0 4,growx,wmin 0");
       {
-        chckbxAutomaticallyScrapeImages = new JCheckBox(BUNDLE.getString("Settings.default.autoscrape")); //$NON-NLS-1$
+        chckbxAutomaticallyScrapeImages = new JCheckBox(BUNDLE.getString("Settings.default.autoscrape"));
         panelImages.add(chckbxAutomaticallyScrapeImages, "cell 1 0 2 1");
       }
     }

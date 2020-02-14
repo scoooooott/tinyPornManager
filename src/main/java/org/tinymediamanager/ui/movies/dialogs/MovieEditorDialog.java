@@ -225,7 +225,7 @@ public class MovieEditorDialog extends TmmDialog {
    *          the queue size
    */
   public MovieEditorDialog(Movie movie, int queueIndex, int queueSize) {
-    super(BUNDLE.getString("movie.edit") + (queueSize > 1 ? " " + (queueIndex + 1) + "/" + queueSize : "") + "  < " + movie.getPathNIO() + " >", //$NON-NLS-1$
+    super(BUNDLE.getString("movie.edit") + (queueSize > 1 ? " " + (queueIndex + 1) + "/" + queueSize : "") + "  < " + movie.getPathNIO() + " >",
         "movieEditor");
 
     // creation of lists
@@ -338,11 +338,11 @@ public class MovieEditorDialog extends TmmDialog {
       }
     }
     // adjust columnn titles - we have to do it this way - thx to windowbuilder pro
-    tableTrailer.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.nfo")); //$NON-NLS-1$
-    tableTrailer.getColumnModel().getColumn(1).setHeaderValue(BUNDLE.getString("metatag.name")); //$NON-NLS-1$
-    tableTrailer.getColumnModel().getColumn(2).setHeaderValue(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
-    tableTrailer.getColumnModel().getColumn(3).setHeaderValue(BUNDLE.getString("metatag.quality")); //$NON-NLS-1$
-    tableTrailer.getColumnModel().getColumn(4).setHeaderValue(BUNDLE.getString("metatag.url")); //$NON-NLS-1$
+    tableTrailer.getColumnModel().getColumn(0).setHeaderValue(BUNDLE.getString("metatag.nfo"));
+    tableTrailer.getColumnModel().getColumn(1).setHeaderValue(BUNDLE.getString("metatag.name"));
+    tableTrailer.getColumnModel().getColumn(2).setHeaderValue(BUNDLE.getString("metatag.source"));
+    tableTrailer.getColumnModel().getColumn(3).setHeaderValue(BUNDLE.getString("metatag.quality"));
+    tableTrailer.getColumnModel().getColumn(4).setHeaderValue(BUNDLE.getString("metatag.url"));
 
     // adjust table columns
     tableTrailer.getColumnModel().getColumn(0).setMaxWidth(55);
@@ -388,12 +388,12 @@ public class MovieEditorDialog extends TmmDialog {
      **********************************************************************************/
     {
       JPanel details1Panel = new JPanel();
-      tabbedPane.addTab(BUNDLE.getString("metatag.details"), details1Panel); //$NON-NLS-1$
+      tabbedPane.addTab(BUNDLE.getString("metatag.details"), details1Panel);
       details1Panel.setLayout(new MigLayout("", "[][grow][50lp:75lp][][60lp:75lp][100lp:n][50lp:75lp,grow][25lp:n][200lp:250lp,grow]",
           "[][][][][100lp:175lp][][][][][][][75lp:100lp][]"));
 
       {
-        JLabel lblTitle = new TmmLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
+        JLabel lblTitle = new TmmLabel(BUNDLE.getString("metatag.title"));
         details1Panel.add(lblTitle, "cell 0 0,alignx right");
 
         tfTitle = new JTextField();
@@ -429,28 +429,28 @@ public class MovieEditorDialog extends TmmDialog {
         lblPoster.addPropertyChangeListener(ORIGINAL_IMAGE_SIZE, e -> setImageSizeAndCreateLink(lblPosterSize, lblPoster, MediaFileType.POSTER));
       }
       {
-        JLabel lblOriginalTitle = new TmmLabel(BUNDLE.getString("metatag.originaltitle")); //$NON-NLS-1$
+        JLabel lblOriginalTitle = new TmmLabel(BUNDLE.getString("metatag.originaltitle"));
         details1Panel.add(lblOriginalTitle, "cell 0 1,alignx right");
 
         tfOriginalTitle = new JTextField();
         details1Panel.add(tfOriginalTitle, "cell 1 1 6 1,growx,wmin 0");
       }
       {
-        JLabel lblSorttitle = new TmmLabel(BUNDLE.getString("metatag.sorttitle")); //$NON-NLS-1$
+        JLabel lblSorttitle = new TmmLabel(BUNDLE.getString("metatag.sorttitle"));
         details1Panel.add(lblSorttitle, "cell 0 2,alignx right");
 
         tfSorttitle = new JTextField();
         details1Panel.add(tfSorttitle, "cell 1 2 6 1,growx,wmin 0");
       }
       {
-        JLabel lblTagline = new TmmLabel(BUNDLE.getString("metatag.tagline")); //$NON-NLS-1$
+        JLabel lblTagline = new TmmLabel(BUNDLE.getString("metatag.tagline"));
         details1Panel.add(lblTagline, "cell 0 3,alignx right,aligny top");
 
         tfTagline = new JTextField();
         details1Panel.add(tfTagline, "cell 1 3 6 1,growx,wmin 0");
       }
       {
-        JLabel lblPlot = new TmmLabel(BUNDLE.getString("metatag.plot")); //$NON-NLS-1$
+        JLabel lblPlot = new TmmLabel(BUNDLE.getString("metatag.plot"));
         details1Panel.add(lblPlot, "cell 0 4,alignx right,aligny top");
 
         JScrollPane scrollPanePlot = new JScrollPane();
@@ -459,40 +459,40 @@ public class MovieEditorDialog extends TmmDialog {
         taPlot = new JTextArea();
         taPlot.setLineWrap(true);
         taPlot.setWrapStyleWord(true);
-        taPlot.setForeground(UIManager.getColor("TextField.foreground")); //$NON-NLS-1$
+        taPlot.setForeground(UIManager.getColor("TextField.foreground"));
         scrollPanePlot.setViewportView(taPlot);
       }
 
       {
-        JLabel lblYear = new TmmLabel(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
+        JLabel lblYear = new TmmLabel(BUNDLE.getString("metatag.year"));
         details1Panel.add(lblYear, "cell 0 5,alignx right");
 
         spYear = new YearSpinner();
         details1Panel.add(spYear, "cell 1 5,growx");
       }
       {
-        JLabel lblReleaseDate = new TmmLabel(BUNDLE.getString("metatag.releasedate")); //$NON-NLS-1$
+        JLabel lblReleaseDate = new TmmLabel(BUNDLE.getString("metatag.releasedate"));
         details1Panel.add(lblReleaseDate, "cell 3 5,alignx right");
 
         dpReleaseDate = new DatePicker(movieToEdit.getReleaseDate());
         details1Panel.add(dpReleaseDate, "cell 4 5 2 1,growx");
       }
       {
-        JLabel lblCompany = new TmmLabel(BUNDLE.getString("metatag.production")); //$NON-NLS-1$
+        JLabel lblCompany = new TmmLabel(BUNDLE.getString("metatag.production"));
         details1Panel.add(lblCompany, "cell 0 6,alignx right");
 
         tfProductionCompanies = new JTextField();
         details1Panel.add(tfProductionCompanies, "cell 1 6 6 1,growx,wmin 0");
       }
       {
-        JLabel lblCountry = new TmmLabel(BUNDLE.getString("metatag.country")); //$NON-NLS-1$
+        JLabel lblCountry = new TmmLabel(BUNDLE.getString("metatag.country"));
         details1Panel.add(lblCountry, "cell 0 7,alignx right");
 
         tfCountry = new JTextField();
         details1Panel.add(tfCountry, "cell 1 7 6 1,growx,wmin 0");
       }
       {
-        JLabel lblSpokenLanguages = new TmmLabel(BUNDLE.getString("metatag.spokenlanguages")); //$NON-NLS-1$
+        JLabel lblSpokenLanguages = new TmmLabel(BUNDLE.getString("metatag.spokenlanguages"));
         details1Panel.add(lblSpokenLanguages, "cell 0 8,alignx right");
 
         tfSpokenLanguages = new JTextField();
@@ -500,7 +500,7 @@ public class MovieEditorDialog extends TmmDialog {
       }
 
       {
-        JLabel lblCertification = new TmmLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
+        JLabel lblCertification = new TmmLabel(BUNDLE.getString("metatag.certification"));
         details1Panel.add(lblCertification, "cell 0 9,alignx right");
 
         cbCertification = new JComboBox();
@@ -508,14 +508,14 @@ public class MovieEditorDialog extends TmmDialog {
         cbCertification.setSelectedItem(movieToEdit.getCertification());
       }
       {
-        JLabel lblRating = new TmmLabel(BUNDLE.getString("metatag.userrating")); //$NON-NLS-1$
+        JLabel lblRating = new TmmLabel(BUNDLE.getString("metatag.userrating"));
         details1Panel.add(lblRating, "cell 0 10,alignx right");
 
         spRating = new JSpinner();
         details1Panel.add(spRating, "cell 1 10,growx");
       }
       {
-        JLabel lblRatingsT = new TmmLabel(BUNDLE.getString("metatag.ratings")); //$NON-NLS-1$
+        JLabel lblRatingsT = new TmmLabel(BUNDLE.getString("metatag.ratings"));
         details1Panel.add(lblRatingsT, "flowy,cell 0 11,alignx right,aligny top");
 
         JScrollPane scrollPaneRatings = new JScrollPane();
@@ -526,7 +526,7 @@ public class MovieEditorDialog extends TmmDialog {
         scrollPaneRatings.setViewportView(tableRatings);
       }
       {
-        JLabel lblTop = new TmmLabel(BUNDLE.getString("metatag.top250")); //$NON-NLS-1$
+        JLabel lblTop = new TmmLabel(BUNDLE.getString("metatag.top250"));
         details1Panel.add(lblTop, "cell 3 10,alignx right,aligny top");
 
         spTop250 = new JSpinner();
@@ -599,23 +599,23 @@ public class MovieEditorDialog extends TmmDialog {
      **********************************************************************************/
     {
       JPanel details2Panel = new JPanel();
-      tabbedPane.addTab(BUNDLE.getString("metatag.details2"), details2Panel); //$NON-NLS-1$
+      tabbedPane.addTab(BUNDLE.getString("metatag.details2"), details2Panel);
 
       details2Panel.setLayout(
           new MigLayout("", "[][][20lp:50lp][][50lp:100lp][20lp:n][][300lp:300lp]", "[][][][][][pref!][20lp:n][100lp:150lp,grow][][grow 200]"));
       {
-        JLabel lblDateAdded = new TmmLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
+        JLabel lblDateAdded = new TmmLabel(BUNDLE.getString("metatag.dateadded"));
         details2Panel.add(lblDateAdded, "cell 0 0,alignx right");
 
         spDateAdded = new JSpinner(new SpinnerDateModel());
         details2Panel.add(spDateAdded, "cell 1 0,growx");
       }
       {
-        JLabel lblWatched = new TmmLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
+        JLabel lblWatched = new TmmLabel(BUNDLE.getString("metatag.watched"));
         details2Panel.add(lblWatched, "flowx,cell 3 0");
       }
       {
-        JLabel label = new TmmLabel(BUNDLE.getString("metatag.ids")); //$NON-NLS-1$
+        JLabel label = new TmmLabel(BUNDLE.getString("metatag.ids"));
         details2Panel.add(label, "flowy,cell 6 0 1 3,alignx right,aligny top");
 
         JScrollPane scrollPaneIds = new JScrollPane();
@@ -626,7 +626,7 @@ public class MovieEditorDialog extends TmmDialog {
         scrollPaneIds.setViewportView(tableIds);
       }
       {
-        JLabel lblSourceT = new TmmLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
+        JLabel lblSourceT = new TmmLabel(BUNDLE.getString("metatag.source"));
         details2Panel.add(lblSourceT, "cell 0 1,alignx right");
 
         cbSource = new AutocompleteComboBox(MediaSource.values());
@@ -637,24 +637,24 @@ public class MovieEditorDialog extends TmmDialog {
         details2Panel.add(label, "flowx,cell 3 1");
       }
       {
-        JLabel lblEditionT = new TmmLabel(BUNDLE.getString("metatag.edition")); //$NON-NLS-1$
+        JLabel lblEditionT = new TmmLabel(BUNDLE.getString("metatag.edition"));
         details2Panel.add(lblEditionT, "cell 0 2,alignx right");
 
         cbEdition = new AutocompleteComboBox(MovieEdition.values());
         details2Panel.add(cbEdition, "cell 1 2 3 1");
       }
       {
-        JLabel lblRuntime = new TmmLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
+        JLabel lblRuntime = new TmmLabel(BUNDLE.getString("metatag.runtime"));
         details2Panel.add(lblRuntime, "cell 0 3,alignx right");
 
         spRuntime = new JSpinner();
         details2Panel.add(spRuntime, "flowx,cell 1 3,growx");
 
-        JLabel lblMin = new JLabel(BUNDLE.getString("metatag.minutes")); //$NON-NLS-1$
+        JLabel lblMin = new JLabel(BUNDLE.getString("metatag.minutes"));
         details2Panel.add(lblMin, "cell 1 3");
       }
       {
-        JLabel lblMovieSet = new TmmLabel(BUNDLE.getString("metatag.movieset")); //$NON-NLS-1$
+        JLabel lblMovieSet = new TmmLabel(BUNDLE.getString("metatag.movieset"));
         details2Panel.add(lblMovieSet, "cell 0 4,alignx right");
 
         cbMovieSet = new JComboBox();
@@ -662,7 +662,7 @@ public class MovieEditorDialog extends TmmDialog {
         details2Panel.add(cbMovieSet, "cell 1 4 4 1, growx, wmin 0");
       }
       {
-        JLabel lblGenres = new TmmLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
+        JLabel lblGenres = new TmmLabel(BUNDLE.getString("metatag.genre"));
         details2Panel.add(lblGenres, "flowy,cell 0 7,alignx right,aligny top");
 
         JScrollPane scrollPaneGenres = new JScrollPane();
@@ -679,7 +679,7 @@ public class MovieEditorDialog extends TmmDialog {
         details2Panel.add(cbGenres, "cell 1 8 4 1, growx, wmin 0");
       }
       {
-        JLabel lblTags = new TmmLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
+        JLabel lblTags = new TmmLabel(BUNDLE.getString("metatag.tags"));
         details2Panel.add(lblTags, "flowy,cell 6 7,alignx right,aligny top");
 
         JScrollPane scrollPaneTags = new JScrollPane();
@@ -762,11 +762,11 @@ public class MovieEditorDialog extends TmmDialog {
      **********************************************************************************/
     {
       JPanel crewPanel = new JPanel();
-      tabbedPane.addTab(BUNDLE.getString("movie.edit.castandcrew"), null, crewPanel, null); //$NON-NLS-1$
+      tabbedPane.addTab(BUNDLE.getString("movie.edit.castandcrew"), null, crewPanel, null);
       crewPanel
           .setLayout(new MigLayout("", "[][150lp:300lp,grow][20lp:n][][150lp:300lp,grow]", "[100lp:250lp,grow][20lp:n][100lp:200lp,grow][grow]"));
       {
-        JLabel lblActors = new TmmLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$
+        JLabel lblActors = new TmmLabel(BUNDLE.getString("metatag.actors"));
         crewPanel.add(lblActors, "flowy,cell 0 0,alignx right,aligny top");
 
         JScrollPane scrollPane = new JScrollPane();
@@ -776,7 +776,7 @@ public class MovieEditorDialog extends TmmDialog {
         tableActors.configureScrollPane(scrollPane);
       }
       {
-        JLabel lblProducers = new TmmLabel(BUNDLE.getString("metatag.producers")); //$NON-NLS-1$
+        JLabel lblProducers = new TmmLabel(BUNDLE.getString("metatag.producers"));
         crewPanel.add(lblProducers, "flowy,cell 3 0,alignx right,aligny top");
 
         JScrollPane scrollPane = new JScrollPane();
@@ -786,7 +786,7 @@ public class MovieEditorDialog extends TmmDialog {
         tableProducers.configureScrollPane(scrollPane);
       }
       {
-        JLabel lblDirectorsT = new TmmLabel(BUNDLE.getString("metatag.directors")); //$NON-NLS-1$
+        JLabel lblDirectorsT = new TmmLabel(BUNDLE.getString("metatag.directors"));
         crewPanel.add(lblDirectorsT, "flowy,cell 0 2,alignx right,aligny top");
 
         JScrollPane scrollPane = new JScrollPane();
@@ -796,7 +796,7 @@ public class MovieEditorDialog extends TmmDialog {
         tableDirectors.configureScrollPane(scrollPane);
       }
       {
-        JLabel lblWritersT = new TmmLabel(BUNDLE.getString("metatag.writers")); //$NON-NLS-1$
+        JLabel lblWritersT = new TmmLabel(BUNDLE.getString("metatag.writers"));
         crewPanel.add(lblWritersT, "flowy,cell 3 2,alignx right,aligny top");
 
         JScrollPane scrollPane = new JScrollPane();
@@ -896,7 +896,7 @@ public class MovieEditorDialog extends TmmDialog {
       artworkPanel.setLayout(new MigLayout("", "[200lp:300lp,grow][20lp:n][200lp:300lp,grow][20lp:n][100lp:200lp,grow]",
           "[][100lp:125lp,grow][20lp:n][][100lp:125lp,grow][20lp:n][][100lp:150lp,grow]"));
       {
-        JLabel lblLogoT = new TmmLabel(BUNDLE.getString("mediafiletype.logo")); //$NON-NLS-1$
+        JLabel lblLogoT = new TmmLabel(BUNDLE.getString("mediafiletype.logo"));
         artworkPanel.add(lblLogoT, "cell 0 0");
 
         LinkLabel lblLogoSize = new LinkLabel();
@@ -928,7 +928,7 @@ public class MovieEditorDialog extends TmmDialog {
 
       }
       {
-        JLabel lblKeyartT = new TmmLabel(BUNDLE.getString("mediafiletype.keyart")); //$NON-NLS-1$
+        JLabel lblKeyartT = new TmmLabel(BUNDLE.getString("mediafiletype.keyart"));
         artworkPanel.add(lblKeyartT, "cell 4 0");
 
         LinkLabel lblKeyartSize = new LinkLabel();
@@ -958,7 +958,7 @@ public class MovieEditorDialog extends TmmDialog {
         lblKeyart.addPropertyChangeListener(ORIGINAL_IMAGE_SIZE, e -> setImageSizeAndCreateLink(lblKeyartSize, lblKeyart, MediaFileType.KEYART));
       }
       {
-        JLabel lblClearlogoT = new TmmLabel(BUNDLE.getString("mediafiletype.clearlogo")); //$NON-NLS-1$
+        JLabel lblClearlogoT = new TmmLabel(BUNDLE.getString("mediafiletype.clearlogo"));
         artworkPanel.add(lblClearlogoT, "cell 2 0");
 
         LinkLabel lblClearlogoSize = new LinkLabel();
@@ -989,7 +989,7 @@ public class MovieEditorDialog extends TmmDialog {
             e -> setImageSizeAndCreateLink(lblClearlogoSize, lblClearlogo, MediaFileType.CLEARLOGO));
       }
       {
-        JLabel lblBannerT = new TmmLabel(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
+        JLabel lblBannerT = new TmmLabel(BUNDLE.getString("mediafiletype.banner"));
         artworkPanel.add(lblBannerT, "cell 0 3");
 
         LinkLabel lblBannerSize = new LinkLabel();
@@ -1120,63 +1120,63 @@ public class MovieEditorDialog extends TmmDialog {
       tabbedPane.addTab(BUNDLE.getString("edit.artworkandtrailer"), null, artworkAndTrailerPanel, null);
       artworkAndTrailerPanel.setLayout(new MigLayout("", "[][grow]", "[][][][][][][][][][20lp:n][250lp]"));
       {
-        JLabel lblPosterT = new TmmLabel(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
+        JLabel lblPosterT = new TmmLabel(BUNDLE.getString("mediafiletype.poster"));
         artworkAndTrailerPanel.add(lblPosterT, "cell 0 0,alignx right");
       }
       {
         tfPoster = new JTextField();
         artworkAndTrailerPanel.add(tfPoster, "cell 1 0,growx");
 
-        JLabel lblFanartT = new TmmLabel(BUNDLE.getString("mediafiletype.fanart")); //$NON-NLS-1$
+        JLabel lblFanartT = new TmmLabel(BUNDLE.getString("mediafiletype.fanart"));
         artworkAndTrailerPanel.add(lblFanartT, "cell 0 1,alignx right");
 
         tfFanart = new JTextField();
         artworkAndTrailerPanel.add(tfFanart, "cell 1 1,growx");
       }
       {
-        JLabel lblLogoT = new TmmLabel(BUNDLE.getString("mediafiletype.logo")); //$NON-NLS-1$
+        JLabel lblLogoT = new TmmLabel(BUNDLE.getString("mediafiletype.logo"));
         artworkAndTrailerPanel.add(lblLogoT, "cell 0 2,alignx right");
 
         tfLogo = new JTextField();
         artworkAndTrailerPanel.add(tfLogo, "cell 1 2,growx");
       }
       {
-        JLabel lblClearLogoT = new TmmLabel(BUNDLE.getString("mediafiletype.clearlogo")); //$NON-NLS-1$
+        JLabel lblClearLogoT = new TmmLabel(BUNDLE.getString("mediafiletype.clearlogo"));
         artworkAndTrailerPanel.add(lblClearLogoT, "cell 0 3,alignx right");
 
         tfClearLogo = new JTextField();
         artworkAndTrailerPanel.add(tfClearLogo, "cell 1 3,growx");
       }
       {
-        JLabel lblBannerT = new TmmLabel(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
+        JLabel lblBannerT = new TmmLabel(BUNDLE.getString("mediafiletype.banner"));
         artworkAndTrailerPanel.add(lblBannerT, "cell 0 4,alignx right");
 
         tfBanner = new JTextField();
         artworkAndTrailerPanel.add(tfBanner, "cell 1 4,growx");
       }
       {
-        JLabel lblClearArtT = new TmmLabel(BUNDLE.getString("mediafiletype.clearart")); //$NON-NLS-1$
+        JLabel lblClearArtT = new TmmLabel(BUNDLE.getString("mediafiletype.clearart"));
         artworkAndTrailerPanel.add(lblClearArtT, "cell 0 5,alignx right");
 
         tfClearArt = new JTextField();
         artworkAndTrailerPanel.add(tfClearArt, "cell 1 5,growx");
       }
       {
-        JLabel lblThumbT = new TmmLabel(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
+        JLabel lblThumbT = new TmmLabel(BUNDLE.getString("mediafiletype.thumb"));
         artworkAndTrailerPanel.add(lblThumbT, "cell 0 6,alignx right");
 
         tfThumb = new JTextField();
         artworkAndTrailerPanel.add(tfThumb, "cell 1 6,growx");
       }
       {
-        JLabel lblDiscT = new TmmLabel(BUNDLE.getString("mediafiletype.disc")); //$NON-NLS-1$
+        JLabel lblDiscT = new TmmLabel(BUNDLE.getString("mediafiletype.disc"));
         artworkAndTrailerPanel.add(lblDiscT, "cell 0 7,alignx trailing");
 
         tfDisc = new JTextField();
         artworkAndTrailerPanel.add(tfDisc, "cell 1 7,growx");
       }
       {
-        JLabel lblKeyartT = new TmmLabel(BUNDLE.getString("mediafiletype.keyart")); //$NON-NLS-1$
+        JLabel lblKeyartT = new TmmLabel(BUNDLE.getString("mediafiletype.keyart"));
         artworkAndTrailerPanel.add(lblKeyartT, "cell 0 8,alignx trailing");
 
         tfKeyart = new JTextField();
@@ -1184,7 +1184,7 @@ public class MovieEditorDialog extends TmmDialog {
       }
 
       {
-        JLabel lblTrailer = new TmmLabel(BUNDLE.getString("metatag.trailer")); //$NON-NLS-1$
+        JLabel lblTrailer = new TmmLabel(BUNDLE.getString("metatag.trailer"));
         artworkAndTrailerPanel.add(lblTrailer, "flowy,cell 0 10,alignx right,aligny top");
 
         JButton btnAddTrailer = new JButton(new AddTrailerAction());
@@ -1209,7 +1209,7 @@ public class MovieEditorDialog extends TmmDialog {
      **********************************************************************************/
     {
       mediaFilesPanel = new MediaFileEditorPanel(mediaFiles);
-      tabbedPane.addTab(BUNDLE.getString("metatag.mediafiles"), null, mediaFilesPanel, null); //$NON-NLS-1$
+      tabbedPane.addTab(BUNDLE.getString("metatag.mediafiles"), null, mediaFilesPanel, null);
       mediaFilesPanel.setLayout(new MigLayout("", "[400lp:500lp,grow,fill]", "[300lp:400lp,grow,fill]"));
     }
 
@@ -1252,8 +1252,8 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -3767744690599233490L;
 
     public ChangeMovieAction() {
-      putValue(NAME, BUNDLE.getString("Button.ok")); //$NON-NLS-1$
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.change")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("Button.ok"));
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.change"));
       putValue(SMALL_ICON, IconManager.APPLY_INV);
       putValue(LARGE_ICON_KEY, IconManager.APPLY_INV);
     }
@@ -1442,8 +1442,8 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -5581329896797961536L;
 
     public DiscardAction() {
-      putValue(NAME, BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("edit.discard")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("Button.cancel"));
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("edit.discard"));
       putValue(SMALL_ICON, IconManager.CANCEL_INV);
     }
 
@@ -1457,7 +1457,7 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = 2903255414533349267L;
 
     public AddRatingAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("rating.add")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("rating.add"));
       putValue(SMALL_ICON, IconManager.ADD_INV);
     }
 
@@ -1481,7 +1481,7 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -7079821950827356996L;
 
     public RemoveRatingAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("rating.remove")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("rating.remove"));
       putValue(SMALL_ICON, IconManager.REMOVE_INV);
     }
 
@@ -1499,7 +1499,7 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = 2903255414553349267L;
 
     public AddIdAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("id.add")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("id.add"));
       putValue(SMALL_ICON, IconManager.ADD_INV);
     }
 
@@ -1519,7 +1519,7 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -7079826950827356996L;
 
     public RemoveIdAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("id.remove")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("id.remove"));
       putValue(SMALL_ICON, IconManager.REMOVE_INV);
     }
 
@@ -1537,13 +1537,13 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = 2903255414153349267L;
 
     public AddActorAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("cast.actor.add")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("cast.actor.add"));
       putValue(SMALL_ICON, IconManager.ADD_INV);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      Person actor = new Person(Person.Type.ACTOR, BUNDLE.getString("cast.actor.unknown"), BUNDLE.getString("cast.role.unknown")); //$NON-NLS-1$
+      Person actor = new Person(Person.Type.ACTOR, BUNDLE.getString("cast.actor.unknown"), BUNDLE.getString("cast.role.unknown"));
       PersonEditorDialog dialog = new PersonEditorDialog(SwingUtilities.getWindowAncestor(tableActors), BUNDLE.getString("cast.actor.add"), actor);
       dialog.setVisible(true);
 
@@ -1557,7 +1557,7 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -7079826970827356996L;
 
     public RemoveActorAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("cast.actor.remove")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("cast.actor.remove"));
       putValue(SMALL_ICON, IconManager.REMOVE_INV);
     }
 
@@ -1575,13 +1575,13 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -8834531637996987853L;
 
     public AddProducerAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("cast.producer.add")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("cast.producer.add"));
       putValue(SMALL_ICON, IconManager.ADD_INV);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      Person producer = new Person(Person.Type.PRODUCER, BUNDLE.getString("producer.name.unknown"), BUNDLE.getString("producer.role.unknown")); //$NON-NLS-1$
+      Person producer = new Person(Person.Type.PRODUCER, BUNDLE.getString("producer.name.unknown"), BUNDLE.getString("producer.role.unknown"));
       PersonEditorDialog dialog = new PersonEditorDialog(SwingUtilities.getWindowAncestor(tableProducers), BUNDLE.getString("cast.producer.add"),
           producer);
       dialog.setVisible(true);
@@ -1596,7 +1596,7 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -3907776089614305086L;
 
     public RemoveProducerAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("cast.producer.remove")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("cast.producer.remove"));
       putValue(SMALL_ICON, IconManager.REMOVE_INV);
     }
 
@@ -1614,7 +1614,7 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = 176474809593575743L;
 
     public AddGenreAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("genre.add")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("genre.add"));
       putValue(SMALL_ICON, IconManager.ADD_INV);
     }
 
@@ -1665,7 +1665,7 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = 2733654945906747720L;
 
     public RemoveGenreAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("genre.remove")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("genre.remove"));
       putValue(SMALL_ICON, IconManager.REMOVE_INV);
     }
 
@@ -1682,7 +1682,7 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -4446154040952056823L;
 
     public AddTrailerAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("trailer.add")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("trailer.add"));
       putValue(SMALL_ICON, IconManager.ADD_INV);
     }
 
@@ -1701,7 +1701,7 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -6956921050689930101L;
 
     public RemoveTrailerAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("trailer.remove")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("trailer.remove"));
       putValue(SMALL_ICON, IconManager.REMOVE_INV);
     }
 
@@ -1730,7 +1730,7 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = 9160043031922897785L;
 
     public AddTagAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tag.add")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tag.add"));
       putValue(SMALL_ICON, IconManager.ADD_INV);
     }
 
@@ -1784,7 +1784,7 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -1580945350962234235L;
 
     public RemoveTagAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tag.remove")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tag.remove"));
       putValue(SMALL_ICON, IconManager.REMOVE_INV);
     }
 
@@ -1801,8 +1801,8 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -7652218354710642510L;
 
     public AbortQueueAction() {
-      putValue(NAME, BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.abortqueue.desc")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("Button.abortqueue"));
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.abortqueue.desc"));
     }
 
     @Override
@@ -1816,7 +1816,7 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -1652218154720642310L;
 
     public NavigateBackAction() {
-      putValue(NAME, BUNDLE.getString("Button.back")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("Button.back"));
       putValue(SMALL_ICON, IconManager.BACK_INV);
     }
 
@@ -1831,7 +1831,7 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = 5775423424097844658L;
 
     public MoveActorUpAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.moveactorup")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.moveactorup"));
       putValue(SMALL_ICON, IconManager.ARROW_UP_INV);
     }
 
@@ -1849,7 +1849,7 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -6564146895819191932L;
 
     public MoveActorDownAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.moveactordown")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.moveactordown"));
       putValue(SMALL_ICON, IconManager.ARROW_DOWN_INV);
     }
 
@@ -1867,7 +1867,7 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -6855661707692602266L;
 
     public MoveProducerUpAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.moveproducerup")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.moveproducerup"));
       putValue(SMALL_ICON, IconManager.ARROW_UP_INV);
     }
 
@@ -1885,7 +1885,7 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -1135108943010008069L;
 
     public MoveProducerDownAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.moveproducerdown")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.moveproducerdown"));
       putValue(SMALL_ICON, IconManager.ARROW_DOWN_INV);
     }
 
@@ -1903,7 +1903,7 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -6855661707692602266L;
 
     public MoveGenreUpAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.movegenreup")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.movegenreup"));
       putValue(SMALL_ICON, IconManager.ARROW_UP_INV);
     }
 
@@ -1921,7 +1921,7 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -1135108943010008069L;
 
     public MoveGenreDownAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.movegenredown")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.movegenredown"));
       putValue(SMALL_ICON, IconManager.ARROW_DOWN_INV);
     }
 
@@ -1939,7 +1939,7 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -6855661707692602266L;
 
     public MoveTagUpAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.movetagup")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.movetagup"));
       putValue(SMALL_ICON, IconManager.ARROW_UP_INV);
     }
 
@@ -1957,7 +1957,7 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -1135108943010008069L;
 
     public MoveTagDownAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.movetagdown")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.movetagdown"));
       putValue(SMALL_ICON, IconManager.ARROW_DOWN_INV);
     }
 
@@ -1975,13 +1975,13 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -8929331442958057771L;
 
     public AddDirectorAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("cast.director.add")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("cast.director.add"));
       putValue(SMALL_ICON, IconManager.ADD_INV);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      Person person = new Person(Person.Type.DIRECTOR, BUNDLE.getString("director.name.unknown"), "Director"); //$NON-NLS-1$
+      Person person = new Person(Person.Type.DIRECTOR, BUNDLE.getString("director.name.unknown"), "Director");
       PersonEditorDialog dialog = new PersonEditorDialog(SwingUtilities.getWindowAncestor(tableDirectors), BUNDLE.getString("cast.director.add"),
           person);
       dialog.setVisible(true);
@@ -1996,7 +1996,7 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -7079826920821356196L;
 
     public RemoveDirectorAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("cast.director.remove")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("cast.director.remove"));
       putValue(SMALL_ICON, IconManager.REMOVE_INV);
     }
 
@@ -2014,7 +2014,7 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = 5775423424097844658L;
 
     public MoveDirectorUpAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.movedirectorup")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.movedirectorup"));
       putValue(SMALL_ICON, IconManager.ARROW_UP_INV);
     }
 
@@ -2032,7 +2032,7 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -6564146895819191932L;
 
     public MoveDirectorDownAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.movedirectordown")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.movedirectordown"));
       putValue(SMALL_ICON, IconManager.ARROW_DOWN_INV);
     }
 
@@ -2050,13 +2050,13 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -8929331442958057771L;
 
     public AddWriterAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("cast.writer.add")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("cast.writer.add"));
       putValue(SMALL_ICON, IconManager.ADD_INV);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      Person person = new Person(Person.Type.DIRECTOR, BUNDLE.getString("writer.name.unknown"), "Writer"); //$NON-NLS-1$
+      Person person = new Person(Person.Type.DIRECTOR, BUNDLE.getString("writer.name.unknown"), "Writer");
       PersonEditorDialog dialog = new PersonEditorDialog(SwingUtilities.getWindowAncestor(tableWriters), BUNDLE.getString("cast.writer.add"), person);
       dialog.setVisible(true);
 
@@ -2070,7 +2070,7 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -7079826920821356196L;
 
     public RemoveWriterAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("cast.writer.remove")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("cast.writer.remove"));
       putValue(SMALL_ICON, IconManager.REMOVE_INV);
     }
 
@@ -2088,7 +2088,7 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = 5775423424097844658L;
 
     public MoveWriterUpAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.movewriterup")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.movewriterup"));
       putValue(SMALL_ICON, IconManager.ARROW_UP_INV);
     }
 
@@ -2106,7 +2106,7 @@ public class MovieEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -6564146895819191932L;
 
     public MoveWriterDownAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.movewriterdown")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.edit.movewriterdown"));
       putValue(SMALL_ICON, IconManager.ARROW_DOWN_INV);
     }
 

@@ -30,7 +30,7 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class MovieSubtitleChooserModel extends AbstractModelObject {
-  private static final ResourceBundle           BUNDLE       = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle           BUNDLE       = ResourceBundle.getBundle("messages", new UTF8Control());
   private static final Logger                   LOGGER       = LoggerFactory.getLogger(MovieSubtitleChooserModel.class);
   public static final MovieSubtitleChooserModel EMPTY_RESULT = new MovieSubtitleChooserModel();
 
@@ -54,7 +54,7 @@ public class MovieSubtitleChooserModel extends AbstractModelObject {
    * create the empty search result.
    */
   private MovieSubtitleChooserModel() {
-    name = BUNDLE.getString("chooser.nothingfound"); //$NON-NLS-1$
+    name = BUNDLE.getString("chooser.nothingfound");
   }
 
   public String getName() {

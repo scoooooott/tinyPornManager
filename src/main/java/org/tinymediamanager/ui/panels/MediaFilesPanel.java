@@ -58,7 +58,7 @@ import net.miginfocom.swing.MigLayout;
 public abstract class MediaFilesPanel extends JPanel {
   private static final long           serialVersionUID = -4929581173434859034L;
   private static final Logger         LOGGER           = LoggerFactory.getLogger(MediaFilesPanel.class);
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private TmmTable                    tableFiles;
 
@@ -112,25 +112,25 @@ public abstract class MediaFilesPanel extends JPanel {
           return "";
 
         case 1:
-          return BUNDLE.getString("metatag.filename"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.filename");
 
         case 2:
-          return BUNDLE.getString("metatag.size"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.size");
 
         case 3:
-          return BUNDLE.getString("metatag.mediafiletype"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.mediafiletype");
 
         case 4:
-          return BUNDLE.getString("metatag.codec"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.codec");
 
         case 5:
-          return BUNDLE.getString("metatag.resolution"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.resolution");
 
         case 6:
-          return BUNDLE.getString("metatag.runtime"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.runtime");
 
         case 7:
-          return BUNDLE.getString("metatag.subtitle"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.subtitle");
       }
 
       throw new IllegalStateException();

@@ -38,13 +38,13 @@ import org.tinymediamanager.ui.tvshows.dialogs.TvShowSubtitleChooserDialog;
  */
 public class TvShowSubtitleSearchAction extends TmmAction {
   private static final long           serialVersionUID = -6006932119900795735L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public TvShowSubtitleSearchAction() {
-    putValue(NAME, BUNDLE.getString("tvshow.search.subtitle")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("tvshow.search.subtitle"));
     putValue(SMALL_ICON, IconManager.SUBTITLE);
     putValue(LARGE_ICON_KEY, IconManager.SUBTITLE);
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.search.subtitle")); //$NON-NLS-1$
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.search.subtitle"));
   }
 
   @Override
@@ -52,7 +52,7 @@ public class TvShowSubtitleSearchAction extends TmmAction {
     List<TvShowEpisode> episodes = TvShowUIModule.getInstance().getSelectionModel().getSelectedEpisodes();
 
     if (episodes.isEmpty()) {
-      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected"));
       return;
     }
 

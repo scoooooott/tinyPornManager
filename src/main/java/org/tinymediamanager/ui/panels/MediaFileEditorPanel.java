@@ -82,7 +82,7 @@ import net.miginfocom.swing.MigLayout;
 public class MediaFileEditorPanel extends JPanel {
   private static final long               serialVersionUID = -2416409052145301941L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle     BUNDLE           = ResourceBundle.getBundle("messages",              //$NON-NLS-1$
+  private static final ResourceBundle     BUNDLE           = ResourceBundle.getBundle("messages",
       new UTF8Control());
 
   private static final Map<Float, String> ASPECT_RATIOS    = createAspectRatios();
@@ -323,7 +323,7 @@ public class MediaFileEditorPanel extends JPanel {
     private static final long serialVersionUID = 2903255414523349267L;
 
     public AddAudioStreamAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("audiostream.add")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("audiostream.add"));
     }
 
     @Override
@@ -341,7 +341,7 @@ public class MediaFileEditorPanel extends JPanel {
     private static final long serialVersionUID = -7079826940827356996L;
 
     public RemoveAudioStreamAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("audiostream.remove")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("audiostream.remove"));
     }
 
     @Override
@@ -365,7 +365,7 @@ public class MediaFileEditorPanel extends JPanel {
     private static final long serialVersionUID = 2903255414523349767L;
 
     public AddSubtitleAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("subtitle.add")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("subtitle.add"));
     }
 
     @Override
@@ -383,7 +383,7 @@ public class MediaFileEditorPanel extends JPanel {
     private static final long serialVersionUID = -7079866940827356996L;
 
     public RemoveSubtitleAction() {
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("subtitle.remove")); //$NON-NLS-1$
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("subtitle.remove"));
     }
 
     @Override

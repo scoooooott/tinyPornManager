@@ -361,11 +361,11 @@ public class TinyMediaManager {
           LOGGER.error("IllegalStateException", e);
           if (!GraphicsEnvironment.isHeadless() && e.getMessage().contains("file is locked")) {
             // MessageDialog.showExceptionWindow(e);
-            ResourceBundle bundle = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
-            MessageDialog dialog = new MessageDialog(null, bundle.getString("tmm.problemdetected")); //$NON-NLS-1$
+            ResourceBundle bundle = ResourceBundle.getBundle("messages", new UTF8Control());
+            MessageDialog dialog = new MessageDialog(null, bundle.getString("tmm.problemdetected"));
             dialog.setImage(IconManager.ERROR);
-            dialog.setText(bundle.getString("tmm.nostart"));//$NON-NLS-1$
-            dialog.setDescription(bundle.getString("tmm.nostart.instancerunning"));//$NON-NLS-1$
+            dialog.setText(bundle.getString("tmm.nostart"));
+            dialog.setDescription(bundle.getString("tmm.nostart.instancerunning"));
             dialog.setResizable(true);
             dialog.pack();
             dialog.setLocationRelativeTo(MainWindow.getActiveInstance());

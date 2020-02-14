@@ -38,10 +38,10 @@ import org.tinymediamanager.ui.movies.MovieUIModule;
  */
 public class MovieToggleWatchedFlagAction extends TmmAction {
   private static final long           serialVersionUID = 2866581962767395824L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public MovieToggleWatchedFlagAction() {
-    putValue(NAME, BUNDLE.getString("movie.togglewatchedflag")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("movie.togglewatchedflag"));
     putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK));
   }
 
@@ -50,7 +50,7 @@ public class MovieToggleWatchedFlagAction extends TmmAction {
     final List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
     if (selectedMovies.isEmpty()) {
-      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected"));
       return;
     }
 

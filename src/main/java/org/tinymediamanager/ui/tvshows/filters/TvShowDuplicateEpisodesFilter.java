@@ -65,7 +65,7 @@ public class TvShowDuplicateEpisodesFilter extends AbstractTvShowUIFilter {
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("movieextendedsearch.duplicates")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("movieextendedsearch.duplicates"));
   }
 
   @Override

@@ -30,7 +30,7 @@ public enum DateField {
   FILE_CREATION_DATE("metatag.filecreationdate"), // fileCreation date
   FILE_LAST_MODIFIED_DATE("metatag.filelastmodifieddate"); // fileLastModified date
 
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());
   private final String                description;
 
   DateField(String description) {

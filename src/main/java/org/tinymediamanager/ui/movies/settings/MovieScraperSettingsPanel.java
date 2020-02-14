@@ -68,7 +68,7 @@ import net.miginfocom.swing.MigLayout;
 class MovieScraperSettingsPanel extends JPanel {
   private static final long           serialVersionUID = -299825914193235308L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private MovieSettings               settings         = MovieModuleManager.SETTINGS;
   private List<MovieScraper>          scrapers         = ObservableCollections.observableList(new ArrayList<>());
@@ -166,7 +166,7 @@ class MovieScraperSettingsPanel extends JPanel {
     {
       JPanel panelScraper = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][grow]", "[][shrink 0][150lp:600lp,grow]"));
 
-      JLabel lblScraper = new TmmLabel(BUNDLE.getString("scraper.metadata"), H3); //$NON-NLS-1$
+      JLabel lblScraper = new TmmLabel(BUNDLE.getString("scraper.metadata"), H3);
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelScraper, lblScraper, true);
       add(collapsiblePanel, "cell 0 0,wmin 0,grow");
       {

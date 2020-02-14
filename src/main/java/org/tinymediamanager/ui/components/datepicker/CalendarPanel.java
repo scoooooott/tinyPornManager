@@ -40,7 +40,7 @@ import org.tinymediamanager.ui.UTF8Control;
  */
 class CalendarPanel extends JPanel implements PropertyChangeListener {
   private static final long           serialVersionUID = -1214699062624370112L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private Calendar                    calendar;
   protected Locale                    locale;

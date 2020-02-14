@@ -86,11 +86,11 @@ public class ScraperMetadataConfigCheckComboBox<E extends ScraperMetadataConfig>
       checkBoxes.add(cb);
     }
 
-    cb = new TmmCheckComboBoxItem<>(BUNDLE.getString("Button.selectall")); //$NON-NLS-1$
+    cb = new TmmCheckComboBoxItem<>(BUNDLE.getString("Button.selectall"));
     cb.setSelected(selectedAll);
     checkBoxes.add(cb);
 
-    cb = new TmmCheckComboBoxItem<>(BUNDLE.getString("Button.selectnone")); //$NON-NLS-1$
+    cb = new TmmCheckComboBoxItem<>(BUNDLE.getString("Button.selectnone"));
     cb.setSelected(selectedNone);
     checkBoxes.add(cb);
   }

@@ -40,12 +40,12 @@ import org.tinymediamanager.ui.movies.dialogs.MovieExporterDialog;
  */
 public class MovieExportAction extends TmmAction {
   private static final long           serialVersionUID = -6731682301579049379L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public MovieExportAction() {
     putValue(LARGE_ICON_KEY, IconManager.EXPORT);
     putValue(SMALL_ICON, IconManager.EXPORT);
-    putValue(NAME, BUNDLE.getString("movie.export")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("movie.export"));
     putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK));
   }
 
@@ -54,7 +54,7 @@ public class MovieExportAction extends TmmAction {
     List<Movie> movies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
     if (movies.isEmpty()) {
-      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected"));
       return;
     }
 

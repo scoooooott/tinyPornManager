@@ -38,7 +38,7 @@ import org.tinymediamanager.ui.movies.MovieUIModule;
  */
 public class MovieUpdateAction extends TmmAction {
   private static final long           serialVersionUID = 6885253964781733478L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public MovieUpdateAction() {
     putValue(NAME, BUNDLE.getString("movie.update"));
@@ -51,7 +51,7 @@ public class MovieUpdateAction extends TmmAction {
     List<Movie> selectedMovies = MovieUIModule.getInstance().getSelectionModel().getSelectedMovies();
 
     if (selectedMovies.isEmpty()) {
-      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected"));
       return;
     }
 

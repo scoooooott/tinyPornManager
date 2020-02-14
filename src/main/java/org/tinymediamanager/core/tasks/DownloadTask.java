@@ -51,7 +51,7 @@ import okhttp3.Headers;
  */
 public class DownloadTask extends TmmTask {
   private static final Logger         LOGGER    = LoggerFactory.getLogger(DownloadTask.class);
-  private static final ResourceBundle BUNDLE    = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE    = ResourceBundle.getBundle("messages", new UTF8Control());
 
   protected String                    url;
   protected Path                      file;

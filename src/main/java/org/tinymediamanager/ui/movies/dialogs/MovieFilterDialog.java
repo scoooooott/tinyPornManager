@@ -79,7 +79,7 @@ import net.miginfocom.swing.MigLayout;
 public class MovieFilterDialog extends TmmDialog {
   private static final long                      serialVersionUID = 2298540526428945319L;
   /** @wbp.nls.resourceBundle messages */
-  protected static final ResourceBundle          BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  protected static final ResourceBundle          BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private final MovieSelectionModel              selectionModel;
   private final JComboBox<SortColumn>            cbSortColumn;
@@ -167,7 +167,7 @@ public class MovieFilterDialog extends TmmDialog {
         JSeparator separator = new JSeparator();
         panelSort.add(separator, "cell 0 1 4 1,growx,aligny top");
 
-        JLabel lblSortBy = new TmmLabel(BUNDLE.getString("movieextendedsearch.sortby")); //$NON-NLS-1$
+        JLabel lblSortBy = new TmmLabel(BUNDLE.getString("movieextendedsearch.sortby"));
         panelSort.add(lblSortBy, "cell 1 2,growx,aligny top");
 
         cbSortColumn = new JComboBox();

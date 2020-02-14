@@ -63,7 +63,7 @@ public class MovieSetDatasourceFilter extends AbstractCheckComboBoxMovieSetUIFil
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("metatag.datasource")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("metatag.datasource"));
   }
 
   private void buildAndInstallDatasourceArray() {

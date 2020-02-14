@@ -43,7 +43,7 @@ public enum MovieSetScraperMetadataConfig implements ScraperMetadataConfig {
   DISCART(Type.ARTWORK, "mediafiletype.disc"),
   KEYART(Type.ARTWORK);
 
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private Type                        type;
   private String                      description;

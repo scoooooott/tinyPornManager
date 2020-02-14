@@ -61,25 +61,25 @@ public class BugReportDialog extends TmmDialog {
     taDescription.setWrapStyleWord(true);
     taDescription.setLineWrap(true);
     taDescription.setEditable(false);
-    taDescription.setText(BUNDLE.getString("BugReport.description")); //$NON-NLS-1$
+    taDescription.setText(BUNDLE.getString("BugReport.description"));
     panelContent.add(taDescription, "cell 0 0 3 1,growx");
 
-    final JLabel lblStep1 = new JLabel(BUNDLE.getString("BugReport.step1")); //$NON-NLS-1$
+    final JLabel lblStep1 = new JLabel(BUNDLE.getString("BugReport.step1"));
     panelContent.add(lblStep1, "cell 0 2");
 
     final JTextArea taStep1 = new JTextArea();
     taStep1.setWrapStyleWord(true);
     taStep1.setLineWrap(true);
-    taStep1.setText(BUNDLE.getString("BugReport.step1.description")); //$NON-NLS-1$
+    taStep1.setText(BUNDLE.getString("BugReport.step1.description"));
     taStep1.setOpaque(false);
     taStep1.setEditable(false);
     panelContent.add(taStep1, "cell 2 2,growx");
 
-    final JButton btnSaveLogs = new JButton(BUNDLE.getString("BugReport.createlogs")); //$NON-NLS-1$
+    final JButton btnSaveLogs = new JButton(BUNDLE.getString("BugReport.createlogs"));
     btnSaveLogs.addActionListener(new ExportLogAction());
     panelContent.add(btnSaveLogs, "cell 2 3");
 
-    final JLabel lblStep2 = new JLabel(BUNDLE.getString("BugReport.step2")); //$NON-NLS-1$
+    final JLabel lblStep2 = new JLabel(BUNDLE.getString("BugReport.step2"));
     panelContent.add(lblStep2, "cell 0 5,alignx left,aligny top");
 
     final JTextArea taStep2 = new JTextArea();
@@ -87,10 +87,10 @@ public class BugReportDialog extends TmmDialog {
     taStep2.setWrapStyleWord(true);
     taStep2.setOpaque(false);
     taStep2.setEditable(false);
-    taStep2.setText(BUNDLE.getString("BugReport.step2.description")); //$NON-NLS-1$
+    taStep2.setText(BUNDLE.getString("BugReport.step2.description"));
     panelContent.add(taStep2, "cell 2 5,growx");
 
-    final JButton btnCreateIssue = new JButton(BUNDLE.getString("BugReport.craeteissue")); //$NON-NLS-1$
+    final JButton btnCreateIssue = new JButton(BUNDLE.getString("BugReport.craeteissue"));
     btnCreateIssue.addActionListener(e -> {
       // create the url for github
       String baseUrl = "https://gitlab.com/tinyMediaManager/tinyMediaManager/issues/new?issue[description]=";
@@ -119,10 +119,10 @@ public class BugReportDialog extends TmmDialog {
     final JLabel lblHintIcon = new JLabel(IconManager.HINT);
     panelContent.add(lblHintIcon, "cell 1 7,alignx left,aligny center");
 
-    final JLabel lblHint = new JLabel(BUNDLE.getString("BugReport.languagehint")); //$NON-NLS-1$
+    final JLabel lblHint = new JLabel(BUNDLE.getString("BugReport.languagehint"));
     panelContent.add(lblHint, "cell 2 7,growx,aligny top");
 
-    JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
+    JButton btnClose = new JButton(BUNDLE.getString("Button.close"));
     btnClose.setIcon(IconManager.CANCEL_INV);
     btnClose.addActionListener(e -> setVisible(false));
     addDefaultButton(btnClose);

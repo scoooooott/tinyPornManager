@@ -32,7 +32,7 @@ import org.tinymediamanager.ui.actions.TmmAction;
  */
 public class MovieUpdateSingleDatasourceAction extends TmmAction {
   private static final long           serialVersionUID = 6885253964781733478L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private String                      datasource;
 

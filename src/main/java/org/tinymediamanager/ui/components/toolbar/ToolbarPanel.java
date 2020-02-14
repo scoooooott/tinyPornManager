@@ -188,7 +188,7 @@ public class ToolbarPanel extends JPanel {
 
     menu.addSeparator();
 
-    JMenuItem tmmLogs = new JMenuItem(BUNDLE.getString("tmm.errorlogs")); //$NON-NLS-1$
+    JMenuItem tmmLogs = new JMenuItem(BUNDLE.getString("tmm.errorlogs"));
     menu.add(tmmLogs);
     tmmLogs.addActionListener(arg0 -> {
       JDialog logDialog = new LogDialog();
@@ -196,14 +196,14 @@ public class ToolbarPanel extends JPanel {
       logDialog.setVisible(true);
     });
 
-    JMenuItem tmmMessages = new JMenuItem(BUNDLE.getString("tmm.messages")); //$NON-NLS-1$
+    JMenuItem tmmMessages = new JMenuItem(BUNDLE.getString("tmm.messages"));
     tmmMessages.setMnemonic(KeyEvent.VK_L);
     menu.add(tmmMessages);
     tmmMessages.addActionListener(arg0 -> {
       JDialog messageDialog = MessageHistoryDialog.getInstance();
       messageDialog.setVisible(true);
     });
-    JMenuItem tmmFolder = new JMenuItem(BUNDLE.getString("tmm.gotoinstalldir")); //$NON-NLS-1$
+    JMenuItem tmmFolder = new JMenuItem(BUNDLE.getString("tmm.gotoinstalldir"));
     menu.add(tmmFolder);
     tmmFolder.addActionListener(arg0 -> {
       Path path = Paths.get(System.getProperty("user.dir"));
@@ -222,7 +222,7 @@ public class ToolbarPanel extends JPanel {
 
     menu.addSeparator();
 
-    final JMenu menuWakeOnLan = new JMenu(BUNDLE.getString("tmm.wakeonlan")); //$NON-NLS-1$
+    final JMenu menuWakeOnLan = new JMenu(BUNDLE.getString("tmm.wakeonlan"));
     menuWakeOnLan.setMnemonic(KeyEvent.VK_W);
     menuWakeOnLan.addMenuListener(new MenuListener() {
       @Override
@@ -252,9 +252,9 @@ public class ToolbarPanel extends JPanel {
 
     // debug menu
     if (Globals.isDebug()) {
-      final JMenu debugMenu = new JMenu("Debug"); //$NON-NLS-1$
+      final JMenu debugMenu = new JMenu("Debug");
 
-      JMenuItem trace = new JMenuItem("set Console Logger to TRACE"); //$NON-NLS-1$
+      JMenuItem trace = new JMenuItem("set Console Logger to TRACE");
       trace.addActionListener(arg0 -> {
         System.setProperty("tmm.consoleloglevel", "TRACE");
         TinyMediaManager.setConsoleLogLevel();
@@ -263,7 +263,7 @@ public class ToolbarPanel extends JPanel {
       });
       debugMenu.add(trace);
 
-      JMenuItem traceLogs = new JMenuItem("Show all logs from this session"); //$NON-NLS-1$
+      JMenuItem traceLogs = new JMenuItem("Show all logs from this session");
       debugMenu.add(traceLogs);
       traceLogs.addActionListener(arg0 -> {
         JDialog logDialog = new FullLogDialog();

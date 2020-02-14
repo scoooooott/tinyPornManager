@@ -73,12 +73,12 @@ public class TvShowDownloadSubtitleDialog extends TmmDialog {
 
       cbLanguage.setSelectedItem(TvShowModuleManager.SETTINGS.getSubtitleScraperLanguage());
 
-      JTextArea taHint = new ReadOnlyTextArea(BUNDLE.getString("tvshow.download.subtitles.hint")); //$NON-NLS-1$
+      JTextArea taHint = new ReadOnlyTextArea(BUNDLE.getString("tvshow.download.subtitles.hint"));
       taHint.setOpaque(false);
       panelCenter.add(taHint, "cell 0 3 2 1,growx");
     }
     {
-      JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+      JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel"));
       btnCancel.setIcon(IconManager.CANCEL_INV);
       btnCancel.addActionListener(e -> {
         startDownload = false;
@@ -86,7 +86,7 @@ public class TvShowDownloadSubtitleDialog extends TmmDialog {
       });
       addButton(btnCancel);
 
-      JButton btnStart = new JButton(BUNDLE.getString("scraper.start")); //$NON-NLS-1$
+      JButton btnStart = new JButton(BUNDLE.getString("scraper.start"));
       btnStart.setIcon(IconManager.APPLY_INV);
       btnStart.addActionListener(e -> {
         startDownload = true;

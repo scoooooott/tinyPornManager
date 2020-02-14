@@ -38,11 +38,11 @@ import org.tinymediamanager.ui.tvshows.TvShowUIModule;
  */
 public class TvShowChangeToAiredOrderAction extends TmmAction {
   private static final long           serialVersionUID = 7866485217093335182L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public TvShowChangeToAiredOrderAction() {
-    putValue(NAME, BUNDLE.getString("tvshow.changefromdvdorder")); //$NON-NLS-1$
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.changeorder.desc")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("tvshow.changefromdvdorder"));
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.changeorder.desc"));
     putValue(LARGE_ICON_KEY, IconManager.EDIT);
     putValue(SMALL_ICON, IconManager.EDIT);
   }
@@ -70,7 +70,7 @@ public class TvShowChangeToAiredOrderAction extends TmmAction {
     }
 
     if (selectedEpisodes.isEmpty()) {
-      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected"));
       return;
     }
 

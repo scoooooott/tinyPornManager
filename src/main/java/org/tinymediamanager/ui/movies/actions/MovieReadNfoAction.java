@@ -41,11 +41,11 @@ import org.tinymediamanager.ui.movies.MovieUIModule;
  */
 public class MovieReadNfoAction extends TmmAction {
   private static final long           serialVersionUID = 2866581962767395824L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public MovieReadNfoAction() {
-    putValue(NAME, BUNDLE.getString("movie.readnfo")); //$NON-NLS-1$
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.readnfo.desc")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("movie.readnfo"));
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.readnfo.desc"));
   }
 
   @Override
@@ -53,7 +53,7 @@ public class MovieReadNfoAction extends TmmAction {
     final List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
     if (selectedMovies.isEmpty()) {
-      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected"));
       return;
     }
 

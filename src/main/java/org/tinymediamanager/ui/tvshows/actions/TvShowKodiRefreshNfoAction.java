@@ -42,12 +42,12 @@ import org.tinymediamanager.ui.tvshows.TvShowUIModule;
  */
 public class TvShowKodiRefreshNfoAction extends TmmAction {
   private static final long           serialVersionUID = -3911290901017607679L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public TvShowKodiRefreshNfoAction() {
     putValue(LARGE_ICON_KEY, IconManager.NFO);
     putValue(SMALL_ICON, IconManager.NFO);
-    putValue(NAME, BUNDLE.getString("kodi.rpc.refreshnfo")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("kodi.rpc.refreshnfo"));
   }
 
   @Override
@@ -55,7 +55,7 @@ public class TvShowKodiRefreshNfoAction extends TmmAction {
     List<Object> selectedObjects = TvShowUIModule.getInstance().getSelectionModel().getSelectedObjects();
 
     if (selectedObjects.isEmpty()) {
-      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected"));
       return;
     }
 

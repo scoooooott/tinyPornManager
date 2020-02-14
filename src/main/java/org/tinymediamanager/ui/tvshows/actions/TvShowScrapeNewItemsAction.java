@@ -45,10 +45,10 @@ import org.tinymediamanager.ui.tvshows.dialogs.TvShowScrapeMetadataDialog;
  */
 public class TvShowScrapeNewItemsAction extends TmmAction {
   private static final long serialVersionUID = -3365542777082781952L;
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public TvShowScrapeNewItemsAction() {
-    putValue(NAME, BUNDLE.getString("tvshow.scrape.newitems")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("tvshow.scrape.newitems"));
     putValue(LARGE_ICON_KEY, IconManager.SEARCH);
     putValue(SMALL_ICON, IconManager.SEARCH);
     putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK));
@@ -99,7 +99,7 @@ public class TvShowScrapeNewItemsAction extends TmmAction {
 
     // scrape new episodes
     if (!newEpisodes.isEmpty()) {
-      TvShowScrapeMetadataDialog dialog = new TvShowScrapeMetadataDialog(BUNDLE.getString("tvshowepisode.scrape"), true, true, false, true, true); //$NON-NLS-1$
+      TvShowScrapeMetadataDialog dialog = new TvShowScrapeMetadataDialog(BUNDLE.getString("tvshowepisode.scrape"), true, true, false, true, true);
       dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
       dialog.setVisible(true);
 

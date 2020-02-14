@@ -51,14 +51,14 @@ import net.miginfocom.swing.MigLayout;
 public class TvShowChangeDatasourceDialog extends TmmDialog {
   private static final long           serialVersionUID = -1515243604267310274L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private List<TvShow>                tvShowsToEdit    = new ArrayList<>();
 
   private JComboBox<String>           cbDatasource;
 
   public TvShowChangeDatasourceDialog(final List<TvShow> tvShows) {
-    super(BUNDLE.getString("tvshow.changedatasource"), "tvShowDatasourceEditor"); //$NON-NLS-1$
+    super(BUNDLE.getString("tvshow.changedatasource"), "tvShowDatasourceEditor");
 
     tvShowsToEdit.addAll(tvShows);
 
@@ -67,11 +67,11 @@ public class TvShowChangeDatasourceDialog extends TmmDialog {
       getContentPane().add(panelContent, BorderLayout.CENTER);
       panelContent.setLayout(new MigLayout("", "[][300lp,grow]", "[][20lp][][20lp]"));
       {
-        JTextArea textArea = new ReadOnlyTextArea(BUNDLE.getString("changedatasource.hint.tvshow")); //$NON-NLS-1$
+        JTextArea textArea = new ReadOnlyTextArea(BUNDLE.getString("changedatasource.hint.tvshow"));
         panelContent.add(textArea, "cell 0 0 2 1,grow");
       }
       {
-        JLabel lblDatasourceT = new TmmLabel(BUNDLE.getString("changedatasource.newdatasource")); //$NON-NLS-1$
+        JLabel lblDatasourceT = new TmmLabel(BUNDLE.getString("changedatasource.newdatasource"));
         panelContent.add(lblDatasourceT, "cell 0 2");
       }
       {
@@ -96,8 +96,8 @@ public class TvShowChangeDatasourceDialog extends TmmDialog {
     private static final long serialVersionUID = -3767744690599233490L;
 
     private ChangeDatasourceAction() {
-      putValue(NAME, BUNDLE.getString("Button.ok")); //$NON-NLS-1$
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.changedatasource")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("Button.ok"));
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.changedatasource"));
       putValue(SMALL_ICON, IconManager.APPLY_INV);
       putValue(LARGE_ICON_KEY, IconManager.APPLY_INV);
     }
@@ -118,8 +118,8 @@ public class TvShowChangeDatasourceDialog extends TmmDialog {
     private static final long serialVersionUID = -5581329896797961536L;
 
     private DiscardAction() {
-      putValue(NAME, BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("edit.discard")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("Button.cancel"));
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("edit.discard"));
       putValue(SMALL_ICON, IconManager.CANCEL_INV);
     }
 

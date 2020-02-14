@@ -50,7 +50,7 @@ import net.miginfocom.swing.MigLayout;
 public class TvShowEpisodeCastPanel extends JPanel {
   private static final long                 serialVersionUID = 4712144916016763491L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle       BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle       BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private final TvShowEpisodeSelectionModel selectionModel;
   private EventList<Person>                 actorEventList   = null;
@@ -118,21 +118,21 @@ public class TvShowEpisodeCastPanel extends JPanel {
   private void initComponents() {
     setLayout(new MigLayout("", "[][400lp,grow][150lp,grow]", "[][][200lp,grow][grow]"));
     {
-      JLabel lblDirectorT = new TmmLabel(BUNDLE.getString("metatag.director")); //$NON-NLS-1$
+      JLabel lblDirectorT = new TmmLabel(BUNDLE.getString("metatag.director"));
       add(lblDirectorT, "cell 0 0");
 
       lblDirector = new JLabel("");
       add(lblDirector, "cell 1 0 2 1,growx,wmin 0");
     }
     {
-      JLabel lblWriterT = new TmmLabel(BUNDLE.getString("metatag.writer")); //$NON-NLS-1$
+      JLabel lblWriterT = new TmmLabel(BUNDLE.getString("metatag.writer"));
       add(lblWriterT, "cell 0 1");
 
       lblWriter = new JLabel("");
       add(lblWriter, "cell 1 1 2 1,growx,wmin 0");
     }
     {
-      JLabel lblActorsT = new TmmLabel(BUNDLE.getString("metatag.actors")); //$NON-NLS-1$
+      JLabel lblActorsT = new TmmLabel(BUNDLE.getString("metatag.actors"));
       add(lblActorsT, "cell 0 2,aligny top");
 
       tableActors = new PersonTable(actorEventList);

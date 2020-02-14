@@ -63,7 +63,7 @@ public class TvShowGenreFilter extends AbstractCheckComboBoxTvShowUIFilter<Media
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("metatag.genre"));
   }
 
   private void buildAndInstallMediaGenres() {

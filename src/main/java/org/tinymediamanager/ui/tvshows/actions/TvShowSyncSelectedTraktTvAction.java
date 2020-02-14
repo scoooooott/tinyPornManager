@@ -38,11 +38,11 @@ import org.tinymediamanager.ui.tvshows.TvShowUIModule;
  */
 public class TvShowSyncSelectedTraktTvAction extends TmmAction {
   private static final long           serialVersionUID = 6640292090443882545L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public TvShowSyncSelectedTraktTvAction() {
-    putValue(NAME, BUNDLE.getString("tvshow.synctrakt.selected")); //$NON-NLS-1$
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.synctrakt.selected.desc")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("tvshow.synctrakt.selected"));
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.synctrakt.selected.desc"));
     putValue(SMALL_ICON, IconManager.SYNC);
     putValue(LARGE_ICON_KEY, IconManager.SYNC);
   }
@@ -52,7 +52,7 @@ public class TvShowSyncSelectedTraktTvAction extends TmmAction {
     List<TvShow> selectedTvShows = TvShowUIModule.getInstance().getSelectionModel().getSelectedTvShows();
 
     if (selectedTvShows.isEmpty()) {
-      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected"));
       return;
     }
 

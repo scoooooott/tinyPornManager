@@ -69,7 +69,7 @@ public class TvShowFrameRateFilter extends AbstractCheckComboBoxTvShowUIFilter<D
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("metatag.framerate")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("metatag.framerate"));
   }
 
   private void buildAndInstallCodecArray() {

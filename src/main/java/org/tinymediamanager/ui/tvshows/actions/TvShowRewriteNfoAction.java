@@ -37,10 +37,10 @@ import org.tinymediamanager.ui.tvshows.TvShowUIModule;
  */
 public class TvShowRewriteNfoAction extends TmmAction {
   private static final long           serialVersionUID = -6575156436788397648L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public TvShowRewriteNfoAction() {
-    putValue(NAME, BUNDLE.getString("tvshow.rewritenfo")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("tvshow.rewritenfo"));
   }
 
   @Override
@@ -48,7 +48,7 @@ public class TvShowRewriteNfoAction extends TmmAction {
     final List<TvShow> selectedTvShows = TvShowUIModule.getInstance().getSelectionModel().getSelectedTvShows();
 
     if (selectedTvShows.isEmpty()) {
-      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected"));
       return;
     }
 

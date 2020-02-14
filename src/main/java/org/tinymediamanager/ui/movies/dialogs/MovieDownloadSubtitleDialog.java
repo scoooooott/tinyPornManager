@@ -59,25 +59,25 @@ public class MovieDownloadSubtitleDialog extends TmmDialog {
       getContentPane().add(panelScraper, BorderLayout.CENTER);
       panelScraper.setLayout(new MigLayout("", "[][300lp]", "[][][20lp:n][]"));
 
-      JLabel lblScraper = new TmmLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
+      JLabel lblScraper = new TmmLabel(BUNDLE.getString("scraper"));
       panelScraper.add(lblScraper, "cell 0 0,alignx right");
 
       cbSubtitleScraper = new MediaScraperCheckComboBox(MovieList.getInstance().getAvailableSubtitleScrapers());
       panelScraper.add(cbSubtitleScraper, "cell 1 0,growx");
 
-      JLabel lblLanguage = new TmmLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
+      JLabel lblLanguage = new TmmLabel(BUNDLE.getString("metatag.language"));
       panelScraper.add(lblLanguage, "cell 0 1,alignx right");
 
       cbLanguage = new JComboBox(MediaLanguages.valuesSorted());
       panelScraper.add(cbLanguage, "cell 1 1,growx");
 
-      JTextArea taHint = new ReadOnlyTextArea(BUNDLE.getString("movie.download.subtitles.hint")); //$NON-NLS-1$
+      JTextArea taHint = new ReadOnlyTextArea(BUNDLE.getString("movie.download.subtitles.hint"));
       taHint.setOpaque(false);
       panelScraper.add(taHint, "cell 0 3 2 1,grow");
     }
 
     {
-      JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+      JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel"));
       btnCancel.setIcon(IconManager.CANCEL_INV);
       btnCancel.addActionListener(e -> {
         startDownload = false;
@@ -86,7 +86,7 @@ public class MovieDownloadSubtitleDialog extends TmmDialog {
 
       addButton(btnCancel);
 
-      JButton btnStart = new JButton(BUNDLE.getString("scraper.start")); //$NON-NLS-1$
+      JButton btnStart = new JButton(BUNDLE.getString("scraper.start"));
       btnStart.setIcon(IconManager.APPLY_INV);
       btnStart.addActionListener(e -> {
         startDownload = true;

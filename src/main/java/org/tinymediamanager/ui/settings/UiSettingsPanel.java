@@ -67,7 +67,7 @@ class UiSettingsPanel extends JPanel {
   private static final long           serialVersionUID   = 6409982195347794360L;
 
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control());
   private static final Logger         LOGGER             = LoggerFactory.getLogger(UiSettingsPanel.class);
   private static final Integer[]      DEFAULT_FONT_SIZES = { 12, 14, 16, 18, 20, 22, 24, 26, 28 };
 
@@ -151,7 +151,7 @@ class UiSettingsPanel extends JPanel {
     {
       JPanel panelLanguage = SettingsPanelFactory.createSettingsPanel();
 
-      JLabel lblLanguageT = new TmmLabel(BUNDLE.getString("Settings.language"), H3); //$NON-NLS-1$
+      JLabel lblLanguageT = new TmmLabel(BUNDLE.getString("Settings.language"), H3);
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelLanguage, lblLanguageT, true);
       add(collapsiblePanel, "cell 0 0,growx, wmin 0");
       {
@@ -159,7 +159,7 @@ class UiSettingsPanel extends JPanel {
         panelLanguage.add(cbLanguage, "cell 1 0 2 1");
       }
       {
-        final JLabel lblLanguageHint = new JLabel(BUNDLE.getString("tmm.helptranslate")); //$NON-NLS-1$
+        final JLabel lblLanguageHint = new JLabel(BUNDLE.getString("tmm.helptranslate"));
         panelLanguage.add(lblLanguageHint, "cell 1 1 2 1");
       }
       {
@@ -175,7 +175,7 @@ class UiSettingsPanel extends JPanel {
     {
       JPanel panelTheme = SettingsPanelFactory.createSettingsPanel();
 
-      JLabel lblThemeT = new TmmLabel(BUNDLE.getString("Settings.uitheme"), H3); //$NON-NLS-1$
+      JLabel lblThemeT = new TmmLabel(BUNDLE.getString("Settings.uitheme"), H3);
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelTheme, lblThemeT, true);
       add(collapsiblePanel, "cell 0 2,growx,wmin 0");
       {
@@ -191,11 +191,11 @@ class UiSettingsPanel extends JPanel {
     {
       JPanel panelFont = SettingsPanelFactory.createSettingsPanel();
 
-      JLabel lblFontT = new TmmLabel(BUNDLE.getString("Settings.font"), H3); //$NON-NLS-1$
+      JLabel lblFontT = new TmmLabel(BUNDLE.getString("Settings.font"), H3);
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelFont, lblFontT, true);
       add(collapsiblePanel, "cell 0 4,growx,wmin 0");
       {
-        JLabel lblFontFamilyT = new JLabel(BUNDLE.getString("Settings.fontfamily")); //$NON-NLS-1$
+        JLabel lblFontFamilyT = new JLabel(BUNDLE.getString("Settings.fontfamily"));
         panelFont.add(lblFontFamilyT, "cell 1 0");
       }
       {
@@ -204,7 +204,7 @@ class UiSettingsPanel extends JPanel {
         panelFont.add(cbFontFamily, "cell 2 0");
       }
       {
-        JLabel lblFontSizeT = new JLabel(BUNDLE.getString("Settings.fontsize")); //$NON-NLS-1$
+        JLabel lblFontSizeT = new JLabel(BUNDLE.getString("Settings.fontsize"));
         panelFont.add(lblFontSizeT, "cell 1 1");
       }
       {
@@ -212,7 +212,7 @@ class UiSettingsPanel extends JPanel {
         panelFont.add(cbFontSize, "cell 2 1");
       }
       {
-        JTextArea tpFontHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.fonts.hint")); //$NON-NLS-1$
+        JTextArea tpFontHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.fonts.hint"));
         panelFont.add(tpFontHint, "cell 1 2 2 1,growx");
       }
       {
@@ -224,7 +224,7 @@ class UiSettingsPanel extends JPanel {
     {
       JPanel panelMisc = SettingsPanelFactory.createSettingsPanel();
 
-      JLabel lblMiscT = new TmmLabel(BUNDLE.getString("Settings.misc"), H3); //$NON-NLS-1$
+      JLabel lblMiscT = new TmmLabel(BUNDLE.getString("Settings.misc"), H3);
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelMisc, lblMiscT, true);
       add(collapsiblePanel, "cell 0 6,growx,wmin 0");
       {
@@ -238,11 +238,11 @@ class UiSettingsPanel extends JPanel {
         panelMisc.add(lblDatefieldHint, "cell 2 1");
       }
       {
-        chckbxStoreWindowPreferences = new JCheckBox(BUNDLE.getString("Settings.storewindowpreferences")); //$NON-NLS-1$
+        chckbxStoreWindowPreferences = new JCheckBox(BUNDLE.getString("Settings.storewindowpreferences"));
         panelMisc.add(chckbxStoreWindowPreferences, "cell 1 2 2 1");
       }
       {
-        chckbxShowMemory = new JCheckBox(BUNDLE.getString("Settings.showmemory")); //$NON-NLS-1$
+        chckbxShowMemory = new JCheckBox(BUNDLE.getString("Settings.showmemory"));
         panelMisc.add(chckbxShowMemory, "cell 1 3 2 1");
       }
     }
@@ -258,7 +258,7 @@ class UiSettingsPanel extends JPanel {
       Locale actualLocale = Utils.getLocaleFromLanguage(Globals.settings.getLanguage());
       if (!locale.equals(actualLocale)) {
         Globals.settings.setLanguage(locale.toString());
-        lblLanguageChangeHint.setText(BUNDLE.getString("Settings.languagehint")); //$NON-NLS-1$
+        lblLanguageChangeHint.setText(BUNDLE.getString("Settings.languagehint"));
       }
     }
 
@@ -266,20 +266,20 @@ class UiSettingsPanel extends JPanel {
     String theme = (String) cbTheme.getSelectedItem();
     if (!theme.equals(Globals.settings.getTheme())) {
       Globals.settings.setTheme(theme);
-      lblThemeHint.setText(BUNDLE.getString("Settings.uitheme.hint")); //$NON-NLS-1$
+      lblThemeHint.setText(BUNDLE.getString("Settings.uitheme.hint"));
     }
 
     // fonts
     Integer fontSize = (Integer) cbFontSize.getSelectedItem();
     if (fontSize != null && fontSize != Globals.settings.getFontSize()) {
       Globals.settings.setFontSize(fontSize);
-      lblFontChangeHint.setText(BUNDLE.getString("Settings.fontchangehint")); //$NON-NLS-1$
+      lblFontChangeHint.setText(BUNDLE.getString("Settings.fontchangehint"));
     }
 
     String fontFamily = (String) cbFontFamily.getSelectedItem();
     if (fontFamily != null && !fontFamily.equals(Globals.settings.getFontFamily())) {
       Globals.settings.setFontFamily(fontFamily);
-      lblFontChangeHint.setText(BUNDLE.getString("Settings.fontchangehint")); //$NON-NLS-1$
+      lblFontChangeHint.setText(BUNDLE.getString("Settings.fontchangehint"));
     }
   }
 

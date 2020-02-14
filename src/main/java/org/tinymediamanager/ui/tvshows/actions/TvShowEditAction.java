@@ -43,13 +43,13 @@ import org.tinymediamanager.ui.tvshows.dialogs.TvShowSeasonEditorDialog;
  */
 public class TvShowEditAction extends TmmAction {
   private static final long           serialVersionUID = -3911290901017607679L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public TvShowEditAction() {
-    putValue(NAME, BUNDLE.getString("tvshow.edit")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("tvshow.edit"));
     putValue(LARGE_ICON_KEY, IconManager.EDIT);
     putValue(SMALL_ICON, IconManager.EDIT);
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.edit")); //$NON-NLS-1$
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.edit"));
     putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK));
   }
 
@@ -61,7 +61,7 @@ public class TvShowEditAction extends TmmAction {
     int index = 0;
 
     if (selectedObjects.isEmpty()) {
-      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected"));
       return;
     }
 

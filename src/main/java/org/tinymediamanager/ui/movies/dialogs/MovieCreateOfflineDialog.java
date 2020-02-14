@@ -45,20 +45,20 @@ public class MovieCreateOfflineDialog extends TmmDialog {
   private MovieList         movieList        = MovieList.getInstance();
 
   public MovieCreateOfflineDialog() {
-    super(BUNDLE.getString("movie.createoffline"), "movieCreateOffline"); //$NON-NLS-1$
+    super(BUNDLE.getString("movie.createoffline"), "movieCreateOffline");
 
     JPanel panelContent = new JPanel();
     getContentPane().add(panelContent, BorderLayout.CENTER);
     panelContent.setLayout(new MigLayout("", "[][][]", "[][][]"));
 
-    JLabel lblTitle = new TmmLabel(BUNDLE.getString("metatag.title")); //$NON-NLS-1$
+    JLabel lblTitle = new TmmLabel(BUNDLE.getString("metatag.title"));
     panelContent.add(lblTitle, "cell 0 0,alignx right");
 
     final JTextField tfMovieName = new JTextField();
     panelContent.add(tfMovieName, "cell 1 0,growx");
     tfMovieName.setColumns(10);
 
-    JLabel lblMediaSource = new TmmLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
+    JLabel lblMediaSource = new TmmLabel(BUNDLE.getString("metatag.source"));
     panelContent.add(lblMediaSource, "cell 0 1,alignx right");
 
     final JComboBox<MediaSource> cbMediaSource = new JComboBox();
@@ -69,7 +69,7 @@ public class MovieCreateOfflineDialog extends TmmDialog {
     cbMediaSource.addItem(MediaSource.VHS);
     panelContent.add(cbMediaSource, "cell 1 1,growx");
 
-    JLabel lblDatasource = new TmmLabel(BUNDLE.getString("metatag.datasource")); //$NON-NLS-1$
+    JLabel lblDatasource = new TmmLabel(BUNDLE.getString("metatag.datasource"));
     panelContent.add(lblDatasource, "cell 0 2,alignx right");
 
     final JComboBox<String> cbDatasource = new JComboBox();
@@ -90,7 +90,7 @@ public class MovieCreateOfflineDialog extends TmmDialog {
     panelContent.add(btnAdd, "cell 2 0");
 
     {
-      JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
+      JButton btnClose = new JButton(BUNDLE.getString("Button.close"));
       btnClose.addActionListener(e -> setVisible(false));
       addButton(btnClose);
     }

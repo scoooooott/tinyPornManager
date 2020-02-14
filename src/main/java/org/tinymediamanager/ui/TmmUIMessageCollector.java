@@ -38,7 +38,7 @@ import ca.odell.glazedlists.GlazedLists;
  */
 public class TmmUIMessageCollector extends AbstractModelObject implements IMessageListener {
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle       BUNDLE      = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle       BUNDLE      = ResourceBundle.getBundle("messages", new UTF8Control());
   public static final TmmUIMessageCollector instance    = new TmmUIMessageCollector();
 
   private final EventList<Message>          messages;

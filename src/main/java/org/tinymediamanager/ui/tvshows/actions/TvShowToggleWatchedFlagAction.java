@@ -37,10 +37,10 @@ import org.tinymediamanager.ui.tvshows.TvShowUIModule;
  */
 public class TvShowToggleWatchedFlagAction extends TmmAction {
   private static final long           serialVersionUID = 5762347331284295996L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public TvShowToggleWatchedFlagAction() {
-    putValue(NAME, BUNDLE.getString("tvshowepisode.togglewatchedflag")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("tvshowepisode.togglewatchedflag"));
     putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK));
   }
 
@@ -49,7 +49,7 @@ public class TvShowToggleWatchedFlagAction extends TmmAction {
     final List<TvShowEpisode> selectedEpisodes = TvShowUIModule.getInstance().getSelectionModel().getSelectedEpisodes();
 
     if (selectedEpisodes.isEmpty()) {
-      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected"));
       return;
     }
 

@@ -97,12 +97,12 @@ public class CleanUpUnwantedFilesDialog extends TmmDialog {
         setBottomInformationPanel(infoPanel);
       }
       {
-        btnClean = new JButton(BUNDLE.getString("Button.deleteselected")); //$NON-NLS-1$
+        btnClean = new JButton(BUNDLE.getString("Button.deleteselected"));
         btnClean.setIcon(IconManager.DELETE_INV);
         btnClean.addActionListener(arg0 -> cleanFiles(table));
         addButton(btnClean);
 
-        JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
+        JButton btnClose = new JButton(BUNDLE.getString("Button.close"));
         btnClose.setIcon(IconManager.APPLY_INV);
         btnClose.addActionListener(arg0 -> setVisible(false));
         addButton(btnClose);

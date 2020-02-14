@@ -54,7 +54,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * @author Manuel Laggner
  */
 public class TvShowModuleManager implements ITmmModule {
-  private static final ResourceBundle BUNDLE       = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE       = ResourceBundle.getBundle("messages", new UTF8Control());
   public static final TvShowSettings  SETTINGS     = TvShowSettings.getInstance();
 
   private static final String         MODULE_TITLE = "TV show management";

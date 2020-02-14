@@ -32,7 +32,7 @@ import org.tinymediamanager.ui.components.table.TmmTableFormat;
  * @author Manuel Laggner
  */
 public class MovieInMovieSetTableFormat extends TmmTableFormat<Movie> {
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public MovieInMovieSetTableFormat() {
 

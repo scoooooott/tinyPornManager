@@ -38,7 +38,7 @@ import org.tinymediamanager.ui.UTF8Control;
  */
 public class TmmTaskManager implements TmmTaskListener {
   public final AtomicLong                GLOB_THRD_CNT    = new AtomicLong(1);
-  private static final ResourceBundle    BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle    BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
   private static final TmmTaskManager    instance         = new TmmTaskManager();
   private final Set<TmmTaskListener>     taskListener     = new CopyOnWriteArraySet<>();
   private final Set<TmmTaskHandle>       runningTasks     = new CopyOnWriteArraySet<>();
