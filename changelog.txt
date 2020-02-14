@@ -19,6 +19,7 @@ x cleanup of artwork when removing movie sets #789
 x (TV show) fixed display of artwork size for season artwork #793
 x (Trakt.tv) better test routine to show if the connection works
 x remember last used folder when choosing files #791
+x (TV show) only offer artwork types in the "Download missing artwork" dialog #795
 
 
 Version 3.1.2

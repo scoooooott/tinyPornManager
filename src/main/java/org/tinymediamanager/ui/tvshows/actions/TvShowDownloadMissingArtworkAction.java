@@ -63,7 +63,8 @@ public class TvShowDownloadMissingArtworkAction extends TmmAction {
       return;
     }
 
-    TvShowScrapeMetadataDialog dialog = new TvShowScrapeMetadataDialog(BUNDLE.getString("tvshow.downloadmissingartwork")); //$NON-NLS-1$
+    TvShowScrapeMetadataDialog dialog = new TvShowScrapeMetadataDialog(BUNDLE.getString("tvshow.downloadmissingartwork"), false, true, false, false, //$NON-NLS-1$
+        false);
     dialog.setVisible(true);
 
     // get options from dialog
