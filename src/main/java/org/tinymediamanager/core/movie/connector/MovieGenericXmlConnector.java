@@ -536,8 +536,27 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
    */
   protected void addDateAdded() {
     Element dateadded = document.createElement("dateadded");
-    if (movie.getDateAdded() != null) {
-      dateadded.setTextContent(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(movie.getDateAdded()));
+    switch (MovieModuleManager.SETTINGS.getNfoDateAddedField()) {
+      case DATE_ADDED:
+        if (movie.getDateAdded() != null) {
+          dateadded.setTextContent(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(movie.getDateAdded()));
+        }
+        break;
+
+      case FILE_CREATION_DATE:
+        MediaFile mainMediaFile = movie.getMainFile();
+        if (mainMediaFile != null && mainMediaFile.getDateCreated() != null) {
+          dateadded.setTextContent(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(mainMediaFile.getDateCreated()));
+        }
+        break;
+
+      case FILE_LAST_MODIFIED_DATE:
+        mainMediaFile = movie.getMainFile();
+        if (mainMediaFile != null && mainMediaFile.getDateLastModified() != null) {
+          dateadded.setTextContent(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(mainMediaFile.getDateLastModified()));
+        }
+        break;
+
     }
     root.appendChild(dateadded);
   }

@@ -31,6 +31,7 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.tinymediamanager.DateField;
 import org.tinymediamanager.core.CertificationStyle;
 import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
@@ -61,6 +62,7 @@ class TvShowScraperNfoSettingsPanel extends JPanel {
   private JComboBox<CertificationStyleWrapper> cbCertificationStyle;
   private JCheckBox                            chckbxWriteCleanNfo;
   private JComboBox<MediaLanguages>            cbNfoLanguage;
+  private JComboBox<DateField>                 cbDatefield;
   private JCheckBox                            chckbxEpisodeNfo1;
   private JCheckBox                            chckbxTvShowNfo1;
 
@@ -127,14 +129,20 @@ class TvShowScraperNfoSettingsPanel extends JPanel {
           panel.add(chckbxEpisodeNfo1, "cell 1 1");
         }
 
+        JLabel lblNfoDatefield = new JLabel(BUNDLE.getString("Settings.dateadded"));
+        panelNfo.add(lblNfoDatefield, "cell 1 4 2 1");
+
+        cbDatefield = new JComboBox(DateField.values());
+        panelNfo.add(cbDatefield, "cell 1 4");
+
         JLabel lblNfoLanguage = new JLabel(BUNDLE.getString("Settings.nfolanguage")); //$NON-NLS-1$
-        panelNfo.add(lblNfoLanguage, "cell 1 4 2 1");
+        panelNfo.add(lblNfoLanguage, "cell 1 5 2 1");
 
         cbNfoLanguage = new JComboBox(MediaLanguages.valuesSorted());
-        panelNfo.add(cbNfoLanguage, "cell 1 4");
+        panelNfo.add(cbNfoLanguage, "cell 1 5");
 
         JLabel lblNfoLanguageDesc = new JLabel(BUNDLE.getString("Settings.nfolanguage.desc")); //$NON-NLS-1$
-        panelNfo.add(lblNfoLanguageDesc, "cell 2 5");
+        panelNfo.add(lblNfoLanguageDesc, "cell 2 6");
 
         JLabel lblCertificationFormatT = new JLabel(BUNDLE.getString("Settings.certificationformat")); //$NON-NLS-1$
         panelNfo.add(lblCertificationFormatT, "cell 1 7 2 1");
@@ -143,7 +151,7 @@ class TvShowScraperNfoSettingsPanel extends JPanel {
         panelNfo.add(cbCertificationStyle, "cell 1 7");
 
         chckbxWriteCleanNfo = new JCheckBox(BUNDLE.getString("Settings.writecleannfo")); //$NON-NLS-1$
-        panelNfo.add(chckbxWriteCleanNfo, "cell 1 9 2 1");
+        panelNfo.add(chckbxWriteCleanNfo, "cell 1 8 2 1");
       }
     }
   }
@@ -242,5 +250,10 @@ class TvShowScraperNfoSettingsPanel extends JPanel {
     AutoBinding<TvShowSettings, MediaLanguages, JComboBox, Object> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         tvShowSettingsBeanProperty_2, cbNfoLanguage, jComboBoxBeanProperty);
     autoBinding_4.bind();
+    //
+    BeanProperty<TvShowSettings, DateField> tvShowSettingsBeanProperty_3 = BeanProperty.create("nfoDateAddedField");
+    AutoBinding<TvShowSettings, DateField, JComboBox, Object> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        tvShowSettingsBeanProperty_3, cbDatefield, jComboBoxBeanProperty);
+    autoBinding_5.bind();
   }
 }

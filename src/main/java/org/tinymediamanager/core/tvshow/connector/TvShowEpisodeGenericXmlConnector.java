@@ -472,8 +472,27 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
    */
   protected void addDateAdded(TvShowEpisode episode, TvShowEpisodeNfoParser.Episode parser) {
     Element dateadded = document.createElement("dateadded");
-    if (episode.getDateAdded() != null) {
-      dateadded.setTextContent(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(episode.getDateAdded()));
+    switch (TvShowModuleManager.SETTINGS.getNfoDateAddedField()) {
+      case DATE_ADDED:
+        if (episode.getDateAdded() != null) {
+          dateadded.setTextContent(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(episode.getDateAdded()));
+        }
+        break;
+
+      case FILE_CREATION_DATE:
+        MediaFile mainMediaFile = episode.getMainFile();
+        if (mainMediaFile != null && mainMediaFile.getDateCreated() != null) {
+          dateadded.setTextContent(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(mainMediaFile.getDateCreated()));
+        }
+        break;
+
+      case FILE_LAST_MODIFIED_DATE:
+        mainMediaFile = episode.getMainFile();
+        if (mainMediaFile != null && mainMediaFile.getDateLastModified() != null) {
+          dateadded.setTextContent(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(mainMediaFile.getDateLastModified()));
+        }
+        break;
+
     }
     root.appendChild(dateadded);
   }

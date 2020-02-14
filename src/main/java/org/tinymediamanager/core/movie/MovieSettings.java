@@ -29,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.DateField;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractSettings;
 import org.tinymediamanager.core.CertificationStyle;
@@ -126,6 +127,7 @@ public class MovieSettings extends AbstractSettings {
   private MovieConnectors                  movieConnector                      = MovieConnectors.KODI;
   private CertificationStyle               certificationStyle                  = CertificationStyle.LARGE;
   private boolean                          writeCleanNfo                       = false;
+  private DateField                        nfoDateAddedField                   = DateField.DATE_ADDED;
   private MediaLanguages                   nfoLanguage                         = MediaLanguages.en;
   private boolean                          createOutline                       = true;
   private boolean                          outlineFirstSentence                = false;
@@ -1238,6 +1240,16 @@ public class MovieSettings extends AbstractSettings {
     boolean oldValue = writeCleanNfo;
     this.writeCleanNfo = newValue;
     firePropertyChange("writeCleanNfo", oldValue, newValue);
+  }
+
+  public DateField getNfoDateAddedField() {
+    return nfoDateAddedField;
+  }
+
+  public void setNfoDateAddedField(DateField newValue) {
+    DateField oldValue = nfoDateAddedField;
+    this.nfoDateAddedField = newValue;
+    firePropertyChange("nfoDateAddedField", oldValue, newValue);
   }
 
   public MediaLanguages getNfoLanguage() {
