@@ -231,7 +231,7 @@ public class MovieListPanel extends TmmListPanel implements ITmmTabItem {
     // set the initial selection
     movieTable.setSelectionModel(selectionModel.getSelectionModel());
     // selecting first movie at startup
-    if (MovieList.getInstance().getMovies() != null && MovieList.getInstance().getMovies().size() > 0) {
+    if (MovieList.getInstance().getMovies() != null && !MovieList.getInstance().getMovies().isEmpty()) {
       ListSelectionModel selectionModel = movieTable.getSelectionModel();
       if (selectionModel.isSelectionEmpty()) {
         int selectionIndex = movieTable.convertRowIndexToModel(0);

@@ -92,7 +92,7 @@ public class KodiRPCMenu {
     i.addActionListener(new VideoDatasourceScanListener(null));
     i.setEnabled(false);
     m2.add(i);
-    if (KodiRPC.getInstance().getVideoDataSources().size() > 0) {
+    if (!KodiRPC.getInstance().getVideoDataSources().isEmpty()) {
       i.setEnabled(true);
       for (SplitUri ds : KodiRPC.getInstance().getVideoDataSources()) {
         i = new JMenuItem("Scan " + ds.label + "  (" + ds.type + ")");
@@ -119,7 +119,7 @@ public class KodiRPCMenu {
     i.addActionListener(new AudioDatasourceScanListener(null));
     i.setEnabled(false);
     m2.add(i);
-    if (KodiRPC.getInstance().getAudioDataSources().size() > 0) {
+    if (!KodiRPC.getInstance().getAudioDataSources().isEmpty()) {
       i.setEnabled(true);
       for (SplitUri ds : KodiRPC.getInstance().getAudioDataSources()) {
         i = new JMenuItem("Scan " + ds.label + "  (" + ds.type + ")");

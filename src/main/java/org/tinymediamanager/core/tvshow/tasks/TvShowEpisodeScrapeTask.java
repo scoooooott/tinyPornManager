@@ -76,7 +76,7 @@ public class TvShowEpisodeScrapeTask extends TmmTask {
   public void doInBackground() {
     for (TvShowEpisode episode : episodes) {
       // only scrape if at least one ID is available
-      if (episode.getTvShow().getIds().size() == 0) {
+      if (episode.getTvShow().getIds().isEmpty()) {
         LOGGER.info("we cannot scrape (no ID): {} - {}", episode.getTvShow().getTitle(), episode.getTitle());
         continue;
       }

@@ -243,7 +243,7 @@ public class TvShowTreePanel extends TmmListPanel implements ITmmTabItem {
 
     // selecting first TV show at startup
     TvShowList tvShowList = TvShowList.getInstance();
-    if (tvShowList.getTvShows() != null && tvShowList.getTvShows().size() > 0) {
+    if (tvShowList.getTvShows() != null && !tvShowList.getTvShows().isEmpty()) {
       SwingUtilities.invokeLater(() -> {
         ListSelectionModel selectionModel1 = tree.getSelectionModel();
         if (selectionModel1.isSelectionEmpty() && tree.getModel().getRowCount() > 0) {

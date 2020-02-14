@@ -32,8 +32,8 @@ import org.tinymediamanager.ui.components.TmmLabel;
  */
 public class TvShowWatchedFilter extends AbstractTvShowUIFilter {
   private enum WatchedFlag {
-    WATCHED(BUNDLE.getString("metatag.watched")),  ,
-    NOT_WATCHED(BUNDLE.getString("metatag.notwatched"));  ,
+    WATCHED(BUNDLE.getString("metatag.watched")),
+    NOT_WATCHED(BUNDLE.getString("metatag.notwatched"));
 
     private String title;
 

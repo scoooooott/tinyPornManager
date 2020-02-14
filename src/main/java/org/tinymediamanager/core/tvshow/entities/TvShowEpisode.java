@@ -798,7 +798,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    */
   public Boolean getHasNfoFile() {
     List<MediaFile> nfos = getMediaFiles(MediaFileType.NFO);
-    return nfos != null && nfos.size() > 0;
+    return nfos != null && !nfos.isEmpty();
   }
 
   /**
@@ -1039,7 +1039,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
    */
   public String getMediaInfoAudioCodecAndChannels() {
     List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
+    if (!videos.isEmpty()) {
       MediaFile mediaFile = videos.get(0);
       return mediaFile.getAudioCodec() + "_" + mediaFile.getAudioChannels();
     }
@@ -1115,7 +1115,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
 
     // get the audio streams from the first video file
     List<MediaFile> videoFiles = getMediaFiles(MediaFileType.VIDEO);
-    if (videoFiles.size() > 0) {
+    if (!videoFiles.isEmpty()) {
       MediaFile videoFile = videoFiles.get(0);
       mediaFilesWithAudioStreams.add(videoFile);
     }
@@ -1492,7 +1492,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   @Override
   public String getMediaInfoContainerFormat() {
     List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
+    if (!videos.isEmpty()) {
       MediaFile mediaFile = videos.get(0);
       return mediaFile.getContainerFormat();
     }
@@ -1514,7 +1514,7 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   public boolean isVideoIn3D() {
     String video3DFormat = "";
     List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
+    if (!videos.isEmpty()) {
       MediaFile mediaFile = videos.get(0);
       video3DFormat = mediaFile.getVideo3DFormat();
     }

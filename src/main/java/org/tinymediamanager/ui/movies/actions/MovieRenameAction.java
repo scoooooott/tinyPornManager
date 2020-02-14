@@ -77,7 +77,7 @@ public class MovieRenameAction extends TmmAction {
 
       // the user don't want to show this dialog again
       if (checkBox.isSelected()) {
-        TmmProperties.getInstance().putProperty("movie.hiderenamehint", String.valueOf(checkBox.isSelected()));  )
+        TmmProperties.getInstance().putProperty("movie.hiderenamehint", String.valueOf(checkBox.isSelected()));
       }
 
       if (answer != JOptionPane.YES_OPTION) {

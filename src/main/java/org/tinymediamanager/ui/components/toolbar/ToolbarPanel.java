@@ -282,7 +282,7 @@ public class ToolbarPanel extends JPanel {
     menu.addPopupMenuListener(new PopupMenuListener() {
       @Override
       public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-        if (Globals.settings.getWolDevices().size() > 0) {
+        if (!Globals.settings.getWolDevices().isEmpty()) {
           menuWakeOnLan.setEnabled(true);
         }
         else {

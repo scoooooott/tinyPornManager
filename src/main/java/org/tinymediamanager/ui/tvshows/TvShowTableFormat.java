@@ -162,7 +162,7 @@ public class TvShowTableFormat extends TmmTreeTableFormat<TmmTreeNode> {
       return String.valueOf(((TvShow) userObject).getEpisodeCount());
     }
     if (userObject instanceof TvShowSeason) {
-      if (((TvShowSeason) userObject).getEpisodes().size() > 0) {
+      if (!((TvShowSeason) userObject).getEpisodes().isEmpty()) {
         return String.valueOf(((TvShowSeason) userObject).getEpisodes().size());
       }
     }

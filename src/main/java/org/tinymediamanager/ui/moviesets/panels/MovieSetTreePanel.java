@@ -209,7 +209,7 @@ public class MovieSetTreePanel extends TmmListPanel implements ITmmTabItem {
     });
 
     // selecting first movie set at startup
-    if (movieList.getMovieSetList() != null && movieList.getMovieSetList().size() > 0) {
+    if (movieList.getMovieSetList() != null && !movieList.getMovieSetList().isEmpty()) {
       SwingUtilities.invokeLater(() -> {
         ListSelectionModel selectionModel1 = tree.getSelectionModel();
         if (selectionModel1.isSelectionEmpty() && tree.getModel().getRowCount() > 0) {

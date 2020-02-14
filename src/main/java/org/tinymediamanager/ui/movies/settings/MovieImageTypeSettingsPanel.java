@@ -53,7 +53,6 @@ class MovieImageTypeSettingsPanel extends JPanel {
   private static final long           serialVersionUID = 7312645402037806284L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
-  @wbp.nls.resourceBundle
 
   private MovieSettings               settings         = MovieModuleManager.SETTINGS;
   private JCheckBox                   chckbxMoviePosterFilename2;

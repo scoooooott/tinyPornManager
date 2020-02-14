@@ -432,7 +432,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     }
     else {
       // no VIDEO files in this dir - skip this folder
-      if (normalizedVideoFiles.size() == 0) {
+      if (normalizedVideoFiles.isEmpty()) {
         return;
       }
       // more than one (unstacked) movie file in directory (or DS root) -> must

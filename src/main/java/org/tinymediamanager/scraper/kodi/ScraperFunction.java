@@ -85,7 +85,7 @@ class ScraperFunction implements RegExpContainer, Cloneable {
 
   @Override
   public boolean hasRegExps() {
-    return regexps != null && regexps.size() > 0;
+    return regexps != null && !regexps.isEmpty();
   }
 
   public boolean isAppendBuffer() {

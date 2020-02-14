@@ -296,7 +296,7 @@ public class MovieSetChooserDialog extends TmmDialog implements ActionListener {
       startProgressBar(BUNDLE.getString("chooser.searchingfor") + " " + searchTerm);
       try {
         List<MediaScraper> sets = MediaScraper.getMediaScrapers(ScraperType.MOVIE_SET);
-        if (sets != null && sets.size() > 0) {
+        if (sets != null && !sets.isEmpty()) {
           MediaScraper first = sets.get(0); // just get first
           IMovieSetMetadataProvider mp = (IMovieSetMetadataProvider) first.getMediaProvider();
 

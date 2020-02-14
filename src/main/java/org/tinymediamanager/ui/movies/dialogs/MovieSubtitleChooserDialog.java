@@ -346,7 +346,7 @@ public class MovieSubtitleChooserDialog extends TmmDialog {
     public void done() {
       if (!cancel) {
         subtitleEventList.clear();
-        if (searchResults == null || searchResults.size() == 0) {
+        if (searchResults == null || searchResults.isEmpty()) {
           // display empty result
           subtitleEventList.add(MovieSubtitleChooserModel.EMPTY_RESULT);
         }

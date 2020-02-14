@@ -326,7 +326,7 @@ public class MovieUIModule extends AbstractTmmUIModule {
 
   @Override
   public String getTabTitle() {
-    return BUNDLE.getString("tmm.movies");  )
+    return BUNDLE.getString("tmm.movies");
   }
 
   @Override

@@ -1688,7 +1688,7 @@ public class TvShowEditorDialog extends TmmDialog {
 
     public String getMediaFilename() {
       List<MediaFile> mfs = tvShowEpisode.getMediaFiles(MediaFileType.VIDEO);
-      if (mfs != null && mfs.size() > 0) {
+      if (mfs != null && !mfs.isEmpty()) {
         return mfs.get(0).getFile().toString();
       }
       else {

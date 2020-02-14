@@ -199,7 +199,7 @@ public class TmmTreeModel<E extends TmmTreeNode> extends DefaultTreeModel {
     readWriteLock.writeLock().unlock();
 
     // Checking if any nodes loaded
-    if (realChildren != null && realChildren.size() > 0) {
+    if (realChildren != null && !realChildren.isEmpty()) {
       // Inserting loaded nodes
       insertNodesInto(realChildren, parent, 0);
     }

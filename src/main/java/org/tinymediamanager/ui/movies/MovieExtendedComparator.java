@@ -40,16 +40,16 @@ public class MovieExtendedComparator implements Comparator<Movie> {
   private RuleBasedCollator           stringCollator = (RuleBasedCollator) RuleBasedCollator.getInstance();
 
   public enum SortColumn {
-    TITLE(BUNDLE.getString("metatag.title")),  ,
-    SORT_TITLE(BUNDLE.getString("metatag.sorttitle")),  ,
-    YEAR(BUNDLE.getString("metatag.year")),  ,
-    DATE_ADDED(BUNDLE.getString("metatag.dateadded")),  ,
-    RELEASE_DATE(BUNDLE.getString("metatag.releasedate")),  ,
-    WATCHED(BUNDLE.getString("metatag.watched")),  ,
-    RATING(BUNDLE.getString("metatag.rating")),  ,
-    RUNTIME(BUNDLE.getString("metatag.runtime")),  ,
-    VIDEO_BITRATE(BUNDLE.getString("metatag.videobitrate")),  ,
-    FRAME_RATE(BUNDLE.getString("metatag.framerate"));  ,
+    TITLE(BUNDLE.getString("metatag.title")),
+    SORT_TITLE(BUNDLE.getString("metatag.sorttitle")),
+    YEAR(BUNDLE.getString("metatag.year")),
+    DATE_ADDED(BUNDLE.getString("metatag.dateadded")),
+    RELEASE_DATE(BUNDLE.getString("metatag.releasedate")),
+    WATCHED(BUNDLE.getString("metatag.watched")),
+    RATING(BUNDLE.getString("metatag.rating")),
+    RUNTIME(BUNDLE.getString("metatag.runtime")),
+    VIDEO_BITRATE(BUNDLE.getString("metatag.videobitrate")),
+    FRAME_RATE(BUNDLE.getString("metatag.framerate"));
 
     private String title;
 
@@ -64,8 +64,8 @@ public class MovieExtendedComparator implements Comparator<Movie> {
   }
 
   public enum WatchedFlag {
-    WATCHED(BUNDLE.getString("metatag.watched")),  ,
-    NOT_WATCHED(BUNDLE.getString("metatag.notwatched"));  ,
+    WATCHED(BUNDLE.getString("metatag.watched")),
+    NOT_WATCHED(BUNDLE.getString("metatag.notwatched"));
 
     private String title;
 

@@ -72,7 +72,6 @@ class MovieSubtitleSettingsPanel extends JPanel {
   private static final long           serialVersionUID = -1607146878528487625L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
-  @wbp.nls.resourceBundle
 
   private MovieSettings               settings         = MovieModuleManager.SETTINGS;
   private List<ScraperInTable>        scrapers         = ObservableCollections.observableList(new ArrayList<>());

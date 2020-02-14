@@ -135,11 +135,11 @@ public class TvShowEpisodeAndSeasonParser {
     EpisodeMatchingResult result = detect(FilenameUtils.getName(name), showname);
 
     // only EPs found, but no season - parse whole string for season ONLY
-    if (result.episodes.size() > 0 && result.season == -1) {
+    if (!result.episodes.isEmpty() && result.season == -1) {
       EpisodeMatchingResult result2 = detect(name, showname);
       result.season = result2.season;
     }
-    else if (result.season == -1 && result.episodes.size() == 0) {
+    else if (result.season == -1 && result.episodes.isEmpty()) {
       // nothing found - check whole string as such
       result = detect(name, showname);
     }

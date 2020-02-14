@@ -346,7 +346,7 @@ public class TvShowSubtitleChooserDialog extends TmmDialog {
     public void done() {
       if (!cancel) {
         subtitleEventList.clear();
-        if (searchResults == null || searchResults.size() == 0) {
+        if (searchResults == null || searchResults.isEmpty()) {
           // display empty result
           subtitleEventList.add(TvShowSubtitleChooserModel.EMPTY_RESULT);
         }

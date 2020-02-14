@@ -29,8 +29,8 @@ import org.tinymediamanager.ui.components.TmmLabel;
  */
 public class MovieWatchedFilter extends AbstractMovieUIFilter {
   private enum WatchedFlag {
-    WATCHED(BUNDLE.getString("metatag.watched")),  ,
-    NOT_WATCHED(BUNDLE.getString("metatag.notwatched"));  ,
+    WATCHED(BUNDLE.getString("metatag.watched")),
+    NOT_WATCHED(BUNDLE.getString("metatag.notwatched"));
 
     private String title;
 

@@ -352,7 +352,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
   public Boolean getHasNfoFile() {
     List<MediaFile> mf = getMediaFiles(MediaFileType.NFO);
 
-    return mf != null && mf.size() > 0;
+    return mf != null && !mf.isEmpty();
   }
 
   /**
@@ -386,7 +386,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
    * @return the checks for trailer
    */
   public Boolean getHasTrailer() {
-    if (trailer != null && trailer.size() > 0) {
+    if (trailer != null && !trailer.isEmpty()) {
       return true;
     }
 
@@ -955,7 +955,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
       }
 
       // if still no preferred trailer has been set, then mark the first one
-      if (preferredTrailer == null && this.trailer.size() == 0 && !trailer.getUrl().startsWith("file")) {
+      if (preferredTrailer == null && this.trailer.isEmpty() && !trailer.getUrl().startsWith("file")) {
         trailer.setInNfo(Boolean.TRUE);
       }
 
@@ -1632,7 +1632,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
     // get the audio streams from the first video file
     List<MediaFile> videoFiles = getMediaFiles(MediaFileType.VIDEO);
-    if (videoFiles.size() > 0) {
+    if (!videoFiles.isEmpty()) {
       MediaFile videoFile = videoFiles.get(0);
       mediaFilesWithAudioStreams.add(videoFile);
     }
@@ -1825,7 +1825,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
   public boolean isVideoIn3D() {
     String video3DFormat = "";
     List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
-    if (videos.size() > 0) {
+    if (!videos.isEmpty()) {
       MediaFile mediaFile = videos.get(0);
       video3DFormat = mediaFile.getVideo3DFormat();
     }

@@ -158,7 +158,7 @@ public class TmmTree<E extends TmmTreeNode> extends JTree {
     final TmmTreeState treeState = new TmmTreeState();
     final List<TmmTreeNode> elements = new ArrayList<>();
     elements.add((TmmTreeNode) root);
-    while (elements.size() > 0) {
+    while (!elements.isEmpty()) {
       final TmmTreeNode element = elements.get(0);
       final TreePath path = new TreePath(element.getPath());
       treeState.addState(element.getId(), isExpanded(path), isPathSelected(path));
@@ -189,7 +189,7 @@ public class TmmTree<E extends TmmTreeNode> extends JTree {
 
     final List<TmmTreeNode> elements = new ArrayList<>();
     elements.add((TmmTreeNode) root);
-    while (elements.size() > 0) {
+    while (!elements.isEmpty()) {
       final TmmTreeNode element = elements.get(0);
       final TreePath path = new TreePath(element.getPath());
 

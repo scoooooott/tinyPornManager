@@ -650,7 +650,7 @@ public class MovieSetEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -7322270015667230646L;
 
     OkAction() {
-      putValue(NAME, BUNDLE.getString("Button.save"));  );
+      putValue(NAME, BUNDLE.getString("Button.save"));
       putValue(SHORT_DESCRIPTION, BUNDLE.getString("Button.save"));
       putValue(SMALL_ICON, IconManager.APPLY_INV);
       putValue(LARGE_ICON_KEY, IconManager.APPLY_INV);

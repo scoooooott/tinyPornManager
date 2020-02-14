@@ -195,7 +195,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
      */
     col = new Column(BUNDLE.getString("metatag.audio"), "audio", movie -> {
       List<MediaFile> videos = movie.getMediaFiles(MediaFileType.VIDEO);
-      if (videos.size() > 0) {
+      if (!videos.isEmpty()) {
         MediaFile mediaFile = videos.get(0);
         if (StringUtils.isNotBlank(mediaFile.getAudioCodec())) {
           return mediaFile.getAudioCodec() + " " + mediaFile.getAudioChannels();

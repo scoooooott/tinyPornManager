@@ -90,12 +90,12 @@ public class TvShowRenameAction extends TmmAction {
       checkBox.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
       Object[] params = { BUNDLE.getString("tvshow.rename.desc"), checkBox };
       Object[] options = { BUNDLE.getString("Button.yes"), BUNDLE.getString("Button.no") };
-      int answer = JOptionPane.showOptionDialog(MainWindow.getActiveInstance(), params, BUNDLE.getString("tvshow.rename"),
-          JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
+      int answer = JOptionPane.showOptionDialog(MainWindow.getActiveInstance(), params, BUNDLE.getString("tvshow.rename"), JOptionPane.YES_NO_OPTION,
+          JOptionPane.QUESTION_MESSAGE, null, options, null);
 
       // the user don't want to show this dialog again
       if (checkBox.isSelected()) {
-        TmmProperties.getInstance().putProperty("tvshow.hiderenamehint", String.valueOf(checkBox.isSelected()));  )
+        TmmProperties.getInstance().putProperty("tvshow.hiderenamehint", String.valueOf(checkBox.isSelected()));
       }
 
       if (answer != JOptionPane.YES_OPTION) {
