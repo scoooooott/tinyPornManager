@@ -34,6 +34,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.SwingPropertyChangeSupport;
 import javax.swing.text.JTextComponent;
 
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.ui.components.TriStateCheckBox;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -38,9 +38,9 @@ import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 
 import org.tinymediamanager.core.TmmModuleManager;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.TmmSplitPane;
 import org.tinymediamanager.ui.components.tree.TmmTree;
 import org.tinymediamanager.ui.components.tree.TmmTreeNode;

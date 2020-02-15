@@ -27,6 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.ui.components.TmmListPanel;
 
 public abstract class AbstractTmmUIModule implements ITmmUIModule {

@@ -20,9 +20,9 @@ import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.scraper.http.InMemoryCachedUrl;
 import org.tinymediamanager.scraper.http.TmmHttpClient;
-import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * The ClearHttpCacheAction is used to completely clear the HTTP cache

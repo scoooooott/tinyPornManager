@@ -18,7 +18,7 @@ package org.tinymediamanager.ui.movies.settings;
 
 import java.util.ResourceBundle;
 
-import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.ui.settings.TmmSettingsNode;
 
 /**

@@ -26,8 +26,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.scraper.util.StrgUtils;
-import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * This class is used to represent an artwork for a media

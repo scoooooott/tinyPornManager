@@ -20,9 +20,9 @@ import java.util.ResourceBundle;
 
 import javax.swing.JDialog;
 
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.dialogs.BugReportDialog;
 
 /**

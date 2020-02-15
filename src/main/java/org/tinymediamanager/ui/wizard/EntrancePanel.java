@@ -22,7 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextPane;
 import javax.swing.text.html.HTMLEditorKit;
 
-import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.ui.components.ReadOnlyTextPane;
 import org.tinymediamanager.ui.images.Logo;
 

@@ -23,8 +23,8 @@ import java.util.ResourceBundle;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.movie.entities.Movie;
-import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * The Class MovieComparator is used to (initial) sort the movies in the moviepanel.

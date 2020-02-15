@@ -18,9 +18,9 @@ package org.tinymediamanager.ui.tvshows;
 import java.util.ResourceBundle;
 
 import org.tinymediamanager.core.AbstractModelObject;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaScraper;
-import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * The class TvShowEpisodeChooserModel

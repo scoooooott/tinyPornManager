@@ -34,10 +34,10 @@ import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 
 import org.jdesktop.beansbinding.BindingGroup;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmWindowSaver;
-import org.tinymediamanager.ui.UTF8Control;
 
 import net.miginfocom.swing.MigLayout;
 

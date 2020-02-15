@@ -20,7 +20,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.JDialog;
 
-import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.ui.dialogs.SettingsDialog;
 
 /**

@@ -25,6 +25,7 @@ import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.IMessageListener;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.Utils;
 
 import ca.odell.glazedlists.BasicEventList;

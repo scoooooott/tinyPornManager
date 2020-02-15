@@ -18,7 +18,7 @@ package org.tinymediamanager;
 
 import java.util.ResourceBundle;
 
-import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.core.UTF8Control;
 
 /**
  * the enum DateAdded is used to control which date should be taken for various parts of tinyMediaManager

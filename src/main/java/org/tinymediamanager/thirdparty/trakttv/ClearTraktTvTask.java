@@ -17,8 +17,8 @@ package org.tinymediamanager.thirdparty.trakttv;
 
 import java.util.ResourceBundle;
 
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.threading.TmmTask;
-import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * Clear your data from trakt.tv

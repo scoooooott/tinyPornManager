@@ -47,12 +47,12 @@ import org.fourthline.cling.support.model.item.Item;
 import org.fourthline.cling.support.model.item.Movie;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.entities.MediaGenres;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
-import org.tinymediamanager.ui.UTF8Control;
 
 public class ContentDirectoryService extends AbstractContentDirectoryService {
 
