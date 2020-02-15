@@ -1,5 +1,5 @@
 # The URL from which the client is downloaded
-appbase = http://prerelease.tinymediamanager.org/v3/build/
+appbase = https://prerelease.tinymediamanager.org/v3/build/
 
 # UI Configuration
 ui.name = tinyMediaManager
