@@ -23,6 +23,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.KeyStroke;
 
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
@@ -32,7 +33,6 @@ import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.movies.dialogs.MovieScrapeMetadataDialog;
 
@@ -43,11 +43,11 @@ import org.tinymediamanager.ui.movies.dialogs.MovieScrapeMetadataDialog;
  */
 public class MovieUnscrapedScrapeAction extends TmmAction {
   private static final long           serialVersionUID = -5330113139288186736L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public MovieUnscrapedScrapeAction() {
-    putValue(NAME, BUNDLE.getString("movie.scrape.unscraped")); //$NON-NLS-1$
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.scrape.unscraped.desc")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("movie.scrape.unscraped"));
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.scrape.unscraped.desc"));
     putValue(SMALL_ICON, IconManager.SEARCH);
     putValue(LARGE_ICON_KEY, IconManager.SEARCH);
     putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK));
@@ -56,8 +56,8 @@ public class MovieUnscrapedScrapeAction extends TmmAction {
   @Override
   protected void processAction(ActionEvent e) {
     List<Movie> unscrapedMovies = MovieList.getInstance().getUnscrapedMovies();
-    if (unscrapedMovies.size() > 0) {
-      MovieScrapeMetadataDialog dialog = new MovieScrapeMetadataDialog(BUNDLE.getString("movie.scrape.unscraped")); //$NON-NLS-1$
+    if (!unscrapedMovies.isEmpty()) {
+      MovieScrapeMetadataDialog dialog = new MovieScrapeMetadataDialog(BUNDLE.getString("movie.scrape.unscraped"));
       dialog.setLocationRelativeTo(MainWindow.getActiveInstance());
       dialog.setVisible(true);
 

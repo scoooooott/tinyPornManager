@@ -18,7 +18,6 @@ package org.tinymediamanager.core;
 import java.util.ResourceBundle;
 
 import org.tinymediamanager.scraper.util.LanguageUtils;
-import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * The enum LanguageStyle is used for the different language notations
@@ -32,7 +31,7 @@ public enum LanguageStyle {
   LANG_EN,
   LANG_LOCALIZED;
 
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());
 
   @Override
   public String toString() {

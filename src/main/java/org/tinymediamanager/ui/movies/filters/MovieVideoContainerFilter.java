@@ -55,7 +55,7 @@ public class MovieVideoContainerFilter extends AbstractCheckComboBoxMovieUIFilte
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("metatag.container")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("metatag.container"));
   }
 
   private void buildAndInstallContainerArray() {

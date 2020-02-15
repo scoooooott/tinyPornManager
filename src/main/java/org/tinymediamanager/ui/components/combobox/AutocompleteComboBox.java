@@ -41,6 +41,7 @@ public class AutocompleteComboBox<E> extends JComboBox<E> {// implements JComboB
     super();
     this.items = new BasicEventList<>();
     this.items.addAll(items);
+    this.items.sort((o1, o2) -> o1.toString().compareToIgnoreCase(o2.toString()));
     init();
   }
 

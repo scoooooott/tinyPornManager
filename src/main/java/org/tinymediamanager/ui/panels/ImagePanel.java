@@ -113,7 +113,7 @@ public class ImagePanel extends JPanel implements HierarchyListener {
 
   @Override
   public void hierarchyChanged(HierarchyEvent arg0) {
-    if (isShowing() && panelImages.getComponents().length == 0 && mediaFiles.size() > 0) {
+    if (isShowing() && panelImages.getComponents().length == 0 && !mediaFiles.isEmpty()) {
       // rebuild the panel
       rebuildPanel();
     }

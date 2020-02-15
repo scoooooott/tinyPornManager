@@ -52,7 +52,7 @@ public class MovieSetWithMoreThanOneMovieFilter extends AbstractMovieSetUIFilter
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("movieextendedsearch.moviesetwithmorethanonemovies")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("movieextendedsearch.moviesetwithmorethanonemovies"));
   }
 
   @Override

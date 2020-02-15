@@ -611,15 +611,13 @@ public class MediaFileHelper {
   }
 
   /**
-   * Gathers the media information for the given {@link MediaFile} via libmediainfo
-   *
+   * gather basic file information like file size, creation date and last modified date
+   * 
    * @param mediaFile
-   *          the media file
-   * @param force
-   *          forces the execution, will not stop on already imported files
+   *          the {@link MediaFile} to gather the information for
    */
-  public static void gatherMediaInformation(MediaFile mediaFile, boolean force) {
-    // get basic infos
+  public static void gatherFileInformation(MediaFile mediaFile) {
+    // get basic infos; file size, creation date and last modified
     try {
       BasicFileAttributes view = Files.readAttributes(mediaFile.getFileAsPath(), BasicFileAttributes.class);
       // sanity check; need something litil bit bigger than 0
@@ -631,10 +629,26 @@ public class MediaFileHelper {
         Date modDat = new Date(view.lastModifiedTime().toMillis());
         mediaFile.setDateLastModified(modDat);
       }
+
+      mediaFile.setFiledate(view.lastModifiedTime().toMillis());
+      mediaFile.setFilesize(view.size());
     }
     catch (Exception e) {
-      LOGGER.warn("could not read filedate: {}", e);
+      LOGGER.warn("could not get file information (size/date): {}", e.getMessage());
     }
+  }
+
+  /**
+   * Gathers the media information for the given {@link MediaFile} via libmediainfo
+   *
+   * @param mediaFile
+   *          the media file
+   * @param force
+   *          forces the execution, will not stop on already imported files
+   */
+  public static void gatherMediaInformation(MediaFile mediaFile, boolean force) {
+    // get basic infos; file size, creation date and last modified
+    gatherFileInformation(mediaFile);
 
     // check for supported filetype
     if (!mediaFile.isValidMediainfoFormat()) {
@@ -653,16 +667,6 @@ public class MediaFileHelper {
     // gather subtitle infos independent of MI
     if (mediaFile.getType() == MediaFileType.SUBTITLE) {
       gatherSubtitleInformation(mediaFile);
-    }
-
-    // file size and last modified
-    try {
-      BasicFileAttributes attrs = Files.readAttributes(mediaFile.getFileAsPath(), BasicFileAttributes.class);
-      mediaFile.setFiledate(attrs.lastModifiedTime().toMillis());
-      mediaFile.setFilesize(attrs.size());
-    }
-    catch (IOException e) {
-      LOGGER.warn("could not get file information (size/date): {}", e.getMessage());
     }
 
     // do not work further on 0 byte files

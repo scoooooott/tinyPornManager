@@ -34,8 +34,8 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.ui.TmmUIHelper;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.converter.RuntimeConverter;
@@ -53,7 +53,7 @@ public class TvShowDetailsPanel extends JPanel {
   private static final long           serialVersionUID = -1569492065407109019L;
   private static final Logger         LOGGER           = LoggerFactory.getLogger(TvShowDetailsPanel.class);
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private final TvShowSelectionModel  selectionModel;
 
@@ -133,21 +133,21 @@ public class TvShowDetailsPanel extends JPanel {
   private void initComponents() {
     setLayout(new MigLayout("insets 0", "[][grow][][grow 200]", "[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]"));
     {
-      JLabel lblPremieredT = new TmmLabel(BUNDLE.getString("metatag.premiered")); //$NON-NLS-1$
+      JLabel lblPremieredT = new TmmLabel(BUNDLE.getString("metatag.premiered"));
       add(lblPremieredT, "cell 0 0");
 
       lblPremiered = new JLabel("");
       add(lblPremiered, "cell 1 0");
     }
     {
-      JLabel lblYearT = new TmmLabel(BUNDLE.getString("metatag.year")); //$NON-NLS-1$
+      JLabel lblYearT = new TmmLabel(BUNDLE.getString("metatag.year"));
       add(lblYearT, "cell 2 0");
 
       lblYear = new JLabel("");
       add(lblYear, "cell 3 0");
     }
     {
-      JLabel lblCertificationT = new TmmLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
+      JLabel lblCertificationT = new TmmLabel(BUNDLE.getString("metatag.certification"));
       add(lblCertificationT, "cell 0 1");
 
       lblCertification = new JLabel("");
@@ -161,7 +161,7 @@ public class TvShowDetailsPanel extends JPanel {
       add(lblImdbId, "cell 3 1");
     }
     {
-      JLabel lblStatusT = new TmmLabel(BUNDLE.getString("metatag.status")); //$NON-NLS-1$
+      JLabel lblStatusT = new TmmLabel(BUNDLE.getString("metatag.status"));
       add(lblStatusT, "cell 0 2");
 
       lblStatus = new JLabel("");
@@ -175,20 +175,20 @@ public class TvShowDetailsPanel extends JPanel {
       add(lblThetvdbId, "cell 3 2");
     }
     {
-      JLabel lblRuntimeT = new TmmLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
+      JLabel lblRuntimeT = new TmmLabel(BUNDLE.getString("metatag.runtime"));
       add(lblRuntimeT, "cell 0 3");
 
       lblRuntime = new JLabel("");
       add(lblRuntime, "cell 1 3");
     }
     {
-      JLabel lblOtherIdsT = new TmmLabel(BUNDLE.getString("metatag.otherids")); //$NON-NLS-1$
+      JLabel lblOtherIdsT = new TmmLabel(BUNDLE.getString("metatag.otherids"));
       add(lblOtherIdsT, "cell 2 3");
 
       lblOtherIds = new JLabel("");
       add(lblOtherIds, "cell 3 3, wmin 0");
     }
-    JLabel lblStudioT = new TmmLabel(BUNDLE.getString("metatag.studio")); //$NON-NLS-1$
+    JLabel lblStudioT = new TmmLabel(BUNDLE.getString("metatag.studio"));
     add(lblStudioT, "cell 0 4");
     {
 
@@ -196,35 +196,35 @@ public class TvShowDetailsPanel extends JPanel {
       add(lblStudio, "cell 1 4 3 1,wmin 0");
     }
     {
-      lblCountryT = new TmmLabel(BUNDLE.getString("metatag.country")); //$NON-NLS-1$
+      lblCountryT = new TmmLabel(BUNDLE.getString("metatag.country"));
       add(lblCountryT, "cell 0 5");
 
       lblCountry = new JLabel("");
       add(lblCountry, "cell 1 5 3 1,wmin 0");
     }
     {
-      JLabel lblGenresT = new TmmLabel(BUNDLE.getString("metatag.genre")); //$NON-NLS-1$
+      JLabel lblGenresT = new TmmLabel(BUNDLE.getString("metatag.genre"));
       add(lblGenresT, "cell 0 6");
 
       lblGenres = new JLabel("");
       add(lblGenres, "cell 1 6 3 1,growx,wmin 0");
     }
     {
-      JLabel lblTagsT = new TmmLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
+      JLabel lblTagsT = new TmmLabel(BUNDLE.getString("metatag.tags"));
       add(lblTagsT, "cell 0 7");
 
       lblTags = new JLabel("");
       add(lblTags, "cell 1 7 3 1,growx,wmin 0");
     }
     {
-      JLabel lblPathT = new TmmLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
+      JLabel lblPathT = new TmmLabel(BUNDLE.getString("metatag.path"));
       add(lblPathT, "cell 0 8");
 
       lblPath = new LinkLabel("");
       add(lblPath, "cell 1 8 3 1,growx,wmin 0");
     }
     {
-      lblNoteT = new TmmLabel(BUNDLE.getString("metatag.note")); //$NON-NLS-1$
+      lblNoteT = new TmmLabel(BUNDLE.getString("metatag.note"));
       add(lblNoteT, "cell 0 9");
 
       lblNote = new JLabel("");

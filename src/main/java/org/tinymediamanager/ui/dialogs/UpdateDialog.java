@@ -50,7 +50,7 @@ public class UpdateDialog extends TmmDialog {
   private static final Logger LOGGER           = LoggerFactory.getLogger(UpdateDialog.class);
 
   public UpdateDialog(String changelog) {
-    super(BUNDLE.getString("tmm.update.title"), "update"); //$NON-NLS-1$
+    super(BUNDLE.getString("tmm.update.title"), "update");
 
     {
       JPanel panelContent = new JPanel();
@@ -58,10 +58,10 @@ public class UpdateDialog extends TmmDialog {
       panelContent.setLayout(new MigLayout("", "[600lp,grow]", "[][10lp:n][][400lp,grow]"));
 
       JTextPane lblUpdateInfo = new ReadOnlyTextPane();
-      lblUpdateInfo.setText(BUNDLE.getString("tmm.update.message")); //$NON-NLS-1$
+      lblUpdateInfo.setText(BUNDLE.getString("tmm.update.message"));
       panelContent.add(lblUpdateInfo, "cell 0 0,growx");
 
-      JLabel lblChangelog = new JLabel(BUNDLE.getString("whatsnew.title")); //$NON-NLS-1$
+      JLabel lblChangelog = new JLabel(BUNDLE.getString("whatsnew.title"));
       panelContent.add(lblChangelog, "cell 0 2,growx");
 
       JScrollPane scrollPane = new JScrollPane();
@@ -86,11 +86,11 @@ public class UpdateDialog extends TmmDialog {
       });
     }
     {
-      JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
+      JButton btnClose = new JButton(BUNDLE.getString("Button.close"));
       btnClose.addActionListener(arg0 -> setVisible(false));
       addDefaultButton(btnClose);
 
-      JButton btnUpdate = new JButton(BUNDLE.getString("Button.update")); //$NON-NLS-1$
+      JButton btnUpdate = new JButton(BUNDLE.getString("Button.update"));
       btnUpdate.addActionListener(arg0 -> {
         setVisible(false);
         LOGGER.info("Updating...");

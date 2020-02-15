@@ -49,7 +49,7 @@ public class MovieNewMoviesFilter extends AbstractMovieUIFilter {
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("movieextendedsearch.newmovies")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("movieextendedsearch.newmovies"));
   }
 
   @Override

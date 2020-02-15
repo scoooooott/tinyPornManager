@@ -88,7 +88,7 @@ public class MovieExporterDialog extends TmmDialog {
    *          the movies to export
    */
   public MovieExporterDialog(List<Movie> moviesToExport) {
-    super(BUNDLE.getString("movie.export"), DIALOG_ID); //$NON-NLS-1$
+    super(BUNDLE.getString("movie.export"), DIALOG_ID);
     {
       JPanel panelContent = new JPanel();
       getContentPane().add(panelContent);
@@ -124,7 +124,7 @@ public class MovieExporterDialog extends TmmDialog {
       taDescription = new ReadOnlyTextArea();
       scrollPaneDescription.setViewportView(taDescription);
 
-      JLabel lblDetails = new TmmLabel(BUNDLE.getString("export.detail")); //$NON-NLS-1$
+      JLabel lblDetails = new TmmLabel(BUNDLE.getString("export.detail"));
       panelExporterDetails.add(lblDetails, "cell 0 2,growx,aligny center");
       splitPane.setDividerLocation(300);
 
@@ -135,17 +135,17 @@ public class MovieExporterDialog extends TmmDialog {
       JButton btnSetDestination = new JButton(BUNDLE.getString("export.setdestination"));
       panelContent.add(btnSetDestination, "cell 0 1");
       btnSetDestination.addActionListener(e -> {
-        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("export.selectdirectory"), tfExportDir.getText()); //$NON-NLS-1$
+        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("export.selectdirectory"), tfExportDir.getText());
         if (file != null) {
           tfExportDir.setText(file.toAbsolutePath().toString());
-          TmmProperties.getInstance().putProperty(DIALOG_ID + ".path", tfExportDir.getText()); //$NON-NLS-1$
+          TmmProperties.getInstance().putProperty(DIALOG_ID + ".path", tfExportDir.getText());
         }
       });
 
     }
 
     {
-      JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+      JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel"));
       btnCancel.setIcon(IconManager.CANCEL_INV);
       btnCancel.addActionListener(arg0 -> setVisible(false));
       addButton(btnCancel);
@@ -168,7 +168,7 @@ public class MovieExporterDialog extends TmmDialog {
           Path exportPath = Paths.get(tfExportDir.getText());
           if (!Files.exists(exportPath)) {
             // export dir does not exist
-            JOptionPane.showMessageDialog(MovieExporterDialog.this, BUNDLE.getString("export.foldernotfound")); //$NON-NLS-1$
+            JOptionPane.showMessageDialog(MovieExporterDialog.this, BUNDLE.getString("export.foldernotfound"));
             return;
           }
 
@@ -188,7 +188,7 @@ public class MovieExporterDialog extends TmmDialog {
           }
 
           try {
-            TmmProperties.getInstance().putProperty(DIALOG_ID + ".template", selectedTemplate.getName()); //$NON-NLS-1$
+            TmmProperties.getInstance().putProperty(DIALOG_ID + ".template", selectedTemplate.getName());
             MovieExporter exporter = new MovieExporter(Paths.get(selectedTemplate.getPath()));
             TmmTaskManager.getInstance().addMainTask(new ExportTask(BUNDLE.getString("movie.export"), exporter, movies, exportPath));
           }
@@ -206,7 +206,7 @@ public class MovieExporterDialog extends TmmDialog {
     bindingGroup = initDataBindings();
 
     // set the last used template as default
-    String lastTemplateName = TmmProperties.getInstance().getProperty(DIALOG_ID + ".template"); //$NON-NLS-1$
+    String lastTemplateName = TmmProperties.getInstance().getProperty(DIALOG_ID + ".template");
     if (StringUtils.isNotBlank(lastTemplateName)) {
       list.setSelectedValue(lastTemplateName, true);
     }

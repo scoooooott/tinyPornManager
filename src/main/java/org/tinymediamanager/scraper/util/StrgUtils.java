@@ -153,7 +153,7 @@ public class StrgUtils {
     if (map == null) {
       return "null";
     }
-    if (map.size() == 0) {
+    if (map.isEmpty()) {
       return "empty";
     }
 

@@ -149,7 +149,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
    *          the queue size
    */
   public TvShowChooserDialog(TvShow tvShow, int queueIndex, int queueSize) {
-    super(BUNDLE.getString("tvshowchooser.search") + (queueSize > 1 ? " " + (queueIndex + 1) + "/" + queueSize : ""), "tvShowChooser"); //$NON-NLS-1$
+    super(BUNDLE.getString("tvshowchooser.search") + (queueSize > 1 ? " " + (queueIndex + 1) + "/" + queueSize : ""), "tvShowChooser");
 
     mediaScraper = tvShowList.getDefaultMediaScraper();
     artworkScrapers = tvShowList.getAvailableArtworkScrapers();
@@ -183,7 +183,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
       contentPanel.add(panelSearchField, "cell 0 0,grow");
       panelSearchField.setLayout(new MigLayout("", "[][][grow][]", "[23px][]"));
       {
-        JLabel lblScraper = new TmmLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
+        JLabel lblScraper = new TmmLabel(BUNDLE.getString("scraper"));
         panelSearchField.add(lblScraper, "cell 0 0,alignx right");
       }
       {
@@ -202,7 +202,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
         panelSearchField.add(textFieldSearchString, "cell 2 0,growx");
         textFieldSearchString.setColumns(10);
 
-        JButton btnSearch = new JButton(BUNDLE.getString("Button.search")); //$NON-NLS-1$
+        JButton btnSearch = new JButton(BUNDLE.getString("Button.search"));
         btnSearch.setIcon(IconManager.SEARCH_INV);
         panelSearchField.add(btnSearch, "cell 3 0");
         btnSearch.addActionListener(searchAction);
@@ -309,27 +309,27 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
       }
       {
         if (queueSize > 1) {
-          JButton abortButton = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
+          JButton abortButton = new JButton(BUNDLE.getString("Button.abortqueue"));
           abortButton.setActionCommand("Abort");
           abortButton.addActionListener(this);
           abortButton.setIcon(IconManager.STOP_INV);
           addButton(abortButton);
 
           if (queueIndex > 0) {
-            JButton backButton = new JButton(BUNDLE.getString("Button.back")); //$NON-NLS-1$
+            JButton backButton = new JButton(BUNDLE.getString("Button.back"));
             backButton.setIcon(IconManager.BACK_INV);
             backButton.setActionCommand("Back");
             backButton.addActionListener(this);
             addButton(backButton);
           }
         }
-        JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+        JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel"));
         cancelButton.setActionCommand("Cancel");
         cancelButton.setIcon(IconManager.CANCEL_INV);
         cancelButton.addActionListener(this);
         addButton(cancelButton);
 
-        okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
+        okButton = new JButton(BUNDLE.getString("Button.ok"));
         okButton.setActionCommand("OK");
         okButton.setIcon(IconManager.APPLY_INV);
         okButton.addActionListener(this);
@@ -681,7 +681,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
 
     @Override
     public Void doInBackground() {
-      startProgressBar(BUNDLE.getString("chooser.searchingfor") + " " + searchTerm); //$NON-NLS-1$
+      startProgressBar(BUNDLE.getString("chooser.searchingfor") + " " + searchTerm);
       searchResult = tvShowList.searchTvShow(searchTerm, show.getYear(), withIds ? show.getIds() : null, mediaScraper, language);
       return null;
     }
@@ -725,7 +725,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
 
     @Override
     public Void doInBackground() {
-      startProgressBar(BUNDLE.getString("chooser.scrapeing") + " " + model.getTitle()); //$NON-NLS-1$
+      startProgressBar(BUNDLE.getString("chooser.scrapeing") + " " + model.getTitle());
 
       // disable ok button as long as its scraping
       okButton.setEnabled(false);

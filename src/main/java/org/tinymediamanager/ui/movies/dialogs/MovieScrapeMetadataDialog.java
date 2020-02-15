@@ -122,7 +122,7 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
       panelCenter.add(panelScraperConfig, "cell 0 5 2 1,grow");
       panelScraperConfig.setLayout(new MigLayout("", "[300lp:500lp,grow]", "[][]"));
       {
-        JLabel lblScrapeFollowingItems = new TmmLabel(BUNDLE.getString("scraper.metadata.select")); //$NON-NLS-1$
+        JLabel lblScrapeFollowingItems = new TmmLabel(BUNDLE.getString("scraper.metadata.select"));
         panelScraperConfig.add(lblScrapeFollowingItems, "cell 0 0");
 
         cbScraperConfig = new ScraperMetadataConfigCheckComboBox(MovieScraperMetadataConfig.values());
@@ -130,7 +130,7 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
       }
     }
     {
-      JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+      JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel"));
       btnCancel.setIcon(IconManager.CANCEL_INV);
       btnCancel.addActionListener(e -> {
         startScrape = false;
@@ -138,7 +138,7 @@ public class MovieScrapeMetadataDialog extends TmmDialog {
       });
       addButton(btnCancel);
 
-      JButton btnStart = new JButton(BUNDLE.getString("scraper.start")); //$NON-NLS-1$
+      JButton btnStart = new JButton(BUNDLE.getString("scraper.start"));
       btnStart.setIcon(IconManager.APPLY_INV);
       btnStart.addActionListener(e -> {
         startScrape = true;

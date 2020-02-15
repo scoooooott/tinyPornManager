@@ -99,7 +99,7 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
    *          the queue size
    */
   public TvShowSeasonEditorDialog(TvShowSeason tvShowSeason, int queueIndex, int queueSize) {
-    super(BUNDLE.getString("tvshowseason.edit") + (queueSize > 1 ? " " + (queueIndex + 1) + "/" + queueSize : ""), "tvShowSeasonEditor"); //$NON-NLS-1$
+    super(BUNDLE.getString("tvshowseason.edit") + (queueSize > 1 ? " " + (queueIndex + 1) + "/" + queueSize : ""), "tvShowSeasonEditor");
 
     this.tvShowSeasonToEdit = tvShowSeason;
     this.queueIndex = queueIndex;
@@ -147,7 +147,7 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
       JLabel lblTitleT = new TmmLabel(BUNDLE.getString("metatag.title"));
       artworkPanel.add(lblTitleT, "flowx,cell 0 0 3 1");
       {
-        JLabel lblPosterT = new TmmLabel(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
+        JLabel lblPosterT = new TmmLabel(BUNDLE.getString("mediafiletype.poster"));
         artworkPanel.add(lblPosterT, "cell 0 1");
 
         LinkLabel lblPosterSize = new LinkLabel();
@@ -181,7 +181,7 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
             e -> setImageSizeAndCreateLink(lblPosterSize, lblPoster, MediaArtwork.MediaArtworkType.SEASON_POSTER));
       }
       {
-        JLabel lblThumbT = new TmmLabel(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
+        JLabel lblThumbT = new TmmLabel(BUNDLE.getString("mediafiletype.thumb"));
         artworkPanel.add(lblThumbT, "cell 2 1");
 
         LinkLabel lblThumbSize = new LinkLabel();
@@ -215,7 +215,7 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
             e -> setImageSizeAndCreateLink(lblThumbSize, lblThumb, MediaArtwork.MediaArtworkType.SEASON_THUMB));
       }
       {
-        JLabel lblBannerT = new TmmLabel(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
+        JLabel lblBannerT = new TmmLabel(BUNDLE.getString("mediafiletype.banner"));
         artworkPanel.add(lblBannerT, "cell 0 4");
 
         LinkLabel lblBannerSize = new LinkLabel();
@@ -261,21 +261,21 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
       tabbedPane.addTab(BUNDLE.getString("edit.artwork"), null, artworkPanel, null);
       artworkPanel.setLayout(new MigLayout("", "[][grow]", "[][][]"));
       {
-        JLabel lblPosterT = new TmmLabel(BUNDLE.getString("mediafiletype.poster")); //$NON-NLS-1$
+        JLabel lblPosterT = new TmmLabel(BUNDLE.getString("mediafiletype.poster"));
         artworkPanel.add(lblPosterT, "cell 0 0,alignx right");
 
         tfPoster = new JTextField();
         artworkPanel.add(tfPoster, "cell 1 0,growx");
       }
       {
-        JLabel lblBannerT = new TmmLabel(BUNDLE.getString("mediafiletype.banner")); //$NON-NLS-1$
+        JLabel lblBannerT = new TmmLabel(BUNDLE.getString("mediafiletype.banner"));
         artworkPanel.add(lblBannerT, "cell 0 1,alignx right");
 
         tfBanner = new JTextField();
         artworkPanel.add(tfBanner, "cell 1 1,growx");
       }
       {
-        JLabel lblThumbT = new TmmLabel(BUNDLE.getString("mediafiletype.thumb")); //$NON-NLS-1$
+        JLabel lblThumbT = new TmmLabel(BUNDLE.getString("mediafiletype.thumb"));
         artworkPanel.add(lblThumbT, "cell 0 2,alignx right");
 
         tfThumb = new JTextField();
@@ -350,8 +350,8 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
     private static final long serialVersionUID = 6699599213348390696L;
 
     OKAction() {
-      putValue(NAME, BUNDLE.getString("Button.ok")); //$NON-NLS-1$
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.change")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("Button.ok"));
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.change"));
       putValue(SMALL_ICON, IconManager.APPLY_INV);
       putValue(LARGE_ICON_KEY, IconManager.APPLY_INV);
     }
@@ -376,8 +376,8 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -4617793684152607277L;
 
     CancelAction() {
-      putValue(NAME, BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("edit.discard")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("Button.cancel"));
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("edit.discard"));
       putValue(SMALL_ICON, IconManager.CANCEL_INV);
       putValue(LARGE_ICON_KEY, IconManager.CANCEL_INV);
     }
@@ -392,7 +392,7 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -1652218154720642310L;
 
     public NavigateBackAction() {
-      putValue(NAME, BUNDLE.getString("Button.back")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("Button.back"));
       putValue(SMALL_ICON, IconManager.BACK_INV);
     }
 
@@ -425,8 +425,8 @@ public class TvShowSeasonEditorDialog extends TmmDialog {
     private static final long serialVersionUID = -7652218354710642510L;
 
     AbortAction() {
-      putValue(NAME, BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.edit.abortqueue.desc")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("Button.abortqueue"));
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.edit.abortqueue.desc"));
       putValue(SMALL_ICON, IconManager.STOP_INV);
       putValue(LARGE_ICON_KEY, IconManager.STOP_INV);
     }

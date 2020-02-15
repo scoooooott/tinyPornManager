@@ -51,21 +51,21 @@ public class WolDeviceDialog extends TmmDialog {
    * constructor for creating a device
    */
   public WolDeviceDialog() {
-    super(BUNDLE.getString("tmm.wakeonlandevice"), "wolDialog"); //$NON-NLS-1$
+    super(BUNDLE.getString("tmm.wakeonlandevice"), "wolDialog");
 
     {
       JPanel panelContent = new JPanel();
       getContentPane().add(panelContent, BorderLayout.CENTER);
       panelContent.setLayout(new MigLayout("", "[][]", "[][]"));
 
-      JLabel lblDeviceName = new JLabel(BUNDLE.getString("Settings.devicename")); //$NON-NLS-1$
+      JLabel lblDeviceName = new JLabel(BUNDLE.getString("Settings.devicename"));
       panelContent.add(lblDeviceName, "cell 0 0,alignx right");
 
       tfName = new JTextField();
       tfName.setColumns(20);
       panelContent.add(tfName, "cell 1 0");
 
-      JLabel lblMacAddress = new JLabel(BUNDLE.getString("Settings.macaddress")); //$NON-NLS-1$
+      JLabel lblMacAddress = new JLabel(BUNDLE.getString("Settings.macaddress"));
       panelContent.add(lblMacAddress, "cell 0 1,alignx right");
 
       tfMacAddress = new JTextField();
@@ -73,11 +73,11 @@ public class WolDeviceDialog extends TmmDialog {
       panelContent.add(tfMacAddress, "cell 1 1");
     }
     {
-      JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+      JButton btnCancel = new JButton(BUNDLE.getString("Button.cancel"));
       btnCancel.setAction(new CancelAction());
       addButton(btnCancel);
 
-      JButton btnSave = new JButton(BUNDLE.getString("Button.save")); //$NON-NLS-1$
+      JButton btnSave = new JButton(BUNDLE.getString("Button.save"));
       btnSave.setAction(new SaveAction());
       addDefaultButton(btnSave);
     }
@@ -93,7 +93,7 @@ public class WolDeviceDialog extends TmmDialog {
     private static final long serialVersionUID = 1740130137146252281L;
 
     SaveAction() {
-      putValue(NAME, BUNDLE.getString("Button.save")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("Button.save"));
       putValue(SMALL_ICON, IconManager.APPLY_INV);
       putValue(LARGE_ICON_KEY, IconManager.APPLY_INV);
     }
@@ -102,7 +102,7 @@ public class WolDeviceDialog extends TmmDialog {
     public void actionPerformed(ActionEvent e) {
       // check whether both fields are filled
       if (StringUtils.isBlank(tfName.getText()) || StringUtils.isBlank(tfMacAddress.getText())) {
-        JOptionPane.showMessageDialog(null, BUNDLE.getString("message.missingitems")); //$NON-NLS-1$
+        JOptionPane.showMessageDialog(null, BUNDLE.getString("message.missingitems"));
         return;
       }
 
@@ -110,7 +110,7 @@ public class WolDeviceDialog extends TmmDialog {
       Pattern pattern = Pattern.compile("^([0-9a-fA-F]{2}[:-]){5}([0-9a-fA-F]{2})$");
       Matcher matcher = pattern.matcher(tfMacAddress.getText());
       if (!matcher.matches()) {
-        JOptionPane.showMessageDialog(null, BUNDLE.getString("message.invalidmac")); //$NON-NLS-1$
+        JOptionPane.showMessageDialog(null, BUNDLE.getString("message.invalidmac"));
         return;
       }
 
@@ -131,7 +131,7 @@ public class WolDeviceDialog extends TmmDialog {
     private static final long serialVersionUID = -8416641526799936831L;
 
     CancelAction() {
-      putValue(NAME, BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("Button.cancel"));
       putValue(SMALL_ICON, IconManager.CANCEL_INV);
       putValue(LARGE_ICON_KEY, IconManager.CANCEL_INV);
     }

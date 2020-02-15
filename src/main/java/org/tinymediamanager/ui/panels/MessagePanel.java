@@ -28,12 +28,12 @@ import javax.swing.SwingConstants;
 
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.TmmDateFormat;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 
 import net.miginfocom.swing.MigLayout;
@@ -41,7 +41,7 @@ import net.miginfocom.swing.MigLayout;
 public class MessagePanel extends JPanel {
   private static final long           serialVersionUID = -7224510527137312686L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private JLabel                      lblTitle;
   private JTextArea                   taMessage;

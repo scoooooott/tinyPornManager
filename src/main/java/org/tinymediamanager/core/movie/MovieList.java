@@ -261,7 +261,7 @@ public class MovieList extends AbstractModelObject {
    *          list of movies to remove
    */
   public void removeMovies(List<Movie> movies) {
-    if (movies == null || movies.size() == 0) {
+    if (movies == null || movies.isEmpty()) {
       return;
     }
     Set<MovieSet> modifiedMovieSets = new HashSet<>();

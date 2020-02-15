@@ -24,6 +24,7 @@ import java.util.ResourceBundle;
 import javax.swing.JOptionPane;
 
 import org.tinymediamanager.core.ScraperMetadataConfig;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.entities.Movie;
@@ -31,7 +32,6 @@ import org.tinymediamanager.core.movie.tasks.MovieMissingArtworkDownloadTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.movies.MovieUIModule;
 import org.tinymediamanager.ui.movies.dialogs.MovieDownloadMissingArtworkDialog;
@@ -43,10 +43,10 @@ import org.tinymediamanager.ui.movies.dialogs.MovieDownloadMissingArtworkDialog;
  */
 public class MovieDownloadMissingArtworkAction extends TmmAction {
   private static final long           serialVersionUID = -4006932829840795735L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public MovieDownloadMissingArtworkAction() {
-    putValue(NAME, BUNDLE.getString("movie.downloadmissingartwork")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("movie.downloadmissingartwork"));
     putValue(SMALL_ICON, IconManager.IMAGE);
     putValue(LARGE_ICON_KEY, IconManager.IMAGE);
   }
@@ -56,7 +56,7 @@ public class MovieDownloadMissingArtworkAction extends TmmAction {
     List<Movie> selectedMovies = new ArrayList<>(MovieUIModule.getInstance().getSelectionModel().getSelectedMovies());
 
     if (selectedMovies.isEmpty()) {
-      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected"));
       return;
     }
 

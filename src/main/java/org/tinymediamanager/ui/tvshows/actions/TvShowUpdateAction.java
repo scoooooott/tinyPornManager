@@ -23,13 +23,13 @@ import java.util.ResourceBundle;
 
 import javax.swing.JOptionPane;
 
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.tasks.TvShowUpdateDatasourceTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 
@@ -40,10 +40,10 @@ import org.tinymediamanager.ui.tvshows.TvShowUIModule;
  */
 public class TvShowUpdateAction extends TmmAction {
   private static final long           serialVersionUID = 7216738427209633666L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public TvShowUpdateAction() {
-    putValue(NAME, BUNDLE.getString("tvshow.update")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("tvshow.update"));
     putValue(LARGE_ICON_KEY, IconManager.REFRESH);
     putValue(SMALL_ICON, IconManager.REFRESH);
   }
@@ -54,7 +54,7 @@ public class TvShowUpdateAction extends TmmAction {
     List<Path> tvShowFolders = new ArrayList<>();
 
     if (selectedTvShows.isEmpty()) {
-      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected"));
       return;
     }
 

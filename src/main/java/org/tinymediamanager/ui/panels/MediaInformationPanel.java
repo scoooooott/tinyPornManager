@@ -36,12 +36,12 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaFileAudioStream;
 import org.tinymediamanager.core.entities.MediaFileSubtitle;
 import org.tinymediamanager.ui.TmmUIHelper;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.table.TmmTable;
@@ -63,7 +63,7 @@ import net.miginfocom.swing.MigLayout;
 abstract public class MediaInformationPanel extends JPanel {
   private static final long                 serialVersionUID = 2513029074142934502L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle       BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle       BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
   private static final Logger               LOGGER           = LoggerFactory.getLogger(MediaInformationPanel.class);
 
   protected EventList<MediaFile>            mediaFileEventList;
@@ -94,7 +94,7 @@ abstract public class MediaInformationPanel extends JPanel {
   private void initComponents() {
     setLayout(new MigLayout("", "[][][100lp][20lp][][grow]", "[][][][][][][][][5lp!][50lp:75lp,grow][5lp!][50lp:75lp,grow][][][200lp,grow 300]"));
     {
-      JLabel lblMoviePathT = new TmmLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
+      JLabel lblMoviePathT = new TmmLabel(BUNDLE.getString("metatag.path"));
       add(lblMoviePathT, "cell 0 0");
 
       lblPath = new LinkLabel("");
@@ -102,14 +102,14 @@ abstract public class MediaInformationPanel extends JPanel {
       add(lblPath, "cell 1 0 5 1,growx,wmin 0");
     }
     {
-      JLabel lblDateAddedT = new TmmLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
+      JLabel lblDateAddedT = new TmmLabel(BUNDLE.getString("metatag.dateadded"));
       add(lblDateAddedT, "cell 0 1");
 
       lblDateAdded = new JLabel("");
       add(lblDateAdded, "cell 1 1");
     }
     {
-      JLabel lblWatchedT = new TmmLabel(BUNDLE.getString("metatag.watched")); //$NON-NLS-1$
+      JLabel lblWatchedT = new TmmLabel(BUNDLE.getString("metatag.watched"));
       add(lblWatchedT, "flowx,cell 4 1 2 1");
 
       chckbxWatched = new JCheckBox("");
@@ -120,53 +120,53 @@ abstract public class MediaInformationPanel extends JPanel {
       add(new JSeparator(), "cell 0 2 6 1,growx");
     }
     {
-      JLabel lblVideoT = new TmmLabel(BUNDLE.getString("metatag.video")); //$NON-NLS-1$
+      JLabel lblVideoT = new TmmLabel(BUNDLE.getString("metatag.video"));
       add(lblVideoT, "cell 0 3");
 
-      JLabel lblSourceT = new TmmLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
+      JLabel lblSourceT = new TmmLabel(BUNDLE.getString("metatag.source"));
       add(lblSourceT, "cell 1 3");
 
       lblSource = new JLabel("");
       add(lblSource, "cell 2 3 3 1");
 
-      JLabel lblRuntimeT = new TmmLabel(BUNDLE.getString("metatag.runtime")); //$NON-NLS-1$
+      JLabel lblRuntimeT = new TmmLabel(BUNDLE.getString("metatag.runtime"));
       add(lblRuntimeT, "cell 1 4");
 
       lblRuntime = new JLabel("");
       add(lblRuntime, "cell 2 4");
 
-      JLabel lblCodecT = new TmmLabel(BUNDLE.getString("metatag.videocodec")); //$NON-NLS-1$
+      JLabel lblCodecT = new TmmLabel(BUNDLE.getString("metatag.videocodec"));
       add(lblCodecT, "cell 1 5");
 
       lblVideoCodec = new JLabel("");
       add(lblVideoCodec, "cell 2 5");
 
-      JLabel lblFrameRateT = new TmmLabel(BUNDLE.getString("metatag.framerate")); //$NON-NLS-1$
+      JLabel lblFrameRateT = new TmmLabel(BUNDLE.getString("metatag.framerate"));
       add(lblFrameRateT, "cell 4 5");
 
       lblFrameRate = new JLabel("");
       add(lblFrameRate, "cell 5 5");
 
-      JLabel lblResolutionT = new TmmLabel(BUNDLE.getString("metatag.resolution")); //$NON-NLS-1$
+      JLabel lblResolutionT = new TmmLabel(BUNDLE.getString("metatag.resolution"));
       add(lblResolutionT, "cell 1 6");
 
       lblVideoResolution = new JLabel("");
       add(lblVideoResolution, "cell 2 6");
 
-      JLabel lblVideoBitrateT = new TmmLabel(BUNDLE.getString("metatag.videobitrate")); //$NON-NLS-1$
+      JLabel lblVideoBitrateT = new TmmLabel(BUNDLE.getString("metatag.videobitrate"));
       add(lblVideoBitrateT, "cell 4 6");
 
       lblVideoBitrate = new JLabel("");
       add(lblVideoBitrate, "cell 5 6");
 
-      JLabel lblVideoBitDepthT = new TmmLabel(BUNDLE.getString("metatag.videobitdepth")); //$NON-NLS-1$
+      JLabel lblVideoBitDepthT = new TmmLabel(BUNDLE.getString("metatag.videobitdepth"));
       add(lblVideoBitDepthT, "cell 1 7");
 
       lblVideoBitDepth = new JLabel("");
       add(lblVideoBitDepth, "cell 2 7");
     }
     {
-      JLabel lblAudioT = new TmmLabel(BUNDLE.getString("metatag.audio")); //$NON-NLS-1$
+      JLabel lblAudioT = new TmmLabel(BUNDLE.getString("metatag.audio"));
       add(lblAudioT, "cell 0 9,aligny top");
 
       TmmTable tableAudioStreams = new TmmTable(
@@ -179,7 +179,7 @@ abstract public class MediaInformationPanel extends JPanel {
       add(scrollPane, "cell 1 9 5 1,growx");
     }
     {
-      JLabel lblSubtitle = new TmmLabel(BUNDLE.getString("metatag.subtitles")); //$NON-NLS-1$
+      JLabel lblSubtitle = new TmmLabel(BUNDLE.getString("metatag.subtitles"));
       add(lblSubtitle, "cell 0 11,aligny top");
 
       TmmTable tableSubtitles = new TmmTable(
@@ -195,7 +195,7 @@ abstract public class MediaInformationPanel extends JPanel {
       add(new JSeparator(), "cell 0 12 6 1,growx");
     }
     {
-      JLabel lblMediaFilesT = new TmmLabel(BUNDLE.getString("metatag.mediafiles")); //$NON-NLS-1$
+      JLabel lblMediaFilesT = new TmmLabel(BUNDLE.getString("metatag.mediafiles"));
       add(lblMediaFilesT, "cell 0 13 2 1");
     }
     {

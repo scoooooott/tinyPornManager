@@ -34,9 +34,9 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.tvshows.TvShowEpisodeSelectionModel;
@@ -52,7 +52,7 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
   private static final long                 serialVersionUID = -5598009673335010850L;
   private static final Logger               LOGGER           = LoggerFactory.getLogger(TvShowEpisodeDetailsPanel.class);
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle       BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle       BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private final TvShowEpisodeSelectionModel selectionModel;
 
@@ -99,7 +99,7 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
   private void initComponents() {
     setLayout(new MigLayout("insets 0", "[][10lp][grow]", "[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]"));
     {
-      JLabel lblSeasonT = new JLabel(BUNDLE.getString("metatag.season")); //$NON-NLS-1$
+      JLabel lblSeasonT = new JLabel(BUNDLE.getString("metatag.season"));
       TmmFontHelper.changeFont(lblSeasonT, 1.166, Font.BOLD);
       add(lblSeasonT, "cell 0 0");
 
@@ -108,7 +108,7 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
       add(lblSeason, "cell 2 0");
     }
     {
-      JLabel lblEpisodeT = new JLabel(BUNDLE.getString("metatag.episode")); //$NON-NLS-1$
+      JLabel lblEpisodeT = new JLabel(BUNDLE.getString("metatag.episode"));
       TmmFontHelper.changeFont(lblEpisodeT, 1.166, Font.BOLD);
       add(lblEpisodeT, "cell 0 1");
 
@@ -117,35 +117,35 @@ public class TvShowEpisodeDetailsPanel extends JPanel {
       add(lblEpisode, "cell 2 1");
     }
     {
-      JLabel lblAiredT = new TmmLabel(BUNDLE.getString("metatag.aired")); //$NON-NLS-1$
+      JLabel lblAiredT = new TmmLabel(BUNDLE.getString("metatag.aired"));
       add(lblAiredT, "cell 0 2");
 
       lblAired = new JLabel("");
       add(lblAired, "cell 2 2");
     }
     {
-      JLabel lblTagsT = new TmmLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
+      JLabel lblTagsT = new TmmLabel(BUNDLE.getString("metatag.tags"));
       add(lblTagsT, "cell 0 3");
 
       lblTags = new JLabel("");
       add(lblTags, "cell 2 3, wmin 0");
     }
     {
-      JLabel lblDateAddedT = new TmmLabel(BUNDLE.getString("metatag.dateadded")); //$NON-NLS-1$
+      JLabel lblDateAddedT = new TmmLabel(BUNDLE.getString("metatag.dateadded"));
       add(lblDateAddedT, "cell 0 4");
 
       lblDateAdded = new JLabel("");
       add(lblDateAdded, "cell 2 4");
     }
     {
-      JLabel lblPathT = new TmmLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
+      JLabel lblPathT = new TmmLabel(BUNDLE.getString("metatag.path"));
       add(lblPathT, "cell 0 5");
 
       lblPath = new LinkLabel("");
       add(lblPath, "cell 2 5, growx, wmin 0");
     }
     {
-      JLabel lblNoteT = new TmmLabel(BUNDLE.getString("metatag.note")); //$NON-NLS-1$
+      JLabel lblNoteT = new TmmLabel(BUNDLE.getString("metatag.note"));
       add(lblNoteT, "cell 0 6");
 
       lblNote = new JLabel("");

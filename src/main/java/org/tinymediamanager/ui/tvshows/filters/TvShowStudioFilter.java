@@ -100,7 +100,7 @@ public class TvShowStudioFilter extends AbstractTvShowUIFilter {
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("tvshowextendedsearch.studio")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("tvshowextendedsearch.studio"));
   }
 
   @Override

@@ -61,7 +61,7 @@ public class TvShowVideoFormatFilter extends AbstractCheckComboBoxTvShowUIFilter
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("metatag.resolution")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("metatag.resolution"));
   }
 
   @Override

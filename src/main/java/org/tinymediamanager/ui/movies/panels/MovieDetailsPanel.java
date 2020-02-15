@@ -33,8 +33,8 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.ui.TmmUIHelper;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
@@ -49,7 +49,7 @@ import net.miginfocom.swing.MigLayout;
 public class MovieDetailsPanel extends JPanel {
   private static final long           serialVersionUID = 6273970118830324299L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
   private static final Logger         LOGGER           = LoggerFactory.getLogger(MovieDetailsPanel.class);
 
   private MovieSelectionModel         movieSelectionModel;
@@ -97,49 +97,49 @@ public class MovieDetailsPanel extends JPanel {
   private void initComponents() {
     setLayout(new MigLayout("insets 0", "[][10lp][200lp,grow]", "[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]"));
 
-    JLabel lblReleaseDateT = new TmmLabel(BUNDLE.getString("metatag.releasedate")); //$NON-NLS-1$
+    JLabel lblReleaseDateT = new TmmLabel(BUNDLE.getString("metatag.releasedate"));
     add(lblReleaseDateT, "cell 0 0");
 
     lblReleaseDate = new JLabel("");
     add(lblReleaseDate, "cell 2 0,growx,wmin 0");
 
-    JLabel lblProductionT = new TmmLabel(BUNDLE.getString("metatag.production")); //$NON-NLS-1$
+    JLabel lblProductionT = new TmmLabel(BUNDLE.getString("metatag.production"));
     add(lblProductionT, "cell 0 1");
 
     lblProduction = new JLabel();
     add(lblProduction, "cell 2 1,growx,wmin 0");
 
-    JLabel lblCountryT = new TmmLabel(BUNDLE.getString("metatag.country")); //$NON-NLS-1$
+    JLabel lblCountryT = new TmmLabel(BUNDLE.getString("metatag.country"));
     add(lblCountryT, "cell 0 2");
 
     lblCountry = new JLabel("");
     add(lblCountry, "cell 2 2,growx,wmin 0");
 
-    JLabel lblSpokenLanguagesT = new TmmLabel(BUNDLE.getString("metatag.spokenlanguages")); //$NON-NLS-1$
+    JLabel lblSpokenLanguagesT = new TmmLabel(BUNDLE.getString("metatag.spokenlanguages"));
     add(lblSpokenLanguagesT, "cell 0 3");
 
     lblSpokenLanguages = new JLabel("");
     add(lblSpokenLanguages, "cell 2 3,growx,wmin 0");
 
-    JLabel lblMoviesetT = new TmmLabel(BUNDLE.getString("metatag.movieset")); //$NON-NLS-1$
+    JLabel lblMoviesetT = new TmmLabel(BUNDLE.getString("metatag.movieset"));
     add(lblMoviesetT, "cell 0 4");
 
     lblMovieSet = new JLabel("");
     add(lblMovieSet, "cell 2 4,growx,wmin 0");
 
-    JLabel lblEditionT = new TmmLabel(BUNDLE.getString("metatag.edition")); //$NON-NLS-1$
+    JLabel lblEditionT = new TmmLabel(BUNDLE.getString("metatag.edition"));
     add(lblEditionT, "cell 0 5");
 
     lblEdition = new JLabel("");
     add(lblEdition, "cell 2 5,growx,wmin 0");
 
-    JLabel lblTagsT = new TmmLabel(BUNDLE.getString("metatag.tags")); //$NON-NLS-1$
+    JLabel lblTagsT = new TmmLabel(BUNDLE.getString("metatag.tags"));
     add(lblTagsT, "cell 0 6");
 
     lblTags = new JLabel("");
     add(lblTags, "cell 2 6,growx,wmin 0");
 
-    JLabel lblMoviePathT = new TmmLabel(BUNDLE.getString("metatag.path")); //$NON-NLS-1$
+    JLabel lblMoviePathT = new TmmLabel(BUNDLE.getString("metatag.path"));
     add(lblMoviePathT, "cell 0 7");
 
     lblMoviePath = new LinkLabel("");

@@ -24,8 +24,8 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.ui.TmmUIHelper;
-import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * The WikiAction to redirect to the wiki
@@ -34,11 +34,11 @@ import org.tinymediamanager.ui.UTF8Control;
  */
 public class DocsAction extends TmmAction {
   private static final long           serialVersionUID = 1668251251156765161L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
   private static final Logger         LOGGER           = LoggerFactory.getLogger(DocsAction.class);
 
   public DocsAction() {
-    putValue(NAME, BUNDLE.getString("tmm.docs")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("tmm.docs"));
   }
 
   @Override

@@ -24,8 +24,8 @@ import javax.swing.table.TableColumn;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.ui.NumberCellEditor;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.table.TmmTable;
 
 import ca.odell.glazedlists.BasicEventList;
@@ -41,7 +41,7 @@ import ca.odell.glazedlists.swing.DefaultEventTableModel;
 public class MediaRatingTable extends TmmTable {
   private static final long                                           serialVersionUID = 8010732881277204728L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle                                 BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle                                 BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private Map<String, org.tinymediamanager.core.entities.MediaRating> ratingMap;
   private EventList<MediaRating>                                      mediaRatingList;
@@ -170,16 +170,16 @@ public class MediaRatingTable extends TmmTable {
     public String getColumnName(int column) {
       switch (column) {
         case 0:
-          return BUNDLE.getString("metatag.rating.source"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.rating.source");
 
         case 1:
-          return BUNDLE.getString("metatag.rating"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.rating");
 
         case 2:
-          return BUNDLE.getString("metatag.rating.maxvalue"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.rating.maxvalue");
 
         case 3:
-          return BUNDLE.getString("metatag.rating.votes"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.rating.votes");
       }
       return "";
     }

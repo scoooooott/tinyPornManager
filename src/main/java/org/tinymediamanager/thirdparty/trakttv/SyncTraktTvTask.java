@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
-import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * Sync your data with trakt.tv
@@ -30,7 +30,7 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class SyncTraktTvTask extends TmmTask {
-  private static final ResourceBundle BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE             = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private boolean                     syncMovies         = false;
   private boolean                     syncMoviesWatched  = false;
@@ -66,7 +66,7 @@ public class SyncTraktTvTask extends TmmTask {
     TraktTv traktTV = TraktTv.getInstance();
 
     if (syncMovies) {
-      publishState(BUNDLE.getString("trakt.sync.movie"), 0); //$NON-NLS-1$
+      publishState(BUNDLE.getString("trakt.sync.movie"), 0);
       if (movies.isEmpty()) {
         traktTV.syncTraktMovieCollection();
       }
@@ -76,7 +76,7 @@ public class SyncTraktTvTask extends TmmTask {
     }
 
     if (syncMoviesWatched) {
-      publishState(BUNDLE.getString("trakt.sync.moviewatched"), 0); //$NON-NLS-1$
+      publishState(BUNDLE.getString("trakt.sync.moviewatched"), 0);
       if (movies.isEmpty()) {
         traktTV.syncTraktMovieWatched();
       }
@@ -86,7 +86,7 @@ public class SyncTraktTvTask extends TmmTask {
     }
 
     if (syncTvShows) {
-      publishState(BUNDLE.getString("trakt.sync.tvshow"), 0); //$NON-NLS-1$
+      publishState(BUNDLE.getString("trakt.sync.tvshow"), 0);
       if (tvShows.isEmpty()) {
         traktTV.syncTraktTvShowCollection();
       }
@@ -96,7 +96,7 @@ public class SyncTraktTvTask extends TmmTask {
     }
 
     if (syncTvShowsWatched) {
-      publishState(BUNDLE.getString("trakt.sync.tvshowwatched"), 0); //$NON-NLS-1$
+      publishState(BUNDLE.getString("trakt.sync.tvshowwatched"), 0);
       if (tvShows.isEmpty()) {
         traktTV.syncTraktTvShowWatched();
       }

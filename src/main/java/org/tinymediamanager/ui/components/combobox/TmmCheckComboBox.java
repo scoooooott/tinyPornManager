@@ -43,8 +43,8 @@ import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.WrapLayout;
 import org.tinymediamanager.ui.components.FlatButton;
 
@@ -57,7 +57,7 @@ import org.tinymediamanager.ui.components.FlatButton;
  */
 public class TmmCheckComboBox<E> extends JComboBox<TmmCheckComboBoxItem<E>> {
   private static final long                         serialVersionUID = -7796247854176782396L;
-  protected static final ResourceBundle             BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  protected static final ResourceBundle             BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   protected List<TmmCheckComboBoxItem<E>>           checkBoxes;
   protected Map<E, Boolean>                         selectedItems;
@@ -268,11 +268,11 @@ public class TmmCheckComboBox<E> extends JComboBox<TmmCheckComboBoxItem<E>> {
       checkBoxes.add(cb);
     }
 
-    cb = new TmmCheckComboBoxItem<>(BUNDLE.getString("Button.selectall")); //$NON-NLS-1$
+    cb = new TmmCheckComboBoxItem<>(BUNDLE.getString("Button.selectall"));
     cb.setSelected(selectedAll);
     checkBoxes.add(cb);
 
-    cb = new TmmCheckComboBoxItem<>(BUNDLE.getString("Button.selectnone")); //$NON-NLS-1$
+    cb = new TmmCheckComboBoxItem<>(BUNDLE.getString("Button.selectnone"));
     cb.setSelected(selectedNone);
     checkBoxes.add(cb);
   }
@@ -425,7 +425,7 @@ public class TmmCheckComboBox<E> extends JComboBox<TmmCheckComboBoxItem<E>> {
 
       List<E> objs = getSelectedItems();
       if (objs.isEmpty()) {
-        add(new JLabel(BUNDLE.getString("ComboBox.select"))); //$NON-NLS-1$
+        add(new JLabel(BUNDLE.getString("ComboBox.select")));
       }
       else {
         for (E obj : objs) {

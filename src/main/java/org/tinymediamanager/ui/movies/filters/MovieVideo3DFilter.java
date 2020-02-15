@@ -49,7 +49,7 @@ public class MovieVideo3DFilter extends AbstractMovieUIFilter {
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("metatag.3d")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("metatag.3d"));
   }
 
   @Override

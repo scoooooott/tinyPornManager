@@ -49,7 +49,7 @@ public class AboutDialog extends TmmDialog {
   private static final Logger LOGGER           = LoggerFactory.getLogger(AboutDialog.class);
 
   public AboutDialog() {
-    super(BUNDLE.getString("tmm.about"), "aboutDialog"); //$NON-NLS-1$
+    super(BUNDLE.getString("tmm.about"), "aboutDialog");
 
     JPanel contentPanel = new JPanel();
     getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -60,28 +60,28 @@ public class AboutDialog extends TmmDialog {
       contentPanel.add(lblLogo, "cell 0 0 1 7,alignx left,aligny top");
     }
     {
-      JLabel lblTinymediamanager = new JLabel("tinyMediaManager"); //$NON-NLS-1$
+      JLabel lblTinymediamanager = new JLabel("tinyMediaManager");
       TmmFontHelper.changeFont(lblTinymediamanager, 1.5, Font.BOLD);
       contentPanel.add(lblTinymediamanager, "cell 2 0,alignx center");
     }
     {
-      JLabel lblByManuel = new JLabel("\u00A9 2012 - 2019 by Manuel Laggner"); //$NON-NLS-1$
+      JLabel lblByManuel = new JLabel("\u00A9 2012 - 2019 by Manuel Laggner");
       contentPanel.add(lblByManuel, "cell 2 2,alignx center");
     }
     {
-      JLabel lblVersion = new JLabel(BUNDLE.getString("tmm.version") + ": " + ReleaseInfo.getRealVersion()); //$NON-NLS-1$
+      JLabel lblVersion = new JLabel(BUNDLE.getString("tmm.version") + ": " + ReleaseInfo.getRealVersion());
       contentPanel.add(lblVersion, "cell 2 4");
     }
     {
-      JLabel lblBuild = new JLabel(BUNDLE.getString("tmm.builddate") + ": " + ReleaseInfo.getRealBuildDate());//$NON-NLS-1$
+      JLabel lblBuild = new JLabel(BUNDLE.getString("tmm.builddate") + ": " + ReleaseInfo.getRealBuildDate());
       contentPanel.add(lblBuild, "cell 2 6");
     }
     {
-      JLabel lblHomepage = new JLabel(BUNDLE.getString("tmm.homepage")); //$NON-NLS-1$
+      JLabel lblHomepage = new JLabel(BUNDLE.getString("tmm.homepage"));
       contentPanel.add(lblHomepage, "cell 0 7,alignx right");
     }
     {
-      final LinkLabel lblHomepage = new LinkLabel("https://www.tinymediamanager.org/"); //$NON-NLS-1$
+      final LinkLabel lblHomepage = new LinkLabel("https://www.tinymediamanager.org/");
       lblHomepage.addActionListener(arg0 -> {
         try {
           TmmUIHelper.browseUrl(lblHomepage.getText());
@@ -89,17 +89,17 @@ public class AboutDialog extends TmmDialog {
         catch (Exception e) {
           LOGGER.error(e.getMessage());
           MessageManager.instance.pushMessage(
-              new Message(MessageLevel.ERROR, lblHomepage.getText(), "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() })); //$NON-NLS-1$
+              new Message(MessageLevel.ERROR, lblHomepage.getText(), "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
         }
       });
       contentPanel.add(lblHomepage, "cell 2 7");
     }
     {
-      JLabel lblThanksTo = new JLabel(BUNDLE.getString("tmm.thanksto")); //$NON-NLS-1$
+      JLabel lblThanksTo = new JLabel(BUNDLE.getString("tmm.thanksto"));
       contentPanel.add(lblThanksTo, "cell 0 9,alignx right");
     }
     {
-      JLabel lblMyronForHelping = new JLabel("Myron for helping me with coding, scrapers, localization, setup, everything..."); //$NON-NLS-1$
+      JLabel lblMyronForHelping = new JLabel("Myron for helping me with coding, scrapers, localization, setup, everything...");
       contentPanel.add(lblMyronForHelping, "cell 2 9");
     }
     {
@@ -111,11 +111,11 @@ public class AboutDialog extends TmmDialog {
       contentPanel.add(lblTranslators, "cell 2 11");
     }
     {
-      JLabel lblLibs = new JLabel("The creators of all libs we've used"); //$NON-NLS-1$
+      JLabel lblLibs = new JLabel("The creators of all libs we've used");
       contentPanel.add(lblLibs, "cell 2 12");
     }
     {
-      JLabel lblTester = new JLabel("Everyone who tested and provided feedback"); //$NON-NLS-1$
+      JLabel lblTester = new JLabel("Everyone who tested and provided feedback");
       contentPanel.add(lblTester, "cell 2 13");
     }
     {
@@ -130,7 +130,7 @@ public class AboutDialog extends TmmDialog {
     private static final long serialVersionUID = 4652946848116365706L;
 
     CloseAction() {
-      putValue(NAME, BUNDLE.getString("Button.ok")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("Button.ok"));
       putValue(SMALL_ICON, IconManager.APPLY_INV);
       putValue(LARGE_ICON_KEY, IconManager.APPLY_INV);
     }

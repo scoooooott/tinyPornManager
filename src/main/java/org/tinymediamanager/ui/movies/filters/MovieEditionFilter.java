@@ -54,7 +54,7 @@ public class MovieEditionFilter extends AbstractCheckComboBoxMovieUIFilter<Movie
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("metatag.edition")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("metatag.edition"));
   }
 
   private void buildAndInstallEditionArray() {

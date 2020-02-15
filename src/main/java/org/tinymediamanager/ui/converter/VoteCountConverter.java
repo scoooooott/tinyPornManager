@@ -19,7 +19,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.jdesktop.beansbinding.Converter;
-import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.core.UTF8Control;
 
 /**
  * The Class VoteCountConverter.
@@ -28,7 +28,7 @@ import org.tinymediamanager.ui.UTF8Control;
  */
 public class VoteCountConverter extends Converter<Integer, String> {
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());
   private Locale                      locale = Locale.getDefault();
 
   @Override

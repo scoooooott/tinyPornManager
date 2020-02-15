@@ -40,9 +40,9 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmUIHelper;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.CollapsiblePanel;
 import org.tinymediamanager.ui.components.TmmLabel;
 
@@ -51,7 +51,7 @@ import net.miginfocom.swing.MigLayout;
 class FileTypesSettingsPanel extends JPanel {
   private static final long           serialVersionUID = 9136097757447080369L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private Settings                    settings         = Settings.getInstance();
   private JTextField                  tfVideoFiletype;
@@ -126,7 +126,7 @@ class FileTypesSettingsPanel extends JPanel {
           Pattern.compile(tfCleanupFiletype.getText());
         }
         catch (PatternSyntaxException ex) {
-          JOptionPane.showMessageDialog(null, BUNDLE.getString("message.regex.error")); //$NON-NLS-1$
+          JOptionPane.showMessageDialog(null, BUNDLE.getString("message.regex.error"));
           return;
         }
         Globals.settings.addCleanupFileType(tfCleanupFiletype.getText());
@@ -147,7 +147,7 @@ class FileTypesSettingsPanel extends JPanel {
     {
       JPanel panelVideoFiletypes = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][100lp][][grow]", "[]"));
 
-      JLabel lblVideoFiletypesT = new TmmLabel(BUNDLE.getString("Settings.videofiletypes"), H3); //$NON-NLS-1$
+      JLabel lblVideoFiletypesT = new TmmLabel(BUNDLE.getString("Settings.videofiletypes"), H3);
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelVideoFiletypes, lblVideoFiletypesT, true);
       add(collapsiblePanel, "cell 0 0,growx, wmin 0");
       {
@@ -159,20 +159,20 @@ class FileTypesSettingsPanel extends JPanel {
 
         btnRemoveVideoFiletype = new JButton(IconManager.REMOVE_INV);
         panelVideoFiletypes.add(btnRemoveVideoFiletype, "cell 2 0,aligny bottom, growx");
-        btnRemoveVideoFiletype.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
+        btnRemoveVideoFiletype.setToolTipText(BUNDLE.getString("Button.remove"));
 
         tfVideoFiletype = new JTextField();
         panelVideoFiletypes.add(tfVideoFiletype, "cell 1 1,growx");
 
         btnAddVideoFiletype = new JButton(IconManager.ADD_INV);
         panelVideoFiletypes.add(btnAddVideoFiletype, "cell 2 1,growx");
-        btnAddVideoFiletype.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+        btnAddVideoFiletype.setToolTipText(BUNDLE.getString("Button.add"));
       }
     }
     {
       JPanel panelSubtitleFiletypes = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][100lp][][grow]", "[]"));
 
-      JLabel lblSubtitleFiletypesT = new TmmLabel(BUNDLE.getString("Settings.extrafiletypes"), H3); //$NON-NLS-1$
+      JLabel lblSubtitleFiletypesT = new TmmLabel(BUNDLE.getString("Settings.extrafiletypes"), H3);
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelSubtitleFiletypes, lblSubtitleFiletypesT, true);
       add(collapsiblePanel, "cell 0 2,growx,wmin 0");
       {
@@ -184,20 +184,20 @@ class FileTypesSettingsPanel extends JPanel {
 
         btnRemoveSubtitleFiletype = new JButton(IconManager.REMOVE_INV);
         panelSubtitleFiletypes.add(btnRemoveSubtitleFiletype, "cell 2 0,aligny bottom, growx");
-        btnRemoveSubtitleFiletype.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
+        btnRemoveSubtitleFiletype.setToolTipText(BUNDLE.getString("Button.remove"));
 
         tfSubtitleFiletype = new JTextField();
         panelSubtitleFiletypes.add(tfSubtitleFiletype, "cell 1 1,growx");
 
         btnAddSubtitleFiletype = new JButton(IconManager.ADD_INV);
         panelSubtitleFiletypes.add(btnAddSubtitleFiletype, "cell 2 1");
-        btnAddSubtitleFiletype.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+        btnAddSubtitleFiletype.setToolTipText(BUNDLE.getString("Button.add"));
       }
     }
     {
       JPanel panelAudioFiletypes = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][100lp][][grow]", "[]"));
 
-      JLabel lblAudioFiletypesT = new TmmLabel(BUNDLE.getString("Settings.audiofiletypes"), H3); //$NON-NLS-1$
+      JLabel lblAudioFiletypesT = new TmmLabel(BUNDLE.getString("Settings.audiofiletypes"), H3);
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelAudioFiletypes, lblAudioFiletypesT, true);
       add(collapsiblePanel, "cell 0 4,growx,wmin 0");
       {
@@ -209,20 +209,20 @@ class FileTypesSettingsPanel extends JPanel {
 
         btnRemoveAudioFiletype = new JButton(IconManager.REMOVE_INV);
         panelAudioFiletypes.add(btnRemoveAudioFiletype, "cell 2 0,aligny bottom, growx");
-        btnRemoveAudioFiletype.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
+        btnRemoveAudioFiletype.setToolTipText(BUNDLE.getString("Button.remove"));
 
         tfAudioFiletype = new JTextField();
         panelAudioFiletypes.add(tfAudioFiletype, "cell 1 1,growx");
 
         btnAddAudioFiletype = new JButton(IconManager.ADD_INV);
         panelAudioFiletypes.add(btnAddAudioFiletype, "cell 2 1, growx");
-        btnAddAudioFiletype.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+        btnAddAudioFiletype.setToolTipText(BUNDLE.getString("Button.add"));
       }
     }
     {
       JPanel panelCleanupFiletypes = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][300lp][][grow]", "[]"));
 
-      JLabel lblCleanupFiletypesT = new TmmLabel(BUNDLE.getString("Settings.unwantedfiletypes"), H3); //$NON-NLS-1$
+      JLabel lblCleanupFiletypesT = new TmmLabel(BUNDLE.getString("Settings.unwantedfiletypes"), H3);
       JLabel lblCleanupFiletypesHelpT = new TmmLabel(BUNDLE.getString("Settings.cleanupfiles.help"));
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelCleanupFiletypes, lblCleanupFiletypesT, true);
       add(collapsiblePanel, "cell 0 6,growx,wmin 0");
@@ -235,18 +235,18 @@ class FileTypesSettingsPanel extends JPanel {
 
         btnRemoveCleanupFiletype = new JButton(IconManager.REMOVE_INV);
         panelCleanupFiletypes.add(btnRemoveCleanupFiletype, "cell 2 0,aligny bottom, growx");
-        btnRemoveCleanupFiletype.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
+        btnRemoveCleanupFiletype.setToolTipText(BUNDLE.getString("Button.remove"));
 
         tfCleanupFiletype = new JTextField();
         panelCleanupFiletypes.add(tfCleanupFiletype, "cell 1 1,growx");
 
         btnAddCleanupFiletype = new JButton(IconManager.ADD_INV);
         panelCleanupFiletypes.add(btnAddCleanupFiletype, "cell 2 1, growx");
-        btnAddCleanupFiletype.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+        btnAddCleanupFiletype.setToolTipText(BUNDLE.getString("Button.add"));
 
         panelCleanupFiletypes.add(lblCleanupFiletypesHelpT, "cell 1 2");
 
-        JButton btnHelp = new JButton(BUNDLE.getString("tmm.help")); //$NON-NLS-1$
+        JButton btnHelp = new JButton(BUNDLE.getString("tmm.help"));
         btnHelp.addActionListener(e -> {
           String url = StringEscapeUtils.unescapeHtml4("https://gitlab.com/tinyMediaManager/tinyMediaManager/wikis/General-Settings#file-types");
           try {

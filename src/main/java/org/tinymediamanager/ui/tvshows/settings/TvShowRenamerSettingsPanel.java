@@ -59,6 +59,7 @@ import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
@@ -71,7 +72,6 @@ import org.tinymediamanager.ui.ScrollingEventDelegator;
 import org.tinymediamanager.ui.TableColumnResizer;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.CollapsiblePanel;
 import org.tinymediamanager.ui.components.EnhancedTextField;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
@@ -96,7 +96,7 @@ import net.miginfocom.swing.MigLayout;
 public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListener {
   private static final long                        serialVersionUID  = 5189531235704401313L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle              BUNDLE            = ResourceBundle.getBundle("messages", new UTF8Control());  //$NON-NLS-1$
+  private static final ResourceBundle              BUNDLE            = ResourceBundle.getBundle("messages", new UTF8Control());
   private static final Logger                      LOGGER            = LoggerFactory.getLogger(TvShowRenamerSettingsPanel.class);
 
   private TvShowSettings                           settings          = TvShowModuleManager.SETTINGS;
@@ -230,16 +230,16 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
     {
       JPanel panelPatterns = new JPanel(new MigLayout("insets 0, hidemode 1", "[20lp!][15lp][][300lp,grow]", "[][][][][][][]"));
 
-      JLabel lblPatternsT = new TmmLabel(BUNDLE.getString("Settings.tvshow.renamer.title"), H3); //$NON-NLS-1$
+      JLabel lblPatternsT = new TmmLabel(BUNDLE.getString("Settings.tvshow.renamer.title"), H3);
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelPatterns, lblPatternsT, true);
       add(collapsiblePanel, "cell 0 0,growx,wmin 0");
 
       {
-        JLabel lblTvShowFolder = new JLabel(BUNDLE.getString("Settings.tvshowfoldername")); //$NON-NLS-1$
+        JLabel lblTvShowFolder = new JLabel(BUNDLE.getString("Settings.tvshowfoldername"));
         panelPatterns.add(lblTvShowFolder, "cell 1 0 2 1,alignx right");
 
         tfTvShowFolder = new EnhancedTextField(IconManager.UNDO_GREY);
-        tfTvShowFolder.setIconToolTipText(BUNDLE.getString("Settings.renamer.reverttodefault")); //$NON-NLS-1$
+        tfTvShowFolder.setIconToolTipText(BUNDLE.getString("Settings.renamer.reverttodefault"));
         tfTvShowFolder.addIconMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
@@ -248,7 +248,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
         });
         panelPatterns.add(tfTvShowFolder, "cell 3 0 2 1,growx");
 
-        JLabel lblDefault = new JLabel(BUNDLE.getString("Settings.default")); //$NON-NLS-1$
+        JLabel lblDefault = new JLabel(BUNDLE.getString("Settings.default"));
         panelPatterns.add(lblDefault, "cell 1 1 2 1,alignx right");
         TmmFontHelper.changeFont(lblDefault, L2);
 
@@ -257,11 +257,11 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
         TmmFontHelper.changeFont(tpDefaultFolderPattern, L2);
       }
       {
-        JLabel lblSeasonFolderName = new JLabel(BUNDLE.getString("Settings.tvshowseasonfoldername")); //$NON-NLS-1$
+        JLabel lblSeasonFolderName = new JLabel(BUNDLE.getString("Settings.tvshowseasonfoldername"));
         panelPatterns.add(lblSeasonFolderName, "cell 1 2 2 1,alignx right");
 
         tfSeasonFolderName = new EnhancedTextField(IconManager.UNDO_GREY);
-        tfSeasonFolderName.setIconToolTipText(BUNDLE.getString("Settings.renamer.reverttodefault")); //$NON-NLS-1$
+        tfSeasonFolderName.setIconToolTipText(BUNDLE.getString("Settings.renamer.reverttodefault"));
         tfSeasonFolderName.addIconMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
@@ -270,7 +270,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
         });
         panelPatterns.add(tfSeasonFolderName, "cell 3 2 2 1,growx");
 
-        JLabel lblDefault = new JLabel(BUNDLE.getString("Settings.default")); //$NON-NLS-1$
+        JLabel lblDefault = new JLabel(BUNDLE.getString("Settings.default"));
         panelPatterns.add(lblDefault, "cell 1 3 2 1,alignx right");
         TmmFontHelper.changeFont(lblDefault, L2);
 
@@ -283,7 +283,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
         panelPatterns.add(lblEpisodeFileName, "cell 1 4 2 1,alignx right");
 
         tfEpisodeFilename = new EnhancedTextField(IconManager.UNDO_GREY);
-        tfEpisodeFilename.setIconToolTipText(BUNDLE.getString("Settings.renamer.reverttodefault")); //$NON-NLS-1$
+        tfEpisodeFilename.setIconToolTipText(BUNDLE.getString("Settings.renamer.reverttodefault"));
         tfEpisodeFilename.addIconMouseListener(new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
@@ -292,7 +292,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
         });
         panelPatterns.add(tfEpisodeFilename, "cell 3 4 2 1,growx");
 
-        JLabel lblDefault = new JLabel(BUNDLE.getString("Settings.default")); //$NON-NLS-1$
+        JLabel lblDefault = new JLabel(BUNDLE.getString("Settings.default"));
         panelPatterns.add(lblDefault, "cell 1 5 2 1,alignx right");
         TmmFontHelper.changeFont(lblDefault, L2);
 
@@ -301,10 +301,10 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
         TmmFontHelper.changeFont(tpDefaultFilePattern, L2);
       }
       {
-        JLabel lblRenamerHintT = new JLabel(BUNDLE.getString("Settings.tvshow.renamer.hint")); //$NON-NLS-1$
+        JLabel lblRenamerHintT = new JLabel(BUNDLE.getString("Settings.tvshow.renamer.hint"));
         panelPatterns.add(lblRenamerHintT, "cell 1 6 3 1");
 
-        JButton btnHelp = new JButton(BUNDLE.getString("tmm.help")); //$NON-NLS-1$
+        JButton btnHelp = new JButton(BUNDLE.getString("tmm.help"));
         btnHelp.addActionListener(e -> {
           String url = StringEscapeUtils.unescapeHtml4("https://gitlab.com/tinyMediaManager/tinyMediaManager/wikis/TV-Show-Settings#renamer");
           try {
@@ -322,19 +322,19 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
     {
       JPanel panelAdvancedOptions = SettingsPanelFactory.createSettingsPanel();
 
-      JLabel lblAdvancedOptions = new TmmLabel(BUNDLE.getString("Settings.advancedoptions"), H3); //$NON-NLS-1$
+      JLabel lblAdvancedOptions = new TmmLabel(BUNDLE.getString("Settings.advancedoptions"), H3);
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelAdvancedOptions, lblAdvancedOptions, true);
       add(collapsiblePanel, "cell 0 2,growx");
       {
-        chckbxSpaceReplacement = new JCheckBox(BUNDLE.getString("Settings.renamer.spacereplacement")); //$NON-NLS-1$
-        chckbxSpaceReplacement.setToolTipText(BUNDLE.getString("Settings.renamer.spacereplacement.hint")); //$NON-NLS-1$
+        chckbxSpaceReplacement = new JCheckBox(BUNDLE.getString("Settings.renamer.spacereplacement"));
+        chckbxSpaceReplacement.setToolTipText(BUNDLE.getString("Settings.renamer.spacereplacement.hint"));
         panelAdvancedOptions.add(chckbxSpaceReplacement, "cell 1 0 2 1");
 
         cbSpaceReplacement = new JComboBox(spaceReplacements.toArray());
         panelAdvancedOptions.add(cbSpaceReplacement, "cell 1 0");
       }
       {
-        JLabel lblColonReplacement = new JLabel(BUNDLE.getString("Settings.renamer.colonreplacement")); //$NON-NLS-1$
+        JLabel lblColonReplacement = new JLabel(BUNDLE.getString("Settings.renamer.colonreplacement"));
         panelAdvancedOptions.add(lblColonReplacement, "cell 2 1");
         lblColonReplacement.setToolTipText(BUNDLE.getString("Settings.renamer.colonreplacement.hint"));
 
@@ -346,7 +346,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
         chckbxAsciiReplacement = new JCheckBox(BUNDLE.getString("Settings.renamer.asciireplacement"));
         panelAdvancedOptions.add(chckbxAsciiReplacement, "cell 1 2 2 1");
 
-        JLabel lblAsciiHint = new JLabel(BUNDLE.getString("Settings.renamer.asciireplacement.hint")); //$NON-NLS-1$
+        JLabel lblAsciiHint = new JLabel(BUNDLE.getString("Settings.renamer.asciireplacement.hint"));
         panelAdvancedOptions.add(lblAsciiHint, "cell 2 3");
         TmmFontHelper.changeFont(lblAsciiHint, L2);
       }
@@ -355,7 +355,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
       JPanel panelExample = new JPanel();
       panelExample.setLayout(new MigLayout("hidemode 1, insets 0", "[20lp!][300lp,grow]", ""));
 
-      JLabel lblAdvancedOptions = new TmmLabel(BUNDLE.getString("Settings.example"), H3); //$NON-NLS-1$
+      JLabel lblAdvancedOptions = new TmmLabel(BUNDLE.getString("Settings.example"), H3);
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelExample, lblAdvancedOptions, true);
       add(collapsiblePanel, "cell 0 4,growx, wmin 0");
       {
@@ -521,7 +521,7 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
       this.token = token;
       this.completeToken = createCompleteToken();
       try {
-        this.description = BUNDLE.getString("Settings.tvshow.renamer." + token); //$NON-NLS-1$
+        this.description = BUNDLE.getString("Settings.tvshow.renamer." + token);
       }
       catch (Exception e) {
         this.description = "";
@@ -581,13 +581,13 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
     public String getColumnName(int column) {
       switch (column) {
         case 0:
-          return BUNDLE.getString("Settings.renamer.token.name"); //$NON-NLS-1$
+          return BUNDLE.getString("Settings.renamer.token.name");
 
         case 1:
-          return BUNDLE.getString("Settings.renamer.token"); //$NON-NLS-1$
+          return BUNDLE.getString("Settings.renamer.token");
 
         case 2:
-          return BUNDLE.getString("Settings.renamer.value"); //$NON-NLS-1$
+          return BUNDLE.getString("Settings.renamer.value");
 
         default:
           return null;

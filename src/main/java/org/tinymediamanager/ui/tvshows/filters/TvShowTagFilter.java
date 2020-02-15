@@ -93,7 +93,7 @@ public class TvShowTagFilter extends AbstractCheckComboBoxTvShowUIFilter<String>
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("movieextendedsearch.tag")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("movieextendedsearch.tag"));
   }
 
   private void buildAndInstallTagsArray() {

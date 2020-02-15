@@ -356,7 +356,7 @@ class KodiUtil {
 
     common = getKodiAddons(dirFilter, fileFilter);
 
-    if (common.size() == 0) {
+    if (common.isEmpty()) {
       LOGGER.debug("Meh - could not find any common folders...");
     }
 
@@ -411,7 +411,7 @@ class KodiUtil {
       }
     }
 
-    if (common.size() == 0) {
+    if (common.isEmpty()) {
       LOGGER.debug("Meh - could not find any common function...");
     }
 

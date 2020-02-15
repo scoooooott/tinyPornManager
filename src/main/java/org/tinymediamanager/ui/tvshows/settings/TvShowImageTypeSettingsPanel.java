@@ -26,6 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowBannerNaming;
@@ -43,7 +44,6 @@ import org.tinymediamanager.core.tvshow.filenaming.TvShowSeasonPosterNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowSeasonThumbNaming;
 import org.tinymediamanager.core.tvshow.filenaming.TvShowThumbNaming;
 import org.tinymediamanager.ui.TmmFontHelper;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.CollapsiblePanel;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.TmmLabel;
@@ -58,7 +58,7 @@ import net.miginfocom.swing.MigLayout;
 class TvShowImageTypeSettingsPanel extends JPanel {
   private static final long           serialVersionUID = 4999827736720726395L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private TvShowSettings              settings         = TvShowModuleManager.SETTINGS;
   private JCheckBox                   chckbxEpisodeThumb1;
@@ -114,7 +114,7 @@ class TvShowImageTypeSettingsPanel extends JPanel {
       JPanel panelFileNaming = new JPanel(new MigLayout("", "[25lp,shrink 0][][][100lp,grow][]",
           "[][10lp!][10lp][10lp!][10lp][10lp!][10lp][10lp!][10lp][10lp!][10lp][10lp!][10lp][10lp!][][10lp!][][10lp!][][10lp!][10lp][][10lp!][10lp][10lp!][10lp][][10lp!][10lp][][][20lp][]"));
 
-      JLabel lblFiletypes = new TmmLabel(BUNDLE.getString("Settings.artwork.naming"), H3); //$NON-NLS-1$
+      JLabel lblFiletypes = new TmmLabel(BUNDLE.getString("Settings.artwork.naming"), H3);
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelFileNaming, lblFiletypes, true);
       add(collapsiblePanel, "cell 0 0,growx, wmin 0");
       {
@@ -235,7 +235,7 @@ class TvShowImageTypeSettingsPanel extends JPanel {
         chckbxEpisodeThumb4 = new JCheckBox("<dynamic>.tbn");
         panelFileNaming.add(chckbxEpisodeThumb4, "cell 2 29");
 
-        JTextArea tpFileNamingHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.naming.info")); //$NON-NLS-1$
+        JTextArea tpFileNamingHint = new ReadOnlyTextArea(BUNDLE.getString("Settings.naming.info"));
         panelFileNaming.add(tpFileNamingHint, "cell 1 31 3 1,growx");
         TmmFontHelper.changeFont(tpFileNamingHint, 0.833);
       }

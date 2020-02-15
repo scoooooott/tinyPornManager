@@ -18,11 +18,11 @@ package org.tinymediamanager.ui.tvshows.actions;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.thirdparty.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
 
 /**
@@ -32,11 +32,11 @@ import org.tinymediamanager.ui.actions.TmmAction;
  */
 public class TvShowSyncTraktTvAction extends TmmAction {
   private static final long           serialVersionUID = 6640292090443882545L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public TvShowSyncTraktTvAction() {
-    putValue(NAME, BUNDLE.getString("tvshow.synctrakt")); //$NON-NLS-1$
-    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.synctrakt.desc")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("tvshow.synctrakt"));
+    putValue(SHORT_DESCRIPTION, BUNDLE.getString("tvshow.synctrakt.desc"));
     putValue(SMALL_ICON, IconManager.SYNC);
     putValue(LARGE_ICON_KEY, IconManager.SYNC);
   }

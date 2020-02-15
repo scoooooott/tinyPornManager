@@ -227,7 +227,7 @@ public class TvShowMissingEpisodeListDialog extends TmmDialog {
     private void compareTvShows() {
 
       for (TvShow tvshow : tvShows) {
-        if (tvshow.getIds().size() == 0) {
+        if (tvshow.getIds().isEmpty()) {
           LOGGER.info("we cannot scrape (no ID): {}", tvshow.getTitle());
           return;
         }

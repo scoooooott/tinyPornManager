@@ -451,7 +451,7 @@ public class BaseTableHeaderUI extends BasicTableHeaderUI {
       if ((table != null) && (UIManager.getLookAndFeel() instanceof AbstractLookAndFeel)) {
         RowSorter rowSorter = table.getRowSorter();
         List keyList = rowSorter == null ? null : rowSorter.getSortKeys();
-        if ((keyList != null) && (keyList.size() > 0)) {
+        if ((keyList != null) && (!keyList.isEmpty())) {
           RowSorter.SortKey sortKey = (RowSorter.SortKey) keyList.get(0);
           if (sortKey.getColumn() == table.convertColumnIndexToModel(col)) {
             AbstractIconFactory iconFactory = ((AbstractLookAndFeel) UIManager.getLookAndFeel()).getIconFactory();

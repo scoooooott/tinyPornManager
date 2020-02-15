@@ -1158,16 +1158,16 @@ public class TraktTv {
     StringBuilder sb = new StringBuilder(50);
 
     // TODO: iterate over error array and display which did not work
-    if (ss.movies != null && ss.movies.size() > 0) {
+    if (ss.movies != null && !ss.movies.isEmpty()) {
       sb.append(ss.movies.size()).append(" Movies ");
     }
-    if (ss.shows != null && ss.shows.size() > 0) {
+    if (ss.shows != null && !ss.shows.isEmpty()) {
       sb.append(ss.shows.size()).append(" Shows ");
     }
-    if (ss.seasons != null && ss.seasons.size() > 0) {
+    if (ss.seasons != null && !ss.seasons.isEmpty()) {
       sb.append(ss.seasons.size()).append(" Seasons ");
     }
-    if (ss.episodes != null && ss.episodes.size() > 0) {
+    if (ss.episodes != null && !ss.episodes.isEmpty()) {
       sb.append(ss.episodes.size()).append(" Episodes");
     }
 

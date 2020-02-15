@@ -33,7 +33,7 @@ public class FullLogDialog extends TmmDialog {
   private static final long serialVersionUID = -5054005564554148578L;
 
   public FullLogDialog() {
-    super(BUNDLE.getString("logwindow.title"), "fullLog"); //$NON-NLS-1$
+    super(BUNDLE.getString("logwindow.title"), "fullLog");
     setBounds(5, 5, 1000, 590);
 
     JPanel panelContent = new JPanel();
@@ -52,7 +52,7 @@ public class FullLogDialog extends TmmDialog {
     taLogs.setText(processInMemoryLogs());
     taLogs.setCaretPosition(0);
     {
-      JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
+      JButton btnClose = new JButton(BUNDLE.getString("Button.close"));
       btnClose.addActionListener(arg0 -> setVisible(false));
       addDefaultButton(btnClose);
     }

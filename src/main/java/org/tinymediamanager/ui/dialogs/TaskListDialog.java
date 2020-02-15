@@ -28,11 +28,11 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.threading.TmmTaskHandle;
 import org.tinymediamanager.core.threading.TmmTaskListener;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.ui.TmmWindowSaver;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.TaskListComponent;
 
 import net.miginfocom.swing.MigLayout;
@@ -40,7 +40,7 @@ import net.miginfocom.swing.MigLayout;
 public class TaskListDialog extends TmmDialog implements TmmTaskListener {
   private static final long                           serialVersionUID = 4151412495928010232L;
   /** @wbp.nls.resourceBundle messages */
-  protected static final ResourceBundle               BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  protected static final ResourceBundle               BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private static TaskListDialog                       instance;
 
@@ -51,14 +51,14 @@ public class TaskListDialog extends TmmDialog implements TmmTaskListener {
   private final JPanel                                panelContent;
 
   private TaskListDialog() {
-    super(BUNDLE.getString("tasklist.title"), "taskList"); //$NON-NLS-1$
+    super(BUNDLE.getString("tasklist.title"), "taskList");
     setModalityType(ModalityType.MODELESS);
 
     {
       panelContent = new JPanel();
       panelContent.setOpaque(false);
 
-      noActiveTask = new TaskListComponent(BUNDLE.getString("task.nonerunning")); //$NON-NLS-1$
+      noActiveTask = new TaskListComponent(BUNDLE.getString("task.nonerunning"));
       noActiveTask.setBorder(BorderFactory.createEmptyBorder(2, 0, 2, 0));
       panelContent.add(noActiveTask);
 

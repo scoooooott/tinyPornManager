@@ -72,7 +72,7 @@ public class MovieLanguageFilter extends AbstractMovieUIFilter {
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("metatag.language"));
   }
 
   @Override

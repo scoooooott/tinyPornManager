@@ -55,7 +55,7 @@ public class MovieVideoCodecFilter extends AbstractCheckComboBoxMovieUIFilter<St
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("metatag.videocodec")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("metatag.videocodec"));
   }
 
   private void buildAndInstallCodecArray() {

@@ -31,15 +31,16 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.tinymediamanager.DateField;
 import org.tinymediamanager.core.CertificationStyle;
 import org.tinymediamanager.core.MediaCertification;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.connector.MovieConnectors;
 import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.CollapsiblePanel;
 import org.tinymediamanager.ui.components.JHintCheckBox;
 import org.tinymediamanager.ui.components.SettingsPanelFactory;
@@ -55,7 +56,7 @@ import net.miginfocom.swing.MigLayout;
 class MovieScraperNfoSettingsPanel extends JPanel {
   private static final long                    serialVersionUID = -299825914193235308L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle          BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle          BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private MovieSettings                        settings         = MovieModuleManager.SETTINGS;
   private JComboBox<MovieConnectors>           cbNfoFormat;
@@ -64,6 +65,7 @@ class MovieScraperNfoSettingsPanel extends JPanel {
   private JComboBox<CertificationStyleWrapper> cbCertificationStyle;
   private JCheckBox                            chckbxWriteCleanNfo;
   private JComboBox<MediaLanguages>            cbNfoLanguage;
+  private JComboBox<DateField>                 cbDatefield;
   private JHintCheckBox                        chckbxCreateOutline;
   private JCheckBox                            chckbxOutlineFirstSentence;
 
@@ -161,11 +163,11 @@ class MovieScraperNfoSettingsPanel extends JPanel {
     {
       JPanel panelNfo = SettingsPanelFactory.createSettingsPanel();
 
-      JLabel lblNfoT = new TmmLabel(BUNDLE.getString("Settings.nfo"), H3); //$NON-NLS-1$
+      JLabel lblNfoT = new TmmLabel(BUNDLE.getString("Settings.nfo"), H3);
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelNfo, lblNfoT, true);
       add(collapsiblePanel, "cell 0 0,growx, wmin 0");
       {
-        JLabel lblNfoFormat = new JLabel(BUNDLE.getString("Settings.nfoFormat")); //$NON-NLS-1$
+        JLabel lblNfoFormat = new JLabel(BUNDLE.getString("Settings.nfoFormat"));
         panelNfo.add(lblNfoFormat, "cell 1 0 2 1");
 
         cbNfoFormat = new JComboBox(MovieConnectors.values());
@@ -176,29 +178,35 @@ class MovieScraperNfoSettingsPanel extends JPanel {
           panelNfo.add(panelNfoFormat, "cell 1 1 2 1");
           panelNfoFormat.setLayout(new MigLayout("insets 0", "[][]", "[][]"));
 
-          JLabel lblNfoFileNaming = new JLabel(BUNDLE.getString("Settings.nofFileNaming")); //$NON-NLS-1$
+          JLabel lblNfoFileNaming = new JLabel(BUNDLE.getString("Settings.nofFileNaming"));
           panelNfoFormat.add(lblNfoFileNaming, "cell 0 0");
 
-          cbMovieNfoFilename1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + ".nfo"); //$NON-NLS-1$
+          cbMovieNfoFilename1 = new JCheckBox(BUNDLE.getString("Settings.moviefilename") + ".nfo");
           panelNfoFormat.add(cbMovieNfoFilename1, "cell 1 0");
 
-          cbMovieNfoFilename2 = new JCheckBox("movie.nfo"); //$NON-NLS-1$
+          cbMovieNfoFilename2 = new JCheckBox("movie.nfo");
           panelNfoFormat.add(cbMovieNfoFilename2, "cell 1 1");
         }
 
-        chckbxWriteCleanNfo = new JCheckBox(BUNDLE.getString("Settings.writecleannfo")); //$NON-NLS-1$
+        chckbxWriteCleanNfo = new JCheckBox(BUNDLE.getString("Settings.writecleannfo"));
         panelNfo.add(chckbxWriteCleanNfo, "cell 1 2 2 1");
 
-        JLabel lblNfoLanguage = new JLabel(BUNDLE.getString("Settings.nfolanguage")); //$NON-NLS-1$
-        panelNfo.add(lblNfoLanguage, "cell 1 4 2 1");
+        JLabel lblNfoDatefield = new JLabel(BUNDLE.getString("Settings.dateadded"));
+        panelNfo.add(lblNfoDatefield, "cell 1 4 2 1");
+
+        cbDatefield = new JComboBox(DateField.values());
+        panelNfo.add(cbDatefield, "cell 1 4");
+
+        JLabel lblNfoLanguage = new JLabel(BUNDLE.getString("Settings.nfolanguage"));
+        panelNfo.add(lblNfoLanguage, "cell 1 5 2 1");
 
         cbNfoLanguage = new JComboBox(MediaLanguages.valuesSorted());
-        panelNfo.add(cbNfoLanguage, "cell 1 4");
+        panelNfo.add(cbNfoLanguage, "cell 1 5");
 
-        JLabel lblNfoLanguageDesc = new JLabel(BUNDLE.getString("Settings.nfolanguage.desc")); //$NON-NLS-1$
-        panelNfo.add(lblNfoLanguageDesc, "cell 2 5");
+        JLabel lblNfoLanguageDesc = new JLabel(BUNDLE.getString("Settings.nfolanguage.desc"));
+        panelNfo.add(lblNfoLanguageDesc, "cell 2 6");
 
-        JLabel lblCertificationStyle = new JLabel(BUNDLE.getString("Settings.certificationformat")); //$NON-NLS-1$
+        JLabel lblCertificationStyle = new JLabel(BUNDLE.getString("Settings.certificationformat"));
         panelNfo.add(lblCertificationStyle, "flowx,cell 1 7 2 1");
 
         cbCertificationStyle = new JComboBox();
@@ -281,5 +289,10 @@ class MovieScraperNfoSettingsPanel extends JPanel {
     AutoBinding<JHintCheckBox, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ, chckbxCreateOutline,
         jHintCheckBoxBeanProperty, chckbxOutlineFirstSentence, jCheckBoxBeanProperty_1);
     autoBinding_4.bind();
+    //
+    BeanProperty<MovieSettings, DateField> movieSettingsBeanProperty_4 = BeanProperty.create("nfoDateAddedField");
+    AutoBinding<MovieSettings, DateField, JComboBox, Object> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        movieSettingsBeanProperty_4, cbDatefield, jComboBoxBeanProperty);
+    autoBinding_5.bind();
   }
 }

@@ -36,13 +36,13 @@ import javax.swing.UIManager;
 
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskHandle;
 import org.tinymediamanager.core.threading.TmmTaskListener;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmUIMessageCollector;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.FlatButton;
 import org.tinymediamanager.ui.dialogs.MessageHistoryDialog;
 import org.tinymediamanager.ui.dialogs.TaskListDialog;
@@ -57,7 +57,7 @@ import net.miginfocom.swing.MigLayout;
 public class StatusBarPanel extends JPanel implements TmmTaskListener {
   private static final long           serialVersionUID = -6375900257553323558L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private Set<TmmTaskHandle>          taskSet;
   private TmmTaskHandle               activeTask;
@@ -177,7 +177,7 @@ public class StatusBarPanel extends JPanel implements TmmTaskListener {
 
       btnNotifications.setEnabled(false);
       btnNotifications.setForeground(Color.RED);
-      btnNotifications.setToolTipText(BUNDLE.getString("notifications.new")); //$NON-NLS-1$
+      btnNotifications.setToolTipText(BUNDLE.getString("notifications.new"));
       add(btnNotifications, "cell 6 0");
     }
   }

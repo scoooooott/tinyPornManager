@@ -20,7 +20,7 @@ import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.ScraperMetadataConfig;
-import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.core.UTF8Control;
 
 /**
  * The enum TvShowEpisodeScraperMetadataConfig is used to control which episode fields should be set after scraping.
@@ -48,7 +48,7 @@ public enum TvShowEpisodeScraperMetadataConfig implements ScraperMetadataConfig 
   // artwork
   THUMB(Type.ARTWORK);
 
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private Type                        type;
   private String                      description;

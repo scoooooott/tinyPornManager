@@ -17,8 +17,8 @@ package org.tinymediamanager.thirdparty.trakttv;
 
 import java.util.ResourceBundle;
 
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.threading.TmmTask;
-import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * Clear your data from trakt.tv
@@ -26,7 +26,7 @@ import org.tinymediamanager.ui.UTF8Control;
  * @author Manuel Laggner
  */
 public class ClearTraktTvTask extends TmmTask {
-  private static final ResourceBundle BUNDLE       = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE       = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private boolean                     clearMovies  = false;
   private boolean                     clearTvShows = false;
@@ -42,12 +42,12 @@ public class ClearTraktTvTask extends TmmTask {
     TraktTv traktTV = TraktTv.getInstance();
 
     if (clearMovies) {
-      publishState(BUNDLE.getString("trakt.clear.movies"), 0); //$NON-NLS-1$
+      publishState(BUNDLE.getString("trakt.clear.movies"), 0);
       traktTV.clearTraktMovies();
     }
 
     if (clearTvShows) {
-      publishState(BUNDLE.getString("trakt.clear.tvshows"), 0); //$NON-NLS-1$
+      publishState(BUNDLE.getString("trakt.clear.tvshows"), 0);
       traktTV.clearTraktTvShows();
     }
   }

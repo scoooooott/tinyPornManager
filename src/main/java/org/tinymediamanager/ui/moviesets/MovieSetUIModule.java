@@ -94,7 +94,7 @@ public class MovieSetUIModule extends AbstractTmmUIModule {
       }
     };
 
-    movieSetDetailPanel.addTab(BUNDLE.getString("metatag.details"), new MovieSetInformationPanel(selectionModel));//$NON-NLS-1$
+    movieSetDetailPanel.addTab(BUNDLE.getString("metatag.details"), new MovieSetInformationPanel(selectionModel));
     movieSetDetailPanel.addTab(BUNDLE.getString("metatag.artwork"), new MovieSetArtworkPanel(selectionModel));
     dataPanel.add(movieSetDetailPanel, "movieSet");
 
@@ -172,7 +172,7 @@ public class MovieSetUIModule extends AbstractTmmUIModule {
     popupMenu.add(createAndRegisterAction(MovieSetRenameAction.class));
 
     if (Globals.isDebug()) {
-      final JMenu debugMenu = new JMenu("Debug"); //$NON-NLS-1$
+      final JMenu debugMenu = new JMenu("Debug");
       debugMenu.add(new DebugDumpMovieSetAction());
       popupMenu.addSeparator();
       popupMenu.add(debugMenu);
@@ -192,7 +192,7 @@ public class MovieSetUIModule extends AbstractTmmUIModule {
 
   @Override
   public String getTabTitle() {
-    return BUNDLE.getString("tmm.moviesets"); //$NON-NLS-1$
+    return BUNDLE.getString("tmm.moviesets");
   }
 
   @Override

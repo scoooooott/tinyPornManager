@@ -52,7 +52,7 @@ public class MovieMediaSourceFilter extends AbstractCheckComboBoxMovieUIFilter<M
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("metatag.source")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("metatag.source"));
   }
 
   @Override

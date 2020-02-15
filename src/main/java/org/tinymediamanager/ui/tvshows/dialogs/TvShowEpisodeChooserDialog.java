@@ -97,7 +97,7 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
   private JTextField                                       textField;
 
   public TvShowEpisodeChooserDialog(TvShowEpisode ep, MediaScraper mediaScraper) {
-    super(BUNDLE.getString("tvshowepisode.choose"), "episodeChooser"); //$NON-NLS-1$
+    super(BUNDLE.getString("tvshowepisode.choose"), "episodeChooser");
 
     this.episode = ep;
     this.mediaScraper = mediaScraper;
@@ -177,14 +177,14 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
     }
     {
 
-      JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+      JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel"));
       cancelButton.setToolTipText(BUNDLE.getString("edit.discard"));
       cancelButton.setIcon(IconManager.CANCEL_INV);
       cancelButton.setActionCommand("Cancel");
       cancelButton.addActionListener(this);
       addButton(cancelButton);
 
-      final JButton okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
+      final JButton okButton = new JButton(BUNDLE.getString("Button.ok"));
       okButton.setToolTipText(BUNDLE.getString("tvshow.change"));
       okButton.setIcon(IconManager.APPLY_INV);
       okButton.setActionCommand("OK");
@@ -376,13 +376,13 @@ public class TvShowEpisodeChooserDialog extends TmmDialog implements ActionListe
     public String getColumnName(int column) {
       switch (column) {
         case 0:
-          return BUNDLE.getString("metatag.season"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.season");
 
         case 1:
-          return BUNDLE.getString("metatag.episode"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.episode");
 
         case 2:
-          return BUNDLE.getString("metatag.title"); //$NON-NLS-1$
+          return BUNDLE.getString("metatag.title");
       }
       return null;
     }

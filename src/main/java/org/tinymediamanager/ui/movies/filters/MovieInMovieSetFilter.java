@@ -29,8 +29,8 @@ import org.tinymediamanager.ui.components.TmmLabel;
  */
 public class MovieInMovieSetFilter extends AbstractMovieUIFilter {
   private enum MovieInMovieSet {
-    IN_MOVIESET(BUNDLE.getString("movie.inmovieset")), //$NON-NLS-1$
-    NOT_IN_MOVIESET(BUNDLE.getString("movie.notinmovieset")); //$NON-NLS-1$
+    IN_MOVIESET(BUNDLE.getString("movie.inmovieset")),
+    NOT_IN_MOVIESET(BUNDLE.getString("movie.notinmovieset"));
 
     private String title;
 
@@ -89,7 +89,7 @@ public class MovieInMovieSetFilter extends AbstractMovieUIFilter {
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("movieextendedsearch.movieset")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("movieextendedsearch.movieset"));
   }
 
   @Override

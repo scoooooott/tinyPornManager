@@ -38,6 +38,7 @@ import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
@@ -45,7 +46,6 @@ import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.entities.CountryCode;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.ui.TableColumnResizer;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.panels.MediaScraperConfigurationPanel;
 import org.tinymediamanager.ui.panels.ScrollablePanel;
@@ -64,7 +64,7 @@ class TvShowScraperPanel extends JPanel {
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private final TvShowSettings        settings         = TvShowModuleManager.SETTINGS;
   private final List<TvShowScraper>   scrapers         = ObservableCollections.observableList(new ArrayList<>());
@@ -177,14 +177,14 @@ class TvShowScraperPanel extends JPanel {
       panelScraperDetails.add(panelScraperOptions, "cell 0 1,growx,aligny top");
     }
 
-    JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage")); //$NON-NLS-1$
+    JLabel lblScraperLanguage = new JLabel(BUNDLE.getString("Settings.preferredLanguage"));
     panelTvShowScrapers.add(lblScraperLanguage, "cell 0 1");
 
     cbScraperLanguage = new JComboBox<>();
     cbScraperLanguage.setModel(new DefaultComboBoxModel<>(MediaLanguages.valuesSorted()));
     panelTvShowScrapers.add(cbScraperLanguage, "cell 1 1");
 
-    JLabel lblCountry = new JLabel(BUNDLE.getString("Settings.certificationCountry")); //$NON-NLS-1$
+    JLabel lblCountry = new JLabel(BUNDLE.getString("Settings.certificationCountry"));
     panelTvShowScrapers.add(lblCountry, "cell 0 2");
 
     cbCertificationCountry = new JComboBox<>();

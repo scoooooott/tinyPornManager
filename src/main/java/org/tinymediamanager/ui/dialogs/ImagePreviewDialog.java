@@ -38,10 +38,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmUIHelper;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.components.ImageLabel;
 
@@ -54,7 +54,7 @@ import net.miginfocom.swing.MigLayout;
  */
 public class ImagePreviewDialog extends TmmDialog {
   private static final long           serialVersionUID = -7479476493187235867L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
   private static final Logger         LOGGER           = LoggerFactory.getLogger(ImagePreviewDialog.class);
 
   private String                      imageUrl;
@@ -110,7 +110,7 @@ public class ImagePreviewDialog extends TmmDialog {
       imagePanel.add(image, "cell 0 0,grow");
     }
     {
-      JButton closeButton = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
+      JButton closeButton = new JButton(BUNDLE.getString("Button.close"));
       closeButton.addActionListener(e -> setVisible(false));
       addDefaultButton(closeButton);
     }
@@ -150,7 +150,7 @@ public class ImagePreviewDialog extends TmmDialog {
     private SaveToDiskAction() {
       putValue(LARGE_ICON_KEY, IconManager.EXPORT);
       putValue(SMALL_ICON, IconManager.EXPORT);
-      putValue(NAME, BUNDLE.getString("image.savetodisk")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("image.savetodisk"));
     }
 
     @Override
@@ -165,7 +165,7 @@ public class ImagePreviewDialog extends TmmDialog {
         else if (StringUtils.isNotBlank(imageUrl)) {
           filename = FilenameUtils.getBaseName(imageUrl);
         }
-        file = TmmUIHelper.saveFile(BUNDLE.getString("image.savetodisk"), "", filename, //$NON-NLS-1$
+        file = TmmUIHelper.saveFile(BUNDLE.getString("image.savetodisk"), "", filename,
             new FileNameExtensionFilter("Image files", ".jpg", ".png"));
         if (file != null) {
           try (FileOutputStream os = new FileOutputStream(file.toFile())) {

@@ -347,7 +347,7 @@ public class UrlUtil {
         l = locale;
       }
     }
-    if (l == null && countries.size() > 0) {
+    if (l == null && !countries.isEmpty()) {
       // well, take the first one
       l = countries.get(0);
     }

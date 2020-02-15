@@ -850,7 +850,7 @@ public class TvShowRenamer {
       case SUBTITLE:
         List<MediaFileSubtitle> subtitles = mf.getSubtitles();
         String subtitleFilename = "";
-        if (subtitles != null && subtitles.size() > 0) {
+        if (subtitles != null && !subtitles.isEmpty()) {
           MediaFileSubtitle mfs = mf.getSubtitles().get(0);
           if (mfs != null) {
             if (!mfs.getLanguage().isEmpty()) {

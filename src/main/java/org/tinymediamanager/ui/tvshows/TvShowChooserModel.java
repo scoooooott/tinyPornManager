@@ -15,6 +15,11 @@
  */
 package org.tinymediamanager.ui.tvshows;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.ResourceBundle;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +28,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.threading.TmmTask;
@@ -49,18 +55,12 @@ import org.tinymediamanager.scraper.interfaces.ITvShowArtworkProvider;
 import org.tinymediamanager.scraper.interfaces.ITvShowMetadataProvider;
 import org.tinymediamanager.scraper.interfaces.ITvShowTrailerProvider;
 import org.tinymediamanager.scraper.util.StrgUtils;
-import org.tinymediamanager.ui.UTF8Control;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.ResourceBundle;
 
 /**
  * @author Manuel Laggner
  */
 public class TvShowChooserModel extends AbstractModelObject {
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle    BUNDLE          = ResourceBundle.getBundle("messages", new UTF8Control());
   private static final Logger LOGGER = LoggerFactory.getLogger(TvShowChooserModel.class);
   public static final TvShowChooserModel emptyResult = new TvShowChooserModel();
 
@@ -105,7 +105,7 @@ public class TvShowChooserModel extends AbstractModelObject {
    * create the empty search result.
    */
   private TvShowChooserModel() {
-    setTitle(BUNDLE.getString("chooser.nothingfound")); //$NON-NLS-1$
+    setTitle(BUNDLE.getString("chooser.nothingfound"));
     combinedName = title;
   }
 

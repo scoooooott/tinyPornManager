@@ -31,9 +31,9 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
 import org.tinymediamanager.Globals;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmWindowSaver;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.MainTabbedPane;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.tree.TmmTreeNode;
@@ -49,7 +49,7 @@ import net.miginfocom.swing.MigLayout;
 public class MovieSetFilterDialog extends TmmDialog {
   private static final long                         serialVersionUID = 5003714573168481816L;
   /** @wbp.nls.resourceBundle messages */
-  protected static final ResourceBundle             BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  protected static final ResourceBundle             BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private static final float                        FONT_SIZE        = Math.round(Globals.settings.getFontSize() * 0.916);
 

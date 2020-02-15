@@ -69,7 +69,7 @@ public class MovieAudioCodecFilter extends AbstractCheckComboBoxMovieUIFilter<St
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("metatag.audiocodec")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("metatag.audiocodec"));
   }
 
   private void buildAndInstallCodecArray() {

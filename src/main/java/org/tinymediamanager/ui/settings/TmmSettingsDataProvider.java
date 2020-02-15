@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import org.tinymediamanager.ui.UTF8Control;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.ui.components.tree.TmmTreeDataProvider;
 import org.tinymediamanager.ui.components.tree.TmmTreeNode;
 import org.tinymediamanager.ui.movies.MovieUIModule;
@@ -32,7 +32,7 @@ import org.tinymediamanager.ui.tvshows.TvShowUIModule;
  * @author Manuel Laggner
  */
 public class TmmSettingsDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());
   private TmmTreeNode                 root;
 
   public TmmSettingsDataProvider() {
@@ -40,13 +40,13 @@ public class TmmSettingsDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
     root = new TmmTreeNode(rootSettingsNode, this);
 
     // build up the settings structure
-    TmmSettingsNode generalSettingsNode = new TmmSettingsNode(BUNDLE.getString("Settings.general"), new UiSettingsPanel()); //$NON-NLS-1$
-    generalSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.filetypes"), new FileTypesSettingsPanel())); //$NON-NLS-1$
-    generalSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.sorting"), new SortTitleSettingsPanel())); //$NON-NLS-1$
-    generalSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.externaldevices"), new ExternalDevicesSettingsPanel())); //$NON-NLS-1$
-    generalSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.externalservices"), new ExternalServicesSettingsPanel())); //$NON-NLS-1$
-    generalSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.system"), new SystemSettingsPanel())); //$NON-NLS-1$
-    generalSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.misc"), new MiscSettingsPanel())); //$NON-NLS-1$
+    TmmSettingsNode generalSettingsNode = new TmmSettingsNode(BUNDLE.getString("Settings.general"), new UiSettingsPanel());
+    generalSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.filetypes"), new FileTypesSettingsPanel()));
+    generalSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.sorting"), new SortTitleSettingsPanel()));
+    generalSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.externaldevices"), new ExternalDevicesSettingsPanel()));
+    generalSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.externalservices"), new ExternalServicesSettingsPanel()));
+    generalSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.system"), new SystemSettingsPanel()));
+    generalSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.misc"), new MiscSettingsPanel()));
     rootSettingsNode.addChild(generalSettingsNode);
 
     // movie settings

@@ -40,8 +40,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * The class EnhancedTextField is used to create a JTextField with<br>
@@ -53,7 +53,7 @@ import org.tinymediamanager.ui.UTF8Control;
  */
 public class EnhancedTextField extends JTextField implements FocusListener {
   private static final long           serialVersionUID = 5397356153111919435L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   protected JLabel                    lblIcon;
   private String                      textWhenNotFocused;
@@ -182,7 +182,7 @@ public class EnhancedTextField extends JTextField implements FocusListener {
    * @return the JTextField for searching
    */
   public static EnhancedTextField createSearchTextField() {
-    EnhancedTextField textField = new EnhancedTextField(BUNDLE.getString("tmm.searchfield"), IconManager.SEARCH_GREY); //$NON-NLS-1$
+    EnhancedTextField textField = new EnhancedTextField(BUNDLE.getString("tmm.searchfield"), IconManager.SEARCH_GREY);
     textField.addIconMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {

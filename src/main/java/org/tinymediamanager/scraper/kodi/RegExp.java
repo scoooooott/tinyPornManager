@@ -65,7 +65,7 @@ class RegExp implements RegExpContainer, Cloneable {
 
   @Override
   public boolean hasRegExps() {
-    return children != null && children.size() > 0;
+    return children != null && !children.isEmpty();
   }
 
   public String getInput() {

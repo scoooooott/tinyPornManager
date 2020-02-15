@@ -57,7 +57,7 @@ public class TmmModelAdaptor extends DefaultModelAdaptor {
         try {
           final int index;
           if (arrayIndex.equalsIgnoreCase("last")) {
-            if (arrayAsList.size() > 0) {
+            if (!arrayAsList.isEmpty()) {
               index = arrayAsList.size() - 1;
               return arrayAsList.get(index);
             }

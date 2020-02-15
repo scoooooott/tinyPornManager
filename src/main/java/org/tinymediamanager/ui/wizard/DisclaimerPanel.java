@@ -24,8 +24,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.ui.TmmFontHelper;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 
 import net.miginfocom.swing.MigLayout;
@@ -38,7 +38,7 @@ import net.miginfocom.swing.MigLayout;
 class DisclaimerPanel extends JPanel {
   private static final long           serialVersionUID = -4743134514329815273L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public DisclaimerPanel() {
     initComponents();
@@ -50,7 +50,7 @@ class DisclaimerPanel extends JPanel {
   private void initComponents() {
     setLayout(new MigLayout("", "[400lp:400lp,grow]", "[][150lp:200lp,grow]"));
     {
-      JLabel lblDisclaimer = new JLabel(BUNDLE.getString("wizard.disclaimer"));//$NON-NLS-1$
+      JLabel lblDisclaimer = new JLabel(BUNDLE.getString("wizard.disclaimer"));
       TmmFontHelper.changeFont(lblDisclaimer, 1.3333, Font.BOLD);
       add(lblDisclaimer, "cell 0 0,growx");
     }
@@ -59,7 +59,7 @@ class DisclaimerPanel extends JPanel {
       scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
       add(scrollPane, "cell 0 1,grow");
 
-      JTextArea taDisclaimer = new ReadOnlyTextArea(BUNDLE.getString("wizard.disclaimer.long"));//$NON-NLS-1$
+      JTextArea taDisclaimer = new ReadOnlyTextArea(BUNDLE.getString("wizard.disclaimer.long"));
       scrollPane.setViewportView(taDisclaimer);
     }
   }

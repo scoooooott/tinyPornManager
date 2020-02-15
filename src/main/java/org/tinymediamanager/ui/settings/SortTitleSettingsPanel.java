@@ -35,10 +35,10 @@ import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.Settings;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.CollapsiblePanel;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.TmmLabel;
@@ -53,7 +53,7 @@ import net.miginfocom.swing.MigLayout;
 class SortTitleSettingsPanel extends JPanel {
   private static final long           serialVersionUID = 1857926059556024932L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private Settings                    settings         = Settings.getInstance();
 
@@ -92,7 +92,7 @@ class SortTitleSettingsPanel extends JPanel {
     {
       JPanel panelSorttitle = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][100lp][][grow]", "[]"));
 
-      JLabel lblSorttitleT = new TmmLabel(BUNDLE.getString("Settings.sorting"), H3); //$NON-NLS-1$
+      JLabel lblSorttitleT = new TmmLabel(BUNDLE.getString("Settings.sorting"), H3);
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelSorttitle, lblSorttitleT, true);
       add(collapsiblePanel, "cell 0 0,growx, wmin 0");
       {
@@ -106,14 +106,14 @@ class SortTitleSettingsPanel extends JPanel {
         scrollPane.setViewportView(listSortPrefixes);
 
         btnRemoveSortPrefix = new JButton(IconManager.REMOVE_INV);
-        btnRemoveSortPrefix.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
+        btnRemoveSortPrefix.setToolTipText(BUNDLE.getString("Button.remove"));
         panelSorttitle.add(btnRemoveSortPrefix, "cell 2 1,aligny bottom, growx");
 
         tfSortPrefix = new JTextField();
         panelSorttitle.add(tfSortPrefix, "cell 1 2,growx");
 
         btnAddSortPrefix = new JButton(IconManager.ADD_INV);
-        btnAddSortPrefix.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+        btnAddSortPrefix.setToolTipText(BUNDLE.getString("Button.add"));
         panelSorttitle.add(btnAddSortPrefix, "cell 2 2, growx");
       }
     }

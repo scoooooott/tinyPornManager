@@ -156,7 +156,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
    *          the queue size
    */
   public MovieChooserDialog(Movie movie, int queueIndex, int queueSize) {
-    super(BUNDLE.getString("moviechooser.search") + (queueSize > 1 ? " " + (queueIndex + 1) + "/" + queueSize : ""), "movieChooser"); //$NON-NLS-1$
+    super(BUNDLE.getString("moviechooser.search") + (queueSize > 1 ? " " + (queueIndex + 1) + "/" + queueSize : ""), "movieChooser");
 
     mediaScraper = movieList.getDefaultMediaScraper();
     artworkScrapers = movieList.getDefaultArtworkScrapers();
@@ -212,7 +212,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       contentPanel.add(panelSearchField, "cell 0 0,grow");
       panelSearchField.setLayout(new MigLayout("insets 0", "[][][grow][]", "[]2lp[]"));
       {
-        JLabel lblScraper = new TmmLabel(BUNDLE.getString("scraper")); //$NON-NLS-1$
+        JLabel lblScraper = new TmmLabel(BUNDLE.getString("scraper"));
         panelSearchField.add(lblScraper, "cell 0 0,alignx right");
       }
       {
@@ -231,13 +231,13 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
         panelSearchField.add(textFieldSearchString, "cell 2 0,growx");
         textFieldSearchString.setColumns(10);
 
-        JButton btnSearch = new JButton(BUNDLE.getString("Button.search")); //$NON-NLS-1$
+        JButton btnSearch = new JButton(BUNDLE.getString("Button.search"));
         panelSearchField.add(btnSearch, "cell 3 0");
         btnSearch.setIcon(IconManager.SEARCH_INV);
         btnSearch.addActionListener(searchAction);
       }
       {
-        JLabel lblLanguage = new TmmLabel(BUNDLE.getString("metatag.language")); //$NON-NLS-1$
+        JLabel lblLanguage = new TmmLabel(BUNDLE.getString("metatag.language"));
         panelSearchField.add(lblLanguage, "cell 0 1,alignx right");
         cbLanguage = new JComboBox(MediaLanguages.valuesSorted());
         cbLanguage.setSelectedItem(MovieModuleManager.SETTINGS.getScraperLanguage());
@@ -310,7 +310,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       contentPanel.add(separator, "cell 0 3,growx");
     }
     {
-      JLabel lblScrapeFollowingItems = new TmmLabel(BUNDLE.getString("chooser.scrape")); //$NON-NLS-1$
+      JLabel lblScrapeFollowingItems = new TmmLabel(BUNDLE.getString("chooser.scrape"));
       contentPanel.add(lblScrapeFollowingItems, "cell 0 4,growx");
 
       cbScraperConfig = new ScraperMetadataConfigCheckComboBox(MovieScraperMetadataConfig.values());
@@ -332,14 +332,14 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
       }
       {
         if (queueSize > 1) {
-          JButton abortButton = new JButton(BUNDLE.getString("Button.abortqueue")); //$NON-NLS-1$
+          JButton abortButton = new JButton(BUNDLE.getString("Button.abortqueue"));
           abortButton.setIcon(IconManager.STOP_INV);
           abortButton.setActionCommand("Abort");
           abortButton.addActionListener(this);
           addButton(abortButton);
 
           if (queueIndex > 0) {
-            JButton backButton = new JButton(BUNDLE.getString("Button.back")); //$NON-NLS-1$
+            JButton backButton = new JButton(BUNDLE.getString("Button.back"));
             backButton.setIcon(IconManager.BACK_INV);
             backButton.setActionCommand("Back");
             backButton.addActionListener(this);
@@ -347,13 +347,13 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
           }
         }
 
-        JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
+        JButton cancelButton = new JButton(BUNDLE.getString("Button.cancel"));
         cancelButton.setIcon(IconManager.CANCEL_INV);
         cancelButton.setActionCommand("Cancel");
         cancelButton.addActionListener(this);
         addButton(cancelButton);
 
-        okButton = new JButton(BUNDLE.getString("Button.ok")); //$NON-NLS-1$
+        okButton = new JButton(BUNDLE.getString("Button.ok"));
         okButton.setIcon(IconManager.APPLY_INV);
         okButton.setActionCommand("OK");
         okButton.addActionListener(this);
@@ -725,7 +725,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
 
     @Override
     public Void doInBackground() {
-      startProgressBar(BUNDLE.getString("chooser.searchingfor") + " " + searchTerm); //$NON-NLS-1$
+      startProgressBar(BUNDLE.getString("chooser.searchingfor") + " " + searchTerm);
       searchResult = movieList.searchMovie(searchTerm, movie.getYear(), withIds ? movie.getIds() : null, mediaScraper, language);
       return null;
     }
@@ -773,7 +773,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
 
     @Override
     public Void doInBackground() {
-      startProgressBar(BUNDLE.getString("chooser.scrapeing") + " " + model.getTitle()); //$NON-NLS-1$
+      startProgressBar(BUNDLE.getString("chooser.scrapeing") + " " + model.getTitle());
 
       // disable button as long as its scraping
       okButton.setEnabled(false);
@@ -870,10 +870,10 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     public String getColumnName(int column) {
       switch (column) {
         case 0:
-          return BUNDLE.getString("metatag.name");//$NON-NLS-1$
+          return BUNDLE.getString("metatag.name");
 
         case 1:
-          return BUNDLE.getString("metatag.role");//$NON-NLS-1$
+          return BUNDLE.getString("metatag.role");
       }
       throw new IllegalStateException();
     }
@@ -906,7 +906,7 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
           setHorizontalTextPosition(SwingConstants.LEADING);
           setIconTextGap(10);
           setIcon(IconManager.WARN);
-          setToolTipText(BUNDLE.getString("moviechooser.duplicate.desc"));//$NON-NLS-1$
+          setToolTipText(BUNDLE.getString("moviechooser.duplicate.desc"));
         }
         else {
           setIcon(null);

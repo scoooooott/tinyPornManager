@@ -30,13 +30,13 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.tasks.MovieChangeDatasourceTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
@@ -51,14 +51,14 @@ import net.miginfocom.swing.MigLayout;
 public class MovieChangeDatasourceDialog extends TmmDialog {
   private static final long           serialVersionUID = -1515243604267310274L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private List<Movie>                 moviesToEdit     = new ArrayList<>();
 
   private JComboBox<String>           cbDatasource;
 
   public MovieChangeDatasourceDialog(final List<Movie> movies) {
-    super(BUNDLE.getString("movie.changedatasource"), "movieDatasourceEditor"); //$NON-NLS-1$
+    super(BUNDLE.getString("movie.changedatasource"), "movieDatasourceEditor");
 
     moviesToEdit.addAll(movies);
 
@@ -67,11 +67,11 @@ public class MovieChangeDatasourceDialog extends TmmDialog {
       getContentPane().add(panelContent, BorderLayout.CENTER);
       panelContent.setLayout(new MigLayout("", "[][300lp,grow]", "[][20lp][][20lp]"));
       {
-        JTextArea textArea = new ReadOnlyTextArea(BUNDLE.getString("changedatasource.hint.movie")); //$NON-NLS-1$
+        JTextArea textArea = new ReadOnlyTextArea(BUNDLE.getString("changedatasource.hint.movie"));
         panelContent.add(textArea, "cell 0 0 2 1,grow");
       }
       {
-        JLabel lblDatasourceT = new TmmLabel(BUNDLE.getString("changedatasource.newdatasource")); //$NON-NLS-1$
+        JLabel lblDatasourceT = new TmmLabel(BUNDLE.getString("changedatasource.newdatasource"));
         panelContent.add(lblDatasourceT, "cell 0 2");
       }
       {
@@ -96,8 +96,8 @@ public class MovieChangeDatasourceDialog extends TmmDialog {
     private static final long serialVersionUID = -3767744690599233490L;
 
     private ChangeDatasourceAction() {
-      putValue(NAME, BUNDLE.getString("Button.ok")); //$NON-NLS-1$
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.changedatasource")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("Button.ok"));
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("movie.changedatasource"));
       putValue(SMALL_ICON, IconManager.APPLY_INV);
       putValue(LARGE_ICON_KEY, IconManager.APPLY_INV);
     }
@@ -118,8 +118,8 @@ public class MovieChangeDatasourceDialog extends TmmDialog {
     private static final long serialVersionUID = -5581329896797961536L;
 
     private DiscardAction() {
-      putValue(NAME, BUNDLE.getString("Button.cancel")); //$NON-NLS-1$
-      putValue(SHORT_DESCRIPTION, BUNDLE.getString("edit.discard")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("Button.cancel"));
+      putValue(SHORT_DESCRIPTION, BUNDLE.getString("edit.discard"));
       putValue(SMALL_ICON, IconManager.CANCEL_INV);
     }
 

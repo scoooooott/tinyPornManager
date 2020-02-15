@@ -31,12 +31,12 @@ import javax.swing.JPanel;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.ScraperMetadataConfig;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowSettings;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.JHintCheckBox;
 import org.tinymediamanager.ui.components.TmmLabel;
 
@@ -51,7 +51,7 @@ public class TvShowScraperMetadataPanel extends JPanel {
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle                        BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle                        BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private TvShowSettings                                     settings         = TvShowModuleManager.SETTINGS;
   private Map<TvShowScraperMetadataConfig, JCheckBox>        tvShowCheckboxes;
@@ -133,12 +133,12 @@ public class TvShowScraperMetadataPanel extends JPanel {
     JPanel panel = new JPanel();
     JButton btnSelectAll = new JButton(IconManager.CHECK_ALL);
     panel.add(btnSelectAll);
-    btnSelectAll.setToolTipText(BUNDLE.getString("Button.select.all")); //$NON-NLS-1$
+    btnSelectAll.setToolTipText(BUNDLE.getString("Button.select.all"));
     btnSelectAll.addActionListener(e -> setTvShowCheckBoxState(true));
 
     JButton btnDeSelectAll = new JButton(IconManager.CLEAR_ALL);
     panel.add(btnDeSelectAll);
-    btnDeSelectAll.setToolTipText(BUNDLE.getString("Button.select.none")); //$NON-NLS-1$
+    btnDeSelectAll.setToolTipText(BUNDLE.getString("Button.select.none"));
     btnDeSelectAll.addActionListener(e -> setTvShowCheckBoxState(false));
 
     gbc.gridx = 0;
@@ -184,12 +184,12 @@ public class TvShowScraperMetadataPanel extends JPanel {
     panel = new JPanel();
     btnSelectAll = new JButton(IconManager.CHECK_ALL);
     panel.add(btnSelectAll);
-    btnSelectAll.setToolTipText(BUNDLE.getString("Button.select.all")); //$NON-NLS-1$
+    btnSelectAll.setToolTipText(BUNDLE.getString("Button.select.all"));
     btnSelectAll.addActionListener(e -> setEpisodeCheckBoxState(true));
 
     btnDeSelectAll = new JButton(IconManager.CLEAR_ALL);
     panel.add(btnDeSelectAll);
-    btnDeSelectAll.setToolTipText(BUNDLE.getString("Button.select.none")); //$NON-NLS-1$
+    btnDeSelectAll.setToolTipText(BUNDLE.getString("Button.select.none"));
     btnDeSelectAll.addActionListener(e -> setEpisodeCheckBoxState(false));
 
     gbc.gridx = 0;

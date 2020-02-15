@@ -19,8 +19,8 @@ import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.dialogs.AboutDialog;
 
 /**
@@ -30,10 +30,10 @@ import org.tinymediamanager.ui.dialogs.AboutDialog;
  */
 public class AboutAction extends TmmAction {
   private static final long           serialVersionUID = -6578562721885387890L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public AboutAction() {
-    putValue(NAME, BUNDLE.getString("tmm.about")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("tmm.about"));
   }
 
   @Override

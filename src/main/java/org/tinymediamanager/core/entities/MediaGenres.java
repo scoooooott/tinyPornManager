@@ -27,8 +27,8 @@ import java.util.ResourceBundle;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.scraper.DynaEnum;
-import org.tinymediamanager.ui.UTF8Control;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -169,7 +169,7 @@ public class MediaGenres extends DynaEnum<MediaGenres> {
         // and for invalid languages (like NB) it will be null
         continue;
       }
-      ResourceBundle b = ResourceBundle.getBundle("messages", loc, new UTF8Control()); //$NON-NLS-1$
+      ResourceBundle b = ResourceBundle.getBundle("messages", loc, new UTF8Control());
       try {
         alt.add(loc.getLanguage() + "-" + b.getString("Genres." + propName)); // just genres
       }

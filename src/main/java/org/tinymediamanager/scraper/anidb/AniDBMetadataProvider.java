@@ -400,7 +400,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
 
     synchronized (AniDBMetadataProvider.class) {
       // first run: build up the anime name list
-      if (showsForLookup.size() == 0) {
+      if (showsForLookup.isEmpty()) {
         buildTitleHashMap();
       }
     }

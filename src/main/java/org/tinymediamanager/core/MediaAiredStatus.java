@@ -18,8 +18,6 @@ package org.tinymediamanager.core;
 
 import java.util.ResourceBundle;
 
-import org.tinymediamanager.ui.UTF8Control;
-
 /**
  * this enum is used to set different aired states
  *

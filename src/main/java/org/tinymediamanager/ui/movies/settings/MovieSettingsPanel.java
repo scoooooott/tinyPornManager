@@ -31,6 +31,7 @@ import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.threading.TmmTask;
@@ -38,7 +39,6 @@ import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.thirdparty.trakttv.ClearTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.CollapsiblePanel;
 import org.tinymediamanager.ui.components.SettingsPanelFactory;
 import org.tinymediamanager.ui.components.TmmLabel;
@@ -54,7 +54,7 @@ import net.miginfocom.swing.MigLayout;
 public class MovieSettingsPanel extends JPanel {
   private static final long            serialVersionUID = -4173835431245178069L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle  BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle  BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private final MovieSettings          settings         = MovieModuleManager.SETTINGS;
 
@@ -98,7 +98,7 @@ public class MovieSettingsPanel extends JPanel {
     btnClearTraktData.addActionListener(e -> {
       Object[] options = { BUNDLE.getString("Button.yes"), BUNDLE.getString("Button.no") };
       int confirm = JOptionPane.showOptionDialog(null, BUNDLE.getString("Settings.trakt.clearmovies.hint"),
-          BUNDLE.getString("Settings.trakt.clearmovies"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null); //$NON-NLS-1$
+          BUNDLE.getString("Settings.trakt.clearmovies"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
       if (confirm == JOptionPane.YES_OPTION) {
         TmmTask task = new ClearTraktTvTask(true, false);
         TmmTaskManager.getInstance().addUnnamedTask(task);
@@ -213,72 +213,72 @@ public class MovieSettingsPanel extends JPanel {
     {
       JPanel panelUiSettings = SettingsPanelFactory.createSettingsPanel();
 
-      JLabel lblUiSettings = new TmmLabel(BUNDLE.getString("Settings.ui"), H3); //$NON-NLS-1$
+      JLabel lblUiSettings = new TmmLabel(BUNDLE.getString("Settings.ui"), H3);
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelUiSettings, lblUiSettings, true);
       add(collapsiblePanel, "cell 0 0,growx,wmin 0");
       {
-        chckbxPersistUiFilters = new JCheckBox(BUNDLE.getString("Settings.movie.persistuifilter")); //$NON-NLS-1$
+        chckbxPersistUiFilters = new JCheckBox(BUNDLE.getString("Settings.movie.persistuifilter"));
         panelUiSettings.add(chckbxPersistUiFilters, "cell 1 0 2 1");
       }
       {
-        chckbxPersistUiSorting = new JCheckBox(BUNDLE.getString("Settings.movie.persistuisorting")); //$NON-NLS-1$
+        chckbxPersistUiSorting = new JCheckBox(BUNDLE.getString("Settings.movie.persistuisorting"));
         panelUiSettings.add(chckbxPersistUiSorting, "cell 1 1 2 1");
       }
       {
-        chckbxShowLogos = new JCheckBox(BUNDLE.getString("Settings.showlogos")); //$NON-NLS-1$
+        chckbxShowLogos = new JCheckBox(BUNDLE.getString("Settings.showlogos"));
         panelUiSettings.add(chckbxShowLogos, "cell 1 2 2 1");
       }
       {
-        JLabel lblRating = new JLabel(BUNDLE.getString("Settings.preferredrating")); //$NON-NLS-1$
+        JLabel lblRating = new JLabel(BUNDLE.getString("Settings.preferredrating"));
         panelUiSettings.add(lblRating, "cell 1 3 2 1");
 
         cbRating = new AutocompleteComboBox<>(Arrays.asList("imdb", "tmdb", "rottenTomatoes"));
         panelUiSettings.add(cbRating, "cell 1 3");
       }
       {
-        chckbxPersonalRatingFirst = new JCheckBox(BUNDLE.getString("Settings.personalratingfirst")); //$NON-NLS-1$
+        chckbxPersonalRatingFirst = new JCheckBox(BUNDLE.getString("Settings.personalratingfirst"));
         panelUiSettings.add(chckbxPersonalRatingFirst, "cell 2 4 2 1");
       }
     }
     {
       JPanel panelAutomaticTasks = SettingsPanelFactory.createSettingsPanel();
 
-      JLabel lblAutomaticTasksT = new TmmLabel(BUNDLE.getString("Settings.automatictasks"), H3); //$NON-NLS-1$
+      JLabel lblAutomaticTasksT = new TmmLabel(BUNDLE.getString("Settings.automatictasks"), H3);
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelAutomaticTasks, lblAutomaticTasksT, true);
       add(collapsiblePanel, "cell 0 2,growx,wmin 0");
       {
-        chckbxRenameAfterScrape = new JCheckBox(BUNDLE.getString("Settings.movie.automaticrename")); //$NON-NLS-1$
+        chckbxRenameAfterScrape = new JCheckBox(BUNDLE.getString("Settings.movie.automaticrename"));
         panelAutomaticTasks.add(chckbxRenameAfterScrape, "cell 1 0 2 1");
 
         JLabel lblAutomaticRenameHint = new JLabel(IconManager.HINT);
-        lblAutomaticRenameHint.setToolTipText(BUNDLE.getString("Settings.movie.automaticrename.desc")); //$NON-NLS-1$
+        lblAutomaticRenameHint.setToolTipText(BUNDLE.getString("Settings.movie.automaticrename.desc"));
         panelAutomaticTasks.add(lblAutomaticRenameHint, "cell 1 0 2 1");
 
-        chckbxTraktSync = new JCheckBox(BUNDLE.getString("Settings.trakt")); //$NON-NLS-1$
+        chckbxTraktSync = new JCheckBox(BUNDLE.getString("Settings.trakt"));
         panelAutomaticTasks.add(chckbxTraktSync, "cell 1 1 2 1");
 
-        btnClearTraktData = new JButton(BUNDLE.getString("Settings.trakt.clearmovies")); //$NON-NLS-1$
+        btnClearTraktData = new JButton(BUNDLE.getString("Settings.trakt.clearmovies"));
         panelAutomaticTasks.add(btnClearTraktData, "cell 1 1 2 1");
       }
     }
     {
       JPanel panelMisc = SettingsPanelFactory.createSettingsPanel();
 
-      JLabel lblMiscT = new TmmLabel(BUNDLE.getString("Settings.misc"), H3); //$NON-NLS-1$
+      JLabel lblMiscT = new TmmLabel(BUNDLE.getString("Settings.misc"), H3);
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelMisc, lblMiscT, true);
       add(collapsiblePanel, "cell 0 4,growx,wmin 0");
       {
-        chckbxBuildImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecacheimport")); //$NON-NLS-1$
+        chckbxBuildImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecacheimport"));
         panelMisc.add(chckbxBuildImageCache, "cell 1 0 2 1");
 
         JLabel lblBuildImageCacheHint = new JLabel(IconManager.HINT);
-        lblBuildImageCacheHint.setToolTipText(BUNDLE.getString("Settings.imagecacheimporthint")); //$NON-NLS-1$
+        lblBuildImageCacheHint.setToolTipText(BUNDLE.getString("Settings.imagecacheimporthint"));
         panelMisc.add(lblBuildImageCacheHint, "cell 1 0 2 1");
 
-        chckbxRuntimeFromMi = new JCheckBox(BUNDLE.getString("Settings.runtimefrommediafile")); //$NON-NLS-1$
+        chckbxRuntimeFromMi = new JCheckBox(BUNDLE.getString("Settings.runtimefrommediafile"));
         panelMisc.add(chckbxRuntimeFromMi, "cell 1 1 2 1");
 
-        chckbxIncludeExternalAudioStreams = new JCheckBox(BUNDLE.getString("Settings.includeexternalstreamsinnfo")); //$NON-NLS-1$
+        chckbxIncludeExternalAudioStreams = new JCheckBox(BUNDLE.getString("Settings.includeexternalstreamsinnfo"));
         panelMisc.add(chckbxIncludeExternalAudioStreams, "cell 1 2 2 1");
       }
       JLabel lblCheckImages = new JLabel(BUNDLE.getString("Settings.checkimages"));
@@ -317,11 +317,11 @@ public class MovieSettingsPanel extends JPanel {
     {
       JPanel panelPresets = new JPanel(new MigLayout("hidemode 1, insets 0", "[20lp!][15lp][][][grow]", "[]"));
 
-      JLabel lblPresets = new TmmLabel(BUNDLE.getString("Settings.preset"), H3); //$NON-NLS-1$
+      JLabel lblPresets = new TmmLabel(BUNDLE.getString("Settings.preset"), H3);
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelPresets, lblPresets, true);
       add(collapsiblePanel, "cell 0 6,growx,wmin 0");
       {
-        JLabel lblPresetHintT = new JLabel(BUNDLE.getString("Settings.preset.desc")); //$NON-NLS-1$
+        JLabel lblPresetHintT = new JLabel(BUNDLE.getString("Settings.preset.desc"));
         panelPresets.add(lblPresetHintT, "cell 1 0 3 1");
       }
       {

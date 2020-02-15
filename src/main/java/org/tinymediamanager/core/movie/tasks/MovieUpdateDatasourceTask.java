@@ -57,6 +57,7 @@ import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaTrailer;
@@ -75,7 +76,6 @@ import org.tinymediamanager.scraper.util.ParserUtils;
 import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.thirdparty.VSMeta;
 import org.tinymediamanager.thirdparty.trakttv.SyncTraktTvTask;
-import org.tinymediamanager.ui.UTF8Control;
 
 import com.sun.jna.Platform;
 
@@ -86,7 +86,7 @@ import com.sun.jna.Platform;
  */
 public class MovieUpdateDatasourceTask extends TmmThreadPool {
   private static final Logger         LOGGER         = LoggerFactory.getLogger(MovieUpdateDatasourceTask.class);
-  private static final ResourceBundle BUNDLE         = ResourceBundle.getBundle("messages", new UTF8Control());                                  //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE         = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private static long                 preDir         = 0;
   private static long                 postDir        = 0;
@@ -432,7 +432,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     }
     else {
       // no VIDEO files in this dir - skip this folder
-      if (normalizedVideoFiles.size() == 0) {
+      if (normalizedVideoFiles.isEmpty()) {
         return;
       }
       // more than one (unstacked) movie file in directory (or DS root) -> must
@@ -1172,10 +1172,22 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         continue;
       }
 
+      boolean dirty = false;
+
       for (MediaFile mf : new ArrayList<>(movie.getMediaFiles())) {
         if (StringUtils.isBlank(mf.getContainerFormat())) {
           submitTask(new MediaFileInformationFetcherTask(mf, movie, false));
         }
+        else {
+          // at least update the file dates
+          MediaFileHelper.gatherFileInformation(mf);
+          dirty = true;
+        }
+      }
+
+      // persist the movie
+      if (dirty) {
+        movie.saveToDb();
       }
     }
     waitForCompletionOrCancel();
@@ -1193,10 +1205,23 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       if (cancel) {
         break;
       }
+
+      boolean dirty = false;
+
       for (MediaFile mf : new ArrayList<>(movie.getMediaFiles())) {
         if (StringUtils.isBlank(mf.getContainerFormat())) {
           submitTask(new MediaFileInformationFetcherTask(mf, movie, false));
         }
+        else {
+          // at least update the file dates
+          MediaFileHelper.gatherFileInformation(mf);
+          dirty = true;
+        }
+      }
+
+      // persist the movie
+      if (dirty) {
+        movie.saveToDb();
       }
     }
     waitForCompletionOrCancel();

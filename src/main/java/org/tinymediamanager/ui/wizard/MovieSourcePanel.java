@@ -36,12 +36,12 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.tinymediamanager.core.TmmProperties;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
 import org.tinymediamanager.ui.TmmUIHelper;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
 
 import net.miginfocom.swing.MigLayout;
@@ -54,7 +54,7 @@ import net.miginfocom.swing.MigLayout;
 class MovieSourcePanel extends JPanel {
   private static final long           serialVersionUID = -8346420911623937902L;
   /** @wbp.nls.resourceBundle messages */
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private final MovieSettings         settings         = MovieModuleManager.SETTINGS;
 
@@ -71,7 +71,7 @@ class MovieSourcePanel extends JPanel {
   private void initComponents() {
     setLayout(new MigLayout("", "[grow]", "[][200lp,grow]"));
     {
-      JLabel lblMovieDataSources = new JLabel(BUNDLE.getString("wizard.movie.datasources")); //$NON-NLS-1$
+      JLabel lblMovieDataSources = new JLabel(BUNDLE.getString("wizard.movie.datasources"));
       TmmFontHelper.changeFont(lblMovieDataSources, 1.3333, Font.BOLD);
       add(lblMovieDataSources, "cell 0 0");
     }
@@ -80,7 +80,7 @@ class MovieSourcePanel extends JPanel {
     add(panelMovieDataSources, "cell 0 1,grow");
     panelMovieDataSources.setLayout(new MigLayout("", "[grow][]", "[][200lp,grow]"));
     {
-      JTextArea tpDatasourceHint = new ReadOnlyTextArea(BUNDLE.getString("wizard.datasource.hint")); //$NON-NLS-1$
+      JTextArea tpDatasourceHint = new ReadOnlyTextArea(BUNDLE.getString("wizard.datasource.hint"));
       panelMovieDataSources.add(tpDatasourceHint, "cell 0 0 2 1,grow");
     }
     {
@@ -93,21 +93,21 @@ class MovieSourcePanel extends JPanel {
     {
       JButton btnAdd = new JButton(IconManager.ADD_INV);
       panelMovieDataSources.add(btnAdd, "flowy,cell 1 1,aligny top");
-      btnAdd.setToolTipText(BUNDLE.getString("Button.add")); //$NON-NLS-1$
+      btnAdd.setToolTipText(BUNDLE.getString("Button.add"));
       btnAdd.setMargin(new Insets(2, 2, 2, 2));
 
       JButton btnRemove = new JButton(IconManager.REMOVE_INV);
       panelMovieDataSources.add(btnRemove, "cell 1 1");
-      btnRemove.setToolTipText(BUNDLE.getString("Button.remove")); //$NON-NLS-1$
+      btnRemove.setToolTipText(BUNDLE.getString("Button.remove"));
       btnRemove.setMargin(new Insets(2, 2, 2, 2));
       btnRemove.addActionListener(arg0 -> {
         int row = listDataSources.getSelectedIndex();
         if (row != -1) { // nothing selected
           String path = MovieModuleManager.SETTINGS.getMovieDataSource().get(row);
-          String[] choices = { BUNDLE.getString("Button.continue"), BUNDLE.getString("Button.abort") }; //$NON-NLS-1$
+          String[] choices = { BUNDLE.getString("Button.continue"), BUNDLE.getString("Button.abort") };
           int decision = JOptionPane.showOptionDialog(null, String.format(BUNDLE.getString("Settings.movie.datasource.remove.info"), path),
               BUNDLE.getString("Settings.datasource.remove"), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, choices,
-              BUNDLE.getString("Button.abort")); //$NON-NLS-1$
+              BUNDLE.getString("Button.abort"));
           if (decision == JOptionPane.YES_OPTION) {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             MovieModuleManager.SETTINGS.removeMovieDataSources(path);
@@ -117,7 +117,7 @@ class MovieSourcePanel extends JPanel {
       });
       btnAdd.addActionListener(arg0 -> {
         String path = TmmProperties.getInstance().getProperty("movie.datasource.path");
-        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.datasource.folderchooser"), path); //$NON-NLS-1$
+        Path file = TmmUIHelper.selectDirectory(BUNDLE.getString("Settings.datasource.folderchooser"), path);
         if (file != null && Files.isDirectory(file)) {
           MovieModuleManager.SETTINGS.addMovieDataSources(file.toAbsolutePath().toString());
         }

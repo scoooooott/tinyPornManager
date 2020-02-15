@@ -1024,7 +1024,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    */
   public Boolean getHasNfoFile() {
     List<MediaFile> nfos = getMediaFiles(MediaFileType.NFO);
-    return nfos != null && nfos.size() > 0;
+    return nfos != null && !nfos.isEmpty();
   }
 
   /**
@@ -1033,7 +1033,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    * @return the checks for trailer
    */
   public Boolean getHasTrailer() {
-    if (trailer != null && trailer.size() > 0) {
+    if (trailer != null && !trailer.isEmpty()) {
       return true;
     }
 
@@ -1566,7 +1566,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
       }
 
       // if still no preferred trailer has been set, then mark the first one
-      if (preferredTrailer == null && this.trailer.size() == 0 && !trailer.getUrl().startsWith("file")) {
+      if (preferredTrailer == null && this.trailer.isEmpty() && !trailer.getUrl().startsWith("file")) {
         trailer.setInNfo(Boolean.TRUE);
       }
 
@@ -2029,7 +2029,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   @Override
   public boolean isScraped() {
     if (!scraped) {
-      if (!plot.isEmpty() && !(year == 0) && !(genres == null || genres.size() == 0) && !(actors == null || actors.size() == 0)) {
+      if (!plot.isEmpty() && !(year == 0) && !(genres == null || genres.isEmpty()) && !(actors == null || actors.isEmpty())) {
         return true;
       }
     }

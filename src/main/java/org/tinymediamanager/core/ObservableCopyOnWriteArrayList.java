@@ -100,7 +100,7 @@ public class ObservableCopyOnWriteArrayList<E> extends CopyOnWriteArrayList<E> i
     List<E> dup = new ArrayList(this);
     super.clear();
 
-    if (dup.size() != 0) {
+    if (!dup.isEmpty()) {
       Iterator iterator = this.listeners.iterator();
       while (iterator.hasNext()) {
         ObservableListListener listener = (ObservableListListener) iterator.next();

@@ -296,7 +296,7 @@ class TinyMediaManagerCMD {
         if (scrapeNew) {
           LOGGER.info("Commandline - scraping new movies...");
           List<Movie> newMovies = MovieList.getInstance().getNewMovies();
-          if (newMovies.size() > 0) {
+          if (!newMovies.isEmpty()) {
             scrape.addAll(newMovies);
           }
         }

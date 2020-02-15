@@ -29,11 +29,11 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieScraperMetadataConfig;
 import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.components.JHintCheckBox;
 
 /**
@@ -47,7 +47,7 @@ public class MovieScraperMetadataPanel extends JPanel {
   /**
    * @wbp.nls.resourceBundle messages
    */
-  private static final ResourceBundle                BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle                BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private MovieSettings                              settings         = MovieModuleManager.SETTINGS;
   private Map<MovieScraperMetadataConfig, JCheckBox> checkboxes;
@@ -108,12 +108,12 @@ public class MovieScraperMetadataPanel extends JPanel {
     JPanel panel = new JPanel();
     JButton btnSelectAll = new JButton(IconManager.CHECK_ALL);
     panel.add(btnSelectAll);
-    btnSelectAll.setToolTipText(BUNDLE.getString("Button.select.all")); //$NON-NLS-1$
+    btnSelectAll.setToolTipText(BUNDLE.getString("Button.select.all"));
     btnSelectAll.addActionListener(e -> setCheckBoxState(true));
 
     JButton btnDeSelectAll = new JButton(IconManager.CLEAR_ALL);
     panel.add(btnDeSelectAll);
-    btnDeSelectAll.setToolTipText(BUNDLE.getString("Button.select.none")); //$NON-NLS-1$
+    btnDeSelectAll.setToolTipText(BUNDLE.getString("Button.select.none"));
     btnDeSelectAll.addActionListener(e -> setCheckBoxState(false));
 
     gbc.gridx = 0;

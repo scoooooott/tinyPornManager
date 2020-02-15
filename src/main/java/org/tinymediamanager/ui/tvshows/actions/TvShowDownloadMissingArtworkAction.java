@@ -24,6 +24,7 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeScraperMetadataConfig;
 import org.tinymediamanager.core.tvshow.TvShowScraperMetadataConfig;
@@ -34,7 +35,6 @@ import org.tinymediamanager.core.tvshow.entities.TvShowSeason;
 import org.tinymediamanager.core.tvshow.tasks.TvShowMissingArtworkDownloadTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.MainWindow;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
 import org.tinymediamanager.ui.tvshows.TvShowUIModule;
 import org.tinymediamanager.ui.tvshows.dialogs.TvShowScrapeMetadataDialog;
@@ -44,10 +44,10 @@ import org.tinymediamanager.ui.tvshows.dialogs.TvShowScrapeMetadataDialog;
  */
 public class TvShowDownloadMissingArtworkAction extends TmmAction {
   private static final long           serialVersionUID = 6102632119900792735L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public TvShowDownloadMissingArtworkAction() {
-    putValue(NAME, BUNDLE.getString("tvshow.downloadmissingartwork")); //$NON-NLS-1$
+    putValue(NAME, BUNDLE.getString("tvshow.downloadmissingartwork"));
     putValue(SMALL_ICON, IconManager.IMAGE);
     putValue(LARGE_ICON_KEY, IconManager.IMAGE);
   }
@@ -59,11 +59,12 @@ public class TvShowDownloadMissingArtworkAction extends TmmAction {
     Set<TvShowEpisode> selectedEpisodes = new HashSet<>();
 
     if (selectedObjects.isEmpty()) {
-      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected")); //$NON-NLS-1$
+      JOptionPane.showMessageDialog(MainWindow.getActiveInstance(), BUNDLE.getString("tmm.nothingselected"));
       return;
     }
 
-    TvShowScrapeMetadataDialog dialog = new TvShowScrapeMetadataDialog(BUNDLE.getString("tvshow.downloadmissingartwork")); //$NON-NLS-1$
+    TvShowScrapeMetadataDialog dialog = new TvShowScrapeMetadataDialog(BUNDLE.getString("tvshow.downloadmissingartwork"), false, true, false, false,
+        false);
     dialog.setVisible(true);
 
     // get options from dialog

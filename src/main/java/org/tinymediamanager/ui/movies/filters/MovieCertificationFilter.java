@@ -56,7 +56,7 @@ public class MovieCertificationFilter extends AbstractCheckComboBoxMovieUIFilter
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("metatag.certification")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("metatag.certification"));
   }
 
   private void buildAndInstallCertificationArray() {

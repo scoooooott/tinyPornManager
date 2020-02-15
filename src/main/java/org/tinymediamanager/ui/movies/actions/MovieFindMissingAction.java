@@ -19,11 +19,11 @@ import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.movie.tasks.MovieFindMissingTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
 import org.tinymediamanager.ui.IconManager;
-import org.tinymediamanager.ui.UTF8Control;
 import org.tinymediamanager.ui.actions.TmmAction;
 
 /**
@@ -34,7 +34,7 @@ import org.tinymediamanager.ui.actions.TmmAction;
  */
 public class MovieFindMissingAction extends TmmAction {
   private static final long           serialVersionUID = 7873846965534352231L;
-  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   private String                      datasource       = null;
 
@@ -61,7 +61,7 @@ public class MovieFindMissingAction extends TmmAction {
       putValue(NAME, datasource);
     }
     else {
-      putValue(NAME, BUNDLE.getString("movie.findmissing.all")); //$NON-NLS-1$
+      putValue(NAME, BUNDLE.getString("movie.findmissing.all"));
     }
     putValue(SMALL_ICON, IconManager.SEARCH);
     putValue(LARGE_ICON_KEY, IconManager.SEARCH);

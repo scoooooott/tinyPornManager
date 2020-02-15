@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
@@ -53,13 +54,12 @@ import org.tinymediamanager.scraper.interfaces.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.interfaces.IMovieSetMetadataProvider;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.scraper.util.MetadataUtil;
-import org.tinymediamanager.ui.UTF8Control;
 
 /**
  * The Class MovieSetChooserModel.
  */
 public class MovieSetChooserModel extends AbstractModelObject {
-  private static final ResourceBundle      BUNDLE      = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle      BUNDLE      = ResourceBundle.getBundle("messages", new UTF8Control());
   private static final Logger              LOGGER      = LoggerFactory.getLogger(MovieSetChooserModel.class);
   public static final MovieSetChooserModel emptyResult = new MovieSetChooserModel();
   private String                           name        = "";
@@ -96,7 +96,7 @@ public class MovieSetChooserModel extends AbstractModelObject {
    * create the empty search result.
    */
   private MovieSetChooserModel() {
-    setName(BUNDLE.getString("chooser.nothingfound")); //$NON-NLS-1$
+    setName(BUNDLE.getString("chooser.nothingfound"));
   }
 
   public String getName() {

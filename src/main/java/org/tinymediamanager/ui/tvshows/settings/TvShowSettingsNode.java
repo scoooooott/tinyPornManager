@@ -16,10 +16,10 @@
 
 package org.tinymediamanager.ui.tvshows.settings;
 
-import org.tinymediamanager.ui.UTF8Control;
-import org.tinymediamanager.ui.settings.TmmSettingsNode;
-
 import java.util.ResourceBundle;
+
+import org.tinymediamanager.core.UTF8Control;
+import org.tinymediamanager.ui.settings.TmmSettingsNode;
 
 /**
  * the class {@link TvShowSettingsNode} provides all settings pages
@@ -27,24 +27,24 @@ import java.util.ResourceBundle;
  * @author Manuel Laggner
  */
 public class TvShowSettingsNode extends TmmSettingsNode {
-  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());
 
   public TvShowSettingsNode() {
-    super(BUNDLE.getString("Settings.tvshow"), new TvShowSettingsPanel());//$NON-NLS-1$
+    super(BUNDLE.getString("Settings.tvshow"), new TvShowSettingsPanel());
 
-    addChild(new TmmSettingsNode(BUNDLE.getString("Settings.source"), new TvShowDatasourceSettingsPanel()));//$NON-NLS-1$
+    addChild(new TmmSettingsNode(BUNDLE.getString("Settings.source"), new TvShowDatasourceSettingsPanel()));
 
-    TmmSettingsNode scraperSettingsNode = new TmmSettingsNode(BUNDLE.getString("Settings.scraper"), new TvShowScraperSettingsPanel());//$NON-NLS-1$
-    scraperSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.scraper.options"), new TvShowScraperOptionsSettingsPanel()));//$NON-NLS-1$
-    scraperSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.nfo"), new TvShowScraperNfoSettingsPanel()));//$NON-NLS-1$
+    TmmSettingsNode scraperSettingsNode = new TmmSettingsNode(BUNDLE.getString("Settings.scraper"), new TvShowScraperSettingsPanel());
+    scraperSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.scraper.options"), new TvShowScraperOptionsSettingsPanel()));
+    scraperSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.nfo"), new TvShowScraperNfoSettingsPanel()));
     addChild(scraperSettingsNode);
 
-    TmmSettingsNode imageSettingsNode = new TmmSettingsNode(BUNDLE.getString("Settings.images"), new TvShowImageSettingsPanel());//$NON-NLS-1$
-    imageSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.artwork.naming"), new TvShowImageTypeSettingsPanel()));//$NON-NLS-1$
+    TmmSettingsNode imageSettingsNode = new TmmSettingsNode(BUNDLE.getString("Settings.images"), new TvShowImageSettingsPanel());
+    imageSettingsNode.addChild(new TmmSettingsNode(BUNDLE.getString("Settings.artwork.naming"), new TvShowImageTypeSettingsPanel()));
     addChild(imageSettingsNode);
 
-    addChild(new TmmSettingsNode(BUNDLE.getString("Settings.trailer"), new TvShowTrailerSettingsPanel()));//$NON-NLS-1$
-    addChild(new TmmSettingsNode(BUNDLE.getString("Settings.subtitle"), new TvShowSubtitleSettingsPanel()));//$NON-NLS-1$
-    addChild(new TmmSettingsNode(BUNDLE.getString("Settings.renamer"), new TvShowRenamerSettingsPanel()));//$NON-NLS-1$
+    addChild(new TmmSettingsNode(BUNDLE.getString("Settings.trailer"), new TvShowTrailerSettingsPanel()));
+    addChild(new TmmSettingsNode(BUNDLE.getString("Settings.subtitle"), new TvShowSubtitleSettingsPanel()));
+    addChild(new TmmSettingsNode(BUNDLE.getString("Settings.renamer"), new TvShowRenamerSettingsPanel()));
   }
 }

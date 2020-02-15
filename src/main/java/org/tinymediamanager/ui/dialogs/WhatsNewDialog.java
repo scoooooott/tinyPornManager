@@ -53,7 +53,7 @@ public class WhatsNewDialog extends TmmDialog {
   private static final Logger LOGGER           = LoggerFactory.getLogger(WhatsNewDialog.class);
 
   public WhatsNewDialog(String changelog) {
-    super(BUNDLE.getString("whatsnew.title"), "whatsnew"); //$NON-NLS-1$
+    super(BUNDLE.getString("whatsnew.title"), "whatsnew");
     {
       JPanel panelContent = new JPanel();
       getContentPane().add(panelContent, BorderLayout.CENTER);
@@ -81,7 +81,7 @@ public class WhatsNewDialog extends TmmDialog {
         }
       });
 
-      JLabel lblHint = new JLabel(BUNDLE.getString("whatsnew.hint")); //$NON-NLS-1$
+      JLabel lblHint = new JLabel(BUNDLE.getString("whatsnew.hint"));
       panelContent.add(lblHint, "flowx,cell 0 1");
 
       LinkLabel lblLink = new LinkLabel("https://www.tinymediamanager.org");
@@ -95,7 +95,7 @@ public class WhatsNewDialog extends TmmDialog {
       panelContent.add(lblLink, "cell 0 1");
     }
     {
-      JButton btnClose = new JButton(BUNDLE.getString("Button.close")); //$NON-NLS-1$
+      JButton btnClose = new JButton(BUNDLE.getString("Button.close"));
       btnClose.addActionListener(arg0 -> setVisible(false));
       addDefaultButton(btnClose);
     }

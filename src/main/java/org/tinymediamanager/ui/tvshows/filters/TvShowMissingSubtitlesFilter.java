@@ -62,7 +62,7 @@ public class TvShowMissingSubtitlesFilter extends AbstractTvShowUIFilter {
 
   @Override
   protected JLabel createLabel() {
-    return new TmmLabel(BUNDLE.getString("movieextendedsearch.missingsubtitles")); //$NON-NLS-1$
+    return new TmmLabel(BUNDLE.getString("movieextendedsearch.missingsubtitles"));
   }
 
   @Override

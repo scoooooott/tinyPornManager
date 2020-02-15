@@ -34,10 +34,10 @@ import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 
 import org.jdesktop.beansbinding.BindingGroup;
+import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.ui.EqualsLayout;
 import org.tinymediamanager.ui.MainWindow;
 import org.tinymediamanager.ui.TmmWindowSaver;
-import org.tinymediamanager.ui.UTF8Control;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -49,7 +49,7 @@ import net.miginfocom.swing.MigLayout;
 public abstract class TmmDialog extends JDialog {
   private static final long             serialVersionUID = 1L;
   /** @wbp.nls.resourceBundle messages */
-  protected static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control()); //$NON-NLS-1$
+  protected static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
   protected BindingGroup                bindingGroup     = null;
 
