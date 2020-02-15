@@ -21,6 +21,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -35,6 +36,7 @@ import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
+import org.tinymediamanager.core.TmmDateFormat;
 import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
@@ -102,7 +104,7 @@ public abstract class MediaFilesPanel extends JPanel {
   private static class MediaTableFormat implements AdvancedTableFormat<MediaFile> {
     @Override
     public int getColumnCount() {
-      return 8;
+      return 10;
     }
 
     @Override
@@ -131,6 +133,12 @@ public abstract class MediaFilesPanel extends JPanel {
 
         case 7:
           return BUNDLE.getString("metatag.subtitle");
+
+        case 8:
+          return BUNDLE.getString("metatag.filecreationdate");
+
+        case 9:
+          return BUNDLE.getString("metatag.filelastmodifieddate");
       }
 
       throw new IllegalStateException();
@@ -168,6 +176,13 @@ public abstract class MediaFilesPanel extends JPanel {
 
         case 7:
           return mediaFile.getSubtitlesAsString();
+
+        case 8:
+          return formatDate(mediaFile.getDateCreated());
+
+        case 9:
+          return formatDate(mediaFile.getDateLastModified());
+
       }
 
       throw new IllegalStateException();
@@ -187,6 +202,8 @@ public abstract class MediaFilesPanel extends JPanel {
         case 5:
         case 6:
         case 7:
+        case 8:
+        case 9:
           return String.class;
       }
 
@@ -202,6 +219,14 @@ public abstract class MediaFilesPanel extends JPanel {
     private String getMediaFileTypeLocalized(MediaFileType type) {
       String prop = "mediafiletype." + type.name().toLowerCase(Locale.ROOT);
       return BUNDLE.getString(prop);
+    }
+
+    private String formatDate(Date date) {
+      if (date == null) {
+        return "";
+      }
+
+      return TmmDateFormat.MEDIUM_DATE_SHORT_TIME_FORMAT.format(date);
     }
   }
 

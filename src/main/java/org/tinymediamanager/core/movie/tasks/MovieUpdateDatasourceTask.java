@@ -1172,10 +1172,22 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
         continue;
       }
 
+      boolean dirty = false;
+
       for (MediaFile mf : new ArrayList<>(movie.getMediaFiles())) {
         if (StringUtils.isBlank(mf.getContainerFormat())) {
           submitTask(new MediaFileInformationFetcherTask(mf, movie, false));
         }
+        else {
+          // at least update the file dates
+          MediaFileHelper.gatherFileInformation(mf);
+          dirty = true;
+        }
+      }
+
+      // persist the movie
+      if (dirty) {
+        movie.saveToDb();
       }
     }
     waitForCompletionOrCancel();
@@ -1193,10 +1205,23 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       if (cancel) {
         break;
       }
+
+      boolean dirty = false;
+
       for (MediaFile mf : new ArrayList<>(movie.getMediaFiles())) {
         if (StringUtils.isBlank(mf.getContainerFormat())) {
           submitTask(new MediaFileInformationFetcherTask(mf, movie, false));
         }
+        else {
+          // at least update the file dates
+          MediaFileHelper.gatherFileInformation(mf);
+          dirty = true;
+        }
+      }
+
+      // persist the movie
+      if (dirty) {
+        movie.saveToDb();
       }
     }
     waitForCompletionOrCancel();

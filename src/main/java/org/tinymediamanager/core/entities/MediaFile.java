@@ -98,13 +98,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   protected Date                     dateCreated       = null;
   @JsonProperty
   protected Date                     dateLastModified  = null;
-
-  @JsonProperty
-  private List<MediaFileAudioStream> audioStreams      = null;
-  @JsonProperty
-  private List<MediaFileSubtitle>    subtitles         = null;
-
-  private Path                       file              = null;
   @JsonProperty
   private boolean                    isISO             = false;
   @JsonProperty
@@ -115,10 +108,18 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   @JsonProperty
   private String                     hdrFormat         = "";
 
+  @JsonProperty
+  private List<MediaFileAudioStream> audioStreams      = null;
+  @JsonProperty
+  private List<MediaFileSubtitle>    subtitles         = null;
+
+  private Path                       file              = null;
+
   /**
    * "clones" a new media file.
    */
   public MediaFile(MediaFile clone) {
+    this.type = clone.type;
     this.path = clone.path;
     this.filename = clone.filename;
     this.filesize = clone.filesize;
@@ -130,19 +131,23 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     this.videoHeight = clone.videoHeight;
     this.videoWidth = clone.videoWidth;
     this.aspectRatio = clone.aspectRatio;
-    this.frameRate = clone.frameRate;
     this.overallBitRate = clone.overallBitRate;
     this.bitDepth = clone.bitDepth;
+    this.frameRate = clone.frameRate;
     this.durationInSecs = clone.durationInSecs;
     this.stacking = clone.stacking;
     this.stackingMarker = clone.stackingMarker;
-    this.type = clone.type;
     this.title = clone.title;
+    this.dateCreated = clone.dateCreated;
+    this.dateLastModified = clone.dateLastModified;
+    this.isISO = clone.isISO;
+    this.isAnimatedGraphic = clone.isAnimatedGraphic;
+    this.hdrFormat = clone.hdrFormat;
 
-    if (clone.audioStreams != null && !clone.audioStreams.isEmpty()) {
+    if (ListUtils.isNotEmpty(clone.audioStreams)) {
       audioStreams = new CopyOnWriteArrayList<>(clone.audioStreams);
     }
-    if (clone.subtitles != null && !clone.subtitles.isEmpty()) {
+    if (ListUtils.isNotEmpty(clone.subtitles)) {
       subtitles = new CopyOnWriteArrayList<>(clone.subtitles);
     }
   }

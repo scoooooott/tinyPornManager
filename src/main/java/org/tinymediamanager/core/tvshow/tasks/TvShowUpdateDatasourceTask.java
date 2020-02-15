@@ -46,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.AbstractFileVisitor;
+import org.tinymediamanager.core.MediaFileHelper;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Message;
@@ -455,19 +456,41 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
    * detect which mediafiles has to be parsed and start a thread to do that
    */
   private void gatherMediaInformationForUngatheredMediaFiles(TvShow tvShow) {
+    boolean dirty = false;
     // get mediainfo for tv show (fanart/poster..)
     for (MediaFile mf : tvShow.getMediaFiles()) {
       if (StringUtils.isBlank(mf.getContainerFormat())) {
         submitTask(new MediaFileInformationFetcherTask(mf, tvShow, false));
       }
+      else {
+        // at least update the file dates
+        MediaFileHelper.gatherFileInformation(mf);
+        dirty = true;
+      }
+    }
+
+    // persist the TV show
+    if (dirty) {
+      tvShow.saveToDb();
     }
 
     // get mediainfo for all episodes within this tv show
     for (TvShowEpisode episode : new ArrayList<>(tvShow.getEpisodes())) {
+      dirty = false;
       for (MediaFile mf : episode.getMediaFiles()) {
         if (StringUtils.isBlank(mf.getContainerFormat())) {
           submitTask(new MediaFileInformationFetcherTask(mf, episode, false));
         }
+        else {
+          // at least update the file dates
+          MediaFileHelper.gatherFileInformation(mf);
+          dirty = true;
+        }
+      }
+
+      // persist the episode
+      if (dirty) {
+        episode.saveToDb();
       }
     }
   }
