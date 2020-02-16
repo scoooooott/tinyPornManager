@@ -42,6 +42,7 @@ public class TvShowOtherIdsConverter extends Converter<Map<String, Object>, Stri
 
         case "imdbId":
         case "traktId":
+        case "tvShowSeason":
           // legacy format
           continue;
 

@@ -34,6 +34,7 @@ public class ReadOnlyTextArea extends JTextArea {
     super(text);
 
     setOpaque(false);
+    setBorder(null);
     setLineWrap(true);
     setWrapStyleWord(true);
     setEditable(false);
