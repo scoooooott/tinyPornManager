@@ -1,18 +1,3 @@
-/*
- * Copyright 2012 - 2020 Manuel Laggner
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.tinymediamanager.ui.movies.panels;
 
 import static org.tinymediamanager.core.Constants.FANART;
@@ -23,13 +8,11 @@ import static org.tinymediamanager.core.Constants.POSTER;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.beans.PropertyChangeListener;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.swing.Box;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -37,7 +20,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingUtilities;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
@@ -51,6 +33,8 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.entities.MediaFile;
+import org.tinymediamanager.core.movie.MovieModuleManager;
+import org.tinymediamanager.core.movie.MovieSettings;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.ColumnLayout;
 import org.tinymediamanager.ui.IconManager;
@@ -71,6 +55,22 @@ import org.tinymediamanager.ui.panels.MediaInformationLogosPanel;
 
 import net.miginfocom.swing.MigLayout;
 
+/*
+ * Copyright 2012 - 2020 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /**
  * The Class MovieInformationPanel.
  * 
@@ -82,7 +82,10 @@ public class MovieInformationPanel extends JPanel {
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
 
-  private final MovieSelectionModel   movieSelectionModel;
+  private MovieSettings               settings         = MovieModuleManager.SETTINGS;
+  private MovieSelectionModel         movieSelectionModel;
+  private final ImageIcon             imageEmtpy       = new ImageIcon();
+  private ImageIcon                   imageUnwatched;
 
   /** UI components */
   private StarRater                   starRater;
@@ -94,28 +97,19 @@ public class MovieInformationPanel extends JPanel {
   private LinkLabel                   lblImdbid;
   private JLabel                      lblRunningTime;
   private LinkLabel                   lblTmdbid;
-  private JTextArea                   taGenres;
+  private JLabel                      lblGenres;
   private JTextArea                   taPlot;
   private ImageLabel                  lblMoviePoster;
   private JLabel                      lblPosterSize;
   private ImageLabel                  lblMovieFanart;
   private JLabel                      lblFanartSize;
   private JLabel                      lblCertification;
-  private JTextArea                   taOtherIds;
+  private JLabel                      lblOtherIds;
+
   private MediaInformationLogosPanel  panelLogos;
   private JSeparator                  sepLogos;
   private JLabel                      lblOriginalTitle;
   private JButton                     btnPlay;
-  private JScrollPane                 scrollPane;
-  private JTextArea                   taProduction;
-  private JTextArea                   taTags;
-  private JLabel                      lblEdition;
-  private LinkLabel                   lblMoviePath;
-  private JLabel                      lblMovieSet;
-  private JLabel                      lblSpokenLanguages;
-  private JLabel                      lblCountry;
-  private JLabel                      lblReleaseDate;
-  private JTextArea                   taNote;
 
   /**
    * Instantiates a new movie information panel.
@@ -125,6 +119,13 @@ public class MovieInformationPanel extends JPanel {
    */
   public MovieInformationPanel(MovieSelectionModel movieSelectionModel) {
     this.movieSelectionModel = movieSelectionModel;
+
+    try {
+      imageUnwatched = new ImageIcon(MovieInformationPanel.class.getResource("/org/tinymediamanager/ui/images/unwatched.png"));
+    }
+    catch (Exception e) {
+      imageUnwatched = imageEmtpy;
+    }
 
     initComponents();
 
@@ -156,24 +157,6 @@ public class MovieInformationPanel extends JPanel {
       }
     });
 
-    lblMoviePath.addActionListener(arg0 -> {
-      if (!StringUtils.isEmpty(lblMoviePath.getText())) {
-        // get the location from the label
-        Path path = Paths.get(lblMoviePath.getText());
-        try {
-          // check whether this location exists
-          if (Files.exists(path)) {
-            TmmUIHelper.openFile(path);
-          }
-        }
-        catch (Exception ex) {
-          LOGGER.error("open filemanager", ex);
-          MessageManager.instance
-              .pushMessage(new Message(Message.MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":", ex.getLocalizedMessage() }));
-        }
-      }
-    });
-
     // manual coded binding
     PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
       String property = propertyChangeEvent.getPropertyName();
@@ -198,10 +181,6 @@ public class MovieInformationPanel extends JPanel {
       if ("selectedMovie".equals(property) || MEDIA_FILES.equals(property) || MEDIA_INFORMATION.equals(property)) {
         panelLogos.setMediaInformationSource(movie);
       }
-
-      if ("selectedMovie".equals(property)) {
-        SwingUtilities.invokeLater(() -> scrollPane.getVerticalScrollBar().setValue(0));
-      }
     };
 
     movieSelectionModel.addPropertyChangeListener(propertyChangeListener);
@@ -223,12 +202,12 @@ public class MovieInformationPanel extends JPanel {
 
   private void initComponents() {
     putClientProperty("class", "roundedPanel");
-    setLayout(new MigLayout("", "[100lp:100lp,grow][300lp:300lp,grow 250]", "[][]"));
+    setLayout(new MigLayout("", "[100lp:100lp,grow][300lp:300lp,grow 350]", "[200lp:n,grow][][shrink 0][][]"));
 
     {
       JPanel panelLeft = new JPanel();
       panelLeft.setLayout(new ColumnLayout());
-      add(panelLeft, "cell 0 0 1 2,grow");
+      add(panelLeft, "cell 0 0 1 5,grow");
 
       lblMoviePoster = new ImageLabel(false, false, true);
       lblMoviePoster.setDesiredAspectRatio(2 / 3f);
@@ -251,38 +230,31 @@ public class MovieInformationPanel extends JPanel {
       panelLeft.add(lblFanartSize);
     }
     {
-      JPanel panelTitle = new JPanel();
-      add(panelTitle, "cell 1 0,grow");
-      panelTitle.setLayout(new MigLayout("insets 0 0 n n", "[grow][]", "[][][shrink 0]"));
+      JPanel panelTopRight = new JPanel();
+      add(panelTopRight, "cell 1 0,grow");
+      panelTopRight.setLayout(
+          new MigLayout("insets 0 n n n, hidemode 2", "[grow][]", "[][][shrink 0][][shrink 0][][shrink 0][][shrink 0][][][][20lp:40lp,grow]"));
 
       {
         lblMovieName = new TmmLabel("", 1.33);
-        panelTitle.add(lblMovieName, "flowx,cell 0 0,wmin 0,growx");
+        panelTopRight.add(lblMovieName, "flowx,cell 0 0,wmin 0,grow");
       }
       {
         btnPlay = new FlatButton(IconManager.PLAY_LARGE);
-        panelTitle.add(btnPlay, "cell 1 0 1 2,aligny top");
+        panelTopRight.add(btnPlay, "cell 1 0 1 2,aligny top");
       }
       {
         lblOriginalTitle = new JLabel("");
-        panelTitle.add(lblOriginalTitle, "cell 0 1,growx,wmin 0");
+        panelTopRight.add(lblOriginalTitle, "cell 0 1,growx,wmin 0");
       }
       {
-        panelTitle.add(new JSeparator(), "cell 0 2 2 1,growx");
+        panelTopRight.add(new JSeparator(), "cell 0 2 2 1,growx");
       }
-    }
-    {
-      JPanel panelRight = new JPanel();
-      panelRight.setLayout(new MigLayout("insets n 0 n n, hidemode 2", "[100lp,grow]", "[shrink 0][][shrink 0][][][][][shrink 0][][][][]"));
-
-      scrollPane = new JScrollPane(panelRight);
-      scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-      add(scrollPane, "cell 1 1,grow, wmin 0");
 
       {
         JPanel panelTopDetails = new JPanel();
-        panelRight.add(panelTopDetails, "cell 0 0,grow");
-        panelTopDetails.setLayout(new MigLayout("insets 0", "[][][20lp:n][][grow]", "[]2lp[]2lp[]2lp[]"));
+        panelTopRight.add(panelTopDetails, "cell 0 3 2 1,grow");
+        panelTopDetails.setLayout(new MigLayout("insets 0", "[][grow][][grow 200]", "[]2lp[]2lp[]2lp[]"));
 
         {
           JLabel lblYearT = new TmmLabel(BUNDLE.getString("metatag.year"));
@@ -294,10 +266,10 @@ public class MovieInformationPanel extends JPanel {
 
         {
           JLabel lblImdbIdT = new TmmLabel(BUNDLE.getString("metatag.imdb"));
-          panelTopDetails.add(lblImdbIdT, "cell 3 0");
+          panelTopDetails.add(lblImdbIdT, "cell 2 0");
 
           lblImdbid = new LinkLabel("");
-          panelTopDetails.add(lblImdbid, "cell 4 0");
+          panelTopDetails.add(lblImdbid, "cell 3 0");
         }
 
         {
@@ -310,10 +282,10 @@ public class MovieInformationPanel extends JPanel {
 
         {
           JLabel lblTmdbIdT = new TmmLabel(BUNDLE.getString("metatag.tmdb"));
-          panelTopDetails.add(lblTmdbIdT, "cell 3 1");
+          panelTopDetails.add(lblTmdbIdT, "cell 2 1");
 
           lblTmdbid = new LinkLabel("");
-          panelTopDetails.add(lblTmdbid, "cell 4 1");
+          panelTopDetails.add(lblTmdbid, "cell 3 1");
         }
 
         {
@@ -326,138 +298,80 @@ public class MovieInformationPanel extends JPanel {
 
         {
           JLabel lblOtherIdsT = new TmmLabel(BUNDLE.getString("metatag.otherids"));
-          panelTopDetails.add(lblOtherIdsT, "cell 3 2");
+          panelTopDetails.add(lblOtherIdsT, "cell 2 2");
 
-          taOtherIds = new ReadOnlyTextArea();
-          panelTopDetails.add(taOtherIds, "cell 4 2,growx,wmin 0");
+          lblOtherIds = new JLabel("");
+          panelTopDetails.add(lblOtherIds, "cell 3 2, wmin 0");
         }
 
         {
           JLabel lblGenresT = new TmmLabel(BUNDLE.getString("metatag.genre"));
           panelTopDetails.add(lblGenresT, "cell 0 3");
 
-          taGenres = new ReadOnlyTextArea();
-          panelTopDetails.add(taGenres, "cell 1 3 4 1,growx,wmin 0");
+          lblGenres = new JLabel("");
+          panelTopDetails.add(lblGenres, "cell 1 3 3 1, growx, wmin 0");
         }
       }
 
       {
-        panelRight.add(new JSeparator(), "cell 0 1,growx");
+        panelTopRight.add(new JSeparator(), "cell 0 4 2 1,growx");
       }
 
       {
         starRater = new StarRater(10, 1);
-        panelRight.add(starRater, "flowx,cell 0 2,aligny center");
+        panelTopRight.add(starRater, "flowx,cell 0 5 2 1,aligny center");
         starRater.setEnabled(false);
 
         lblRating = new JLabel("");
-        panelRight.add(lblRating, "cell 0 2,aligny center");
+        panelTopRight.add(lblRating, "cell 0 5,aligny center");
 
         lblVoteCount = new JLabel("");
-        panelRight.add(lblVoteCount, "cell 0 2,aligny center");
+        panelTopRight.add(lblVoteCount, "cell 0 5,aligny center");
       }
 
       {
         sepLogos = new JSeparator();
-        panelRight.add(sepLogos, "cell 0 3,growx");
+        panelTopRight.add(sepLogos, "cell 0 6 2 1,growx");
       }
 
       {
         panelLogos = new MediaInformationLogosPanel();
-        panelRight.add(panelLogos, "cell 0 4,wmin 0");
+        panelTopRight.add(panelLogos, "cell 0 7 2 1,wmin 0");
       }
 
       {
-        panelRight.add(new JSeparator(), "cell 0 5,growx");
+        panelTopRight.add(new JSeparator(), "cell 0 8 2 1,growx");
       }
 
       {
         JLabel lblTaglineT = new TmmLabel(BUNDLE.getString("metatag.tagline"));
-        panelRight.add(lblTaglineT, "cell 0 6,alignx left,aligny top");
+        panelTopRight.add(lblTaglineT, "cell 0 9 2 1,alignx left,aligny top");
 
         lblTagline = new JLabel();
-        panelRight.add(lblTagline, "cell 0 7,growx,wmin 0,aligny top");
+        panelTopRight.add(lblTagline, "cell 0 10 2 1,growx,wmin 0,aligny top");
       }
 
       {
         JLabel lblPlotT = new TmmLabel(BUNDLE.getString("metatag.plot"));
-        panelRight.add(lblPlotT, "cell 0 8,alignx left,aligny top");
+        panelTopRight.add(lblPlotT, "cell 0 11 2 1,alignx left,aligny top");
+
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setBorder(null);
+        panelTopRight.add(scrollPane, "cell 0 12 2 1,grow");
 
         taPlot = new ReadOnlyTextArea();
-        panelRight.add(taPlot, "cell 0 9,growx,wmin 0,aligny top");
+        taPlot.setBorder(null);
+        scrollPane.setViewportView(taPlot);
       }
-      {
-        panelRight.add(new JSeparator(), "cell 0 10,growx");
-      }
-      {
-        JPanel panelBottomDetails = new JPanel();
-        panelRight.add(panelBottomDetails, "cell 0 11,grow");
-        panelBottomDetails.setLayout(new MigLayout("insets 0", "[][10lp][200lp,grow]", "[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]"));
+    }
+    {
+      add(new JSeparator(), "cell 1 2,growx");
+    }
 
-        {
-          JLabel lblReleaseDateT = new TmmLabel(BUNDLE.getString("metatag.releasedate"));
-          panelBottomDetails.add(lblReleaseDateT, "cell 0 0");
-
-          lblReleaseDate = new JLabel("");
-          panelBottomDetails.add(lblReleaseDate, "cell 2 0,growx,wmin 0");
-        }
-        {
-          JLabel lblProductionT = new TmmLabel(BUNDLE.getString("metatag.production"));
-          panelBottomDetails.add(lblProductionT, "cell 0 1");
-
-          taProduction = new ReadOnlyTextArea();
-          panelBottomDetails.add(taProduction, "cell 2 1,growx, wmin 0");
-        }
-        {
-          JLabel lblCountryT = new TmmLabel(BUNDLE.getString("metatag.country"));
-          panelBottomDetails.add(lblCountryT, "cell 0 2");
-
-          lblCountry = new JLabel("");
-          panelBottomDetails.add(lblCountry, "cell 2 2,growx,wmin 0");
-        }
-        {
-          JLabel lblSpokenLanguagesT = new TmmLabel(BUNDLE.getString("metatag.spokenlanguages"));
-          panelBottomDetails.add(lblSpokenLanguagesT, "cell 0 3");
-
-          lblSpokenLanguages = new JLabel("");
-          panelBottomDetails.add(lblSpokenLanguages, "cell 2 3,growx,wmin 0");
-        }
-        {
-          JLabel lblMoviesetT = new TmmLabel(BUNDLE.getString("metatag.movieset"));
-          panelBottomDetails.add(lblMoviesetT, "cell 0 4");
-
-          lblMovieSet = new JLabel("");
-          panelBottomDetails.add(lblMovieSet, "cell 2 4,growx,wmin 0");
-        }
-        {
-          JLabel lblEditionT = new TmmLabel(BUNDLE.getString("metatag.edition"));
-          panelBottomDetails.add(lblEditionT, "cell 0 5");
-
-          lblEdition = new JLabel("");
-          panelBottomDetails.add(lblEdition, "cell 2 5,growx,wmin 0");
-        }
-        {
-          JLabel lblTagsT = new TmmLabel(BUNDLE.getString("metatag.tags"));
-          panelBottomDetails.add(lblTagsT, "cell 0 6");
-
-          taTags = new ReadOnlyTextArea();
-          panelBottomDetails.add(taTags, "cell 2 6,growx, wmin 0");
-        }
-        {
-          JLabel lblMoviePathT = new TmmLabel(BUNDLE.getString("metatag.path"));
-          panelBottomDetails.add(lblMoviePathT, "cell 0 7");
-
-          lblMoviePath = new LinkLabel("");
-          panelBottomDetails.add(lblMoviePath, "cell 2 7,growx,wmin 0");
-        }
-        {
-          JLabel lblNoteT = new TmmLabel(BUNDLE.getString("metatag.note"));
-          panelBottomDetails.add(lblNoteT, "cell 0 8");
-
-          taNote = new ReadOnlyTextArea();
-          panelBottomDetails.add(taNote, "cell 2 8, growx, wmin 0");
-        }
-      }
+    {
+      MovieDetailsPanel panelBottomRight = new MovieDetailsPanel(movieSelectionModel);
+      add(panelBottomRight, "cell 1 4,grow");
     }
   }
 
@@ -516,12 +430,12 @@ public class MovieInformationPanel extends JPanel {
     autoBinding_7.bind();
     //
     BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_16 = BeanProperty.create("selectedMovie.genresAsString");
-    BeanProperty<JTextArea, String> jTextAreaBeanProperty = BeanProperty.create("text");
-    AutoBinding<MovieSelectionModel, String, JTextArea, String> autoBinding_17 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_16, taGenres, jTextAreaBeanProperty);
+    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_17 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_16, lblGenres, jLabelBeanProperty);
     autoBinding_17.bind();
     //
     BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_14 = BeanProperty.create("selectedMovie.plot");
+    BeanProperty<JTextArea, String> jTextAreaBeanProperty = BeanProperty.create("text");
     AutoBinding<MovieSelectionModel, String, JTextArea, String> autoBinding_18 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
         movieSelectionModelBeanProperty_14, taPlot, jTextAreaBeanProperty);
     autoBinding_18.bind();
@@ -547,8 +461,8 @@ public class MovieInformationPanel extends JPanel {
     autoBinding_8.bind();
     //
     BeanProperty<MovieSelectionModel, Map<String, Object>> movieSelectionModelBeanProperty_5 = BeanProperty.create("selectedMovie.ids");
-    AutoBinding<MovieSelectionModel, Map<String, Object>, JTextArea, String> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ,
-        movieSelectionModel, movieSelectionModelBeanProperty_5, taOtherIds, jTextAreaBeanProperty);
+    AutoBinding<MovieSelectionModel, Map<String, Object>, JLabel, String> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        movieSelectionModel, movieSelectionModelBeanProperty_5, lblOtherIds, jLabelBeanProperty);
     autoBinding_6.setConverter(new MovieOtherIdsConverter());
     autoBinding_6.bind();
     //
@@ -565,50 +479,15 @@ public class MovieInformationPanel extends JPanel {
     autoBinding_1.setConverter(new RatingConverter<>());
     autoBinding_1.bind();
     //
-    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_1 = BeanProperty.create("selectedMovie.releaseDateAsString");
-    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_1, lblReleaseDate, jLabelBeanProperty);
+    BeanProperty<MovieSettings, Boolean> movieSettingsBeanProperty = BeanProperty.create("showLogosPanel");
+    BeanProperty<JSeparator, Boolean> jSeparatorBeanProperty = BeanProperty.create("visible");
+    AutoBinding<MovieSettings, Boolean, JSeparator, Boolean> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ, settings,
+        movieSettingsBeanProperty, sepLogos, jSeparatorBeanProperty);
     autoBinding_11.bind();
     //
-    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_10 = BeanProperty.create("selectedMovie.productionCompany");
-    AutoBinding<MovieSelectionModel, String, JTextArea, String> autoBinding_12 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_10, taProduction, jTextAreaBeanProperty);
+    BeanProperty<MediaInformationLogosPanel, Boolean> mediaInformationLogosPanelBeanProperty = BeanProperty.create("visible");
+    AutoBinding<MovieSettings, Boolean, MediaInformationLogosPanel, Boolean> autoBinding_12 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        settings, movieSettingsBeanProperty, panelLogos, mediaInformationLogosPanelBeanProperty);
     autoBinding_12.bind();
-    //
-    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_11 = BeanProperty.create("selectedMovie.country");
-    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_13 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_11, lblCountry, jLabelBeanProperty);
-    autoBinding_13.bind();
-    //
-    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_17 = BeanProperty.create("selectedMovie.spokenLanguages");
-    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_15 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_17, lblSpokenLanguages, jLabelBeanProperty);
-    autoBinding_15.bind();
-    //
-    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_18 = BeanProperty.create("selectedMovie.movieSetTitle");
-    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_16 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_18, lblMovieSet, jLabelBeanProperty);
-    autoBinding_16.bind();
-    //
-    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_19 = BeanProperty.create("selectedMovie.edition.title");
-    AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_19 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_19, lblEdition, jLabelBeanProperty);
-    autoBinding_19.bind();
-    //
-    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_20 = BeanProperty.create("selectedMovie.tagsAsString");
-    AutoBinding<MovieSelectionModel, String, JTextArea, String> autoBinding_20 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_20, taTags, jTextAreaBeanProperty);
-    autoBinding_20.bind();
-    //
-    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_21 = BeanProperty.create("selectedMovie.path");
-    BeanProperty<LinkLabel, String> linkLabelBeanProperty = BeanProperty.create("text");
-    AutoBinding<MovieSelectionModel, String, LinkLabel, String> autoBinding_21 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_21, lblMoviePath, linkLabelBeanProperty);
-    autoBinding_21.bind();
-    //
-    BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_22 = BeanProperty.create("selectedMovie.note");
-    AutoBinding<MovieSelectionModel, String, JTextArea, String> autoBinding_22 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-        movieSelectionModelBeanProperty_22, taNote, jTextAreaBeanProperty);
-    autoBinding_22.bind();
   }
 }
