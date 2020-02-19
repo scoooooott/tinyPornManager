@@ -23,6 +23,7 @@ x (Trakt.tv) better test routine to show if the connection works
 x remember last used folder when choosing files #791
 x (TV show) only offer artwork types in the "Download missing artwork" dialog #795
 x preserve file creation/modification date on renaming
+x (movie/TV show) try to preserve existing IDs when re-scraping with a different scraper
 
 
 Version 3.1.2

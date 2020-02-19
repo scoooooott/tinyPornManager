@@ -695,8 +695,27 @@ public class Movie extends MediaEntity implements IMediaInformation {
       return;
     }
 
-    // populate ids (and remove old ones)
-    ids.clear();
+    // populate ids
+
+    // here we have two flavors:
+    // a) we did a search, so all existing ids should be different to to new ones -> remove old ones
+    // b) we did just a scrape (probably with another scraper). we should have at least one id in the movie which matches the ids from the metadata ->
+    // merge ids
+
+    // search for existing ids
+    boolean matchFound = false;
+    for (Map.Entry<String, Object> entry : metadata.getIds().entrySet()) {
+      if (entry.getValue() != null && entry.getValue().equals(getId(entry.getKey()))) {
+        matchFound = true;
+        break;
+      }
+    }
+
+    if (!matchFound) {
+      // clear the old ids to set only the new ones
+      ids.clear();
+    }
+
     setIds(metadata.getIds());
 
     // set chosen metadata
