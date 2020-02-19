@@ -344,6 +344,11 @@ public class UpgradeTasks {
     if (StrgUtils.compareVersion(v, "3.1.3") < 0) {
       LOGGER.info("Performing database upgrade tasks to version 3.1.3");
 
+      // remove legacy imdbId
+      for (Movie movie : MovieList.getInstance().getMovies()) {
+        movie.setId("imdbId", null);
+      }
+
       // convert movie set ids from tmdb to tmdbSet
       for (MovieSet movieSet : MovieList.getInstance().getMovieSetList()) {
         if (movieSet.getId(Constants.TMDB) != null) {
