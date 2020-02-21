@@ -734,7 +734,8 @@ public class TvShowSettings extends AbstractSettings {
   }
 
   public void setUiFilters(List<UIFilters> filters) {
-    uiFilters = filters;
+    uiFilters.clear();
+    uiFilters.addAll(filters);
     firePropertyChange(UI_FILTERS, null, uiFilters);
   }
 

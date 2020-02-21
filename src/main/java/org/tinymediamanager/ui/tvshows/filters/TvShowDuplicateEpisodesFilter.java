@@ -41,7 +41,7 @@ public class TvShowDuplicateEpisodesFilter extends AbstractTvShowUIFilter {
 
   @Override
   public String getId() {
-    return "tvShowNewEpisodes";
+    return "tvShowDuplicateEpisodes";
   }
 
   @Override
