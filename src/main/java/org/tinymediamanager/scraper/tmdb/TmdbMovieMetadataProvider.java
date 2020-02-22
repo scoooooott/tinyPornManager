@@ -117,7 +117,6 @@ class TmdbMovieMetadataProvider {
 
     int tmdbId = options.getTmdbId();
 
-
     boolean adult = providerInfo.getConfig().getValueAsBool("includeAdult");
 
     String language = getRequestLanguage(options.getLanguage());
@@ -174,7 +173,7 @@ class TmdbMovieMetadataProvider {
 
           // get all result pages
           do {
-            Response<MovieResultsPage> httpResponse = api.searchService().movie(searchString, page, language, adult, null, null, "phrase").execute();
+            Response<MovieResultsPage> httpResponse = api.searchService().movie(searchString, page, language, null, adult, null, null).execute();
             if (!httpResponse.isSuccessful() || httpResponse.body() == null) {
               throw new HttpException(httpResponse.code(), httpResponse.message());
             }
@@ -200,7 +199,7 @@ class TmdbMovieMetadataProvider {
         searchString = searchString.replaceFirst("\\s\\d{4}$", "");
         try {
           // /search/movie
-          MovieResultsPage resultsPage = api.searchService().movie(searchString, 1, language, adult, null, null, "phrase").execute().body();
+          MovieResultsPage resultsPage = api.searchService().movie(searchString, 1, language, null, adult, null, null).execute().body();
           if (resultsPage != null && resultsPage.results != null) {
             for (BaseMovie movie : resultsPage.results) {
               verifyMovieTitleLanguage(options.getLanguage().toLocale(), movie);

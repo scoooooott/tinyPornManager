@@ -174,7 +174,7 @@ class TmdbTvShowMetadataProvider {
 
           // get all result pages
           do {
-            Response<TvShowResultsPage> httpResponse = api.searchService().tv(searchString, page, language, null, "phrase").execute();
+            Response<TvShowResultsPage> httpResponse = api.searchService().tv(searchString, page, language, null).execute();
             if (!httpResponse.isSuccessful() || httpResponse.body() == null) {
               throw new HttpException(httpResponse.code(), httpResponse.message());
             }
