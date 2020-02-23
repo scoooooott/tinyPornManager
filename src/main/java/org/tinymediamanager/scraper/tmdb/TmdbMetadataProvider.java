@@ -18,6 +18,7 @@ package org.tinymediamanager.scraper.tmdb;
 import java.util.List;
 import java.util.Locale;
 import java.util.SortedSet;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -129,6 +130,9 @@ public class TmdbMetadataProvider implements IMovieMetadataProvider, IMovieSetMe
           @Override
           protected synchronized OkHttpClient okHttpClient() {
             OkHttpClient.Builder builder = TmmHttpClient.newBuilder(true);
+            builder.connectTimeout(30, TimeUnit.SECONDS);
+            builder.writeTimeout(30, TimeUnit.SECONDS);
+            builder.readTimeout(30, TimeUnit.SECONDS);
             builder.addInterceptor(new TmdbInterceptor(this));
             return builder.build();
           }
