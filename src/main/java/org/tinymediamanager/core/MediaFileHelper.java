@@ -253,13 +253,13 @@ public class MediaFileHelper {
 
     if (Globals.settings.getVideoFileType().contains("." + ext)) {
       // is this maybe a trailer?
-      if (basename.matches("(?i).*[\\[\\]\\(\\)_.-]*trailer[\\[\\]\\(\\)_.-]?$") || basename.equalsIgnoreCase("movie-trailer")
+      if (basename.matches("(?i).*[\\[\\]\\(\\)_.-]+trailer[\\[\\]\\(\\)_.-]?$") || basename.equalsIgnoreCase("movie-trailer")
           || foldername.equalsIgnoreCase("trailer") || foldername.equalsIgnoreCase("trailers")) {
         return MediaFileType.TRAILER;
       }
 
       // we have some false positives too - make a more precise check
-      if (basename.matches("(?i).*[\\[\\]\\(\\)_.-]*sample[\\[\\]\\(\\)_.-]?$") // end with sample
+      if (basename.matches("(?i).*[\\[\\]\\(\\)_.-]+sample[\\[\\]\\(\\)_.-]?$") // end with sample (mandatory delimiter before!)
           || foldername.equalsIgnoreCase("sample")) { // sample folder name
         return MediaFileType.SAMPLE;
       }
