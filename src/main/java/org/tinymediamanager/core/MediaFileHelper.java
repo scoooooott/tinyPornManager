@@ -259,7 +259,7 @@ public class MediaFileHelper {
       }
 
       // we have some false positives too - make a more precise check
-      if (basename.matches("(?i).*[\\[\\]\\(\\)_.-]+sample[\\[\\]\\(\\)_.-]?$") // end with sample (mandatory delimiter before!)
+      if (basename.matches("(?i).*[\\[\\]\\(\\)_.-]+sample[\\[\\]\\(\\)_.-]?$") || basename.equalsIgnoreCase("sample")
           || foldername.equalsIgnoreCase("sample")) { // sample folder name
         return MediaFileType.SAMPLE;
       }

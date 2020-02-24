@@ -39,7 +39,7 @@ public class MovieTest extends BasicTest {
 
   @Test
   public void trailerDetection() {
-    String m = "So.Dark.the.Night.1946.720p.BluRay.x264-x0r[Trailer-Theatrical Trailer].mkv";
+    String m = "So.Dark.the.Night.1946.720p.BluRay.x264-x0r[Trailer-Theatrical-Trailer].mkv";
     MediaFile mf = new MediaFile(Paths.get(m));
     Assert.assertSame(MediaFileType.TRAILER, mf.getType());
 
