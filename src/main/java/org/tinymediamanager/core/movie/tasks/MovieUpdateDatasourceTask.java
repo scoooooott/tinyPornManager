@@ -556,9 +556,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     }
 
     Movie movie = movieList.getMovieByPath(movieDir);
-    HashSet<Path> allFiles = getAllFilesRecursive(movieDir, 3); // need 3 (was
-                                                                // 2) because
-                                                                // extracted BD
+    // need 4 levels (3 because of nested extras, 2 because extracted BD)
+    HashSet<Path> allFiles = getAllFilesRecursive(movieDir, 4);
     filesFound.add(movieDir.toAbsolutePath()); // our global cache
     filesFound.addAll(allFiles); // our global cache
 
@@ -1431,11 +1430,11 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
           }
           // check if file is a VIDEO type - only scan those folders (and not extras/trailer folders)!
           MediaFile mf = new MediaFile(file);
-          if (mf.getType() == MediaFileType.VIDEO && !datasource.relativize(file.getParent()).toString().matches("(?i).*[_.-]+extra[s]?$")) {
+          if (mf.getType() == MediaFileType.VIDEO) {
             videofolders.add(file.getParent());
           }
           else {
-            LOGGER.debug("no VIDEO or EXTRA - do not parse {}", file);
+            LOGGER.debug("no VIDEO (is {}) - do not parse {}", mf.getType(), file);
           }
         }
       }
@@ -1496,6 +1495,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       }
       return CONTINUE;
     }
+
   }
 
   /**

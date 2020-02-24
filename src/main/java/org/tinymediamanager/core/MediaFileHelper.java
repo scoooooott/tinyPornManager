@@ -202,9 +202,13 @@ public class MediaFileHelper {
     // just path w/o filename
     String foldername = FilenameUtils.getBaseName(pathToFile.getParent() == null ? "" : pathToFile.getParent().toString().toLowerCase(Locale.ROOT));
 
-    String parentparent = "";
+    String pparent = "";
+    String ppparent = "";
+    String pppparent = "";
     try {
-      parentparent = FilenameUtils.getBaseName(pathToFile.getParent().getParent().toString()).toLowerCase(Locale.ROOT);
+      pparent = FilenameUtils.getBaseName(pathToFile.getParent().getParent().toString()).toLowerCase(Locale.ROOT);
+      ppparent = FilenameUtils.getBaseName(pathToFile.getParent().getParent().getParent().toString()).toLowerCase(Locale.ROOT);
+      pppparent = FilenameUtils.getBaseName(pathToFile.getParent().getParent().getParent().getParent().toString()).toLowerCase(Locale.ROOT);
     }
     catch (Exception ignored) {
       // could happen if we are no 2 levels deep
@@ -216,7 +220,9 @@ public class MediaFileHelper {
         || basename.matches("(?i).*[-]+extra[s]?[-].*") // extra[s] just with surrounding dash (other delims problem)
         || foldername.equalsIgnoreCase("extras") // preferred folder name
         || foldername.equalsIgnoreCase("extra") // preferred folder name
-        || (!parentparent.isEmpty() && parentparent.matches("extra[s]?")) // extras folder a level deeper
+        || (!pparent.isEmpty() && pparent.matches("extra[s]?")) // extras folder a level deeper
+        || (!ppparent.isEmpty() && ppparent.matches("extra[s]?")) // extras folder a level deeper
+        || (!pppparent.isEmpty() && pppparent.matches("extra[s]?")) // extras folder a level deeper
         || basename.matches("(?i).*[-](behindthescenes|deleted|featurette|interview|scene|short|other)$") // Plex (w/o trailer)
         || MediaFileHelper.PLEX_EXTRA_FOLDERS.contains(foldername)) // Plex Extra folders
     {
