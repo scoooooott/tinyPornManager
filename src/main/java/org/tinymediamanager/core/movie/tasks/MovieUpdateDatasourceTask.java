@@ -556,8 +556,8 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     }
 
     Movie movie = movieList.getMovieByPath(movieDir);
-    // need 4 levels (3 because of nested extras, 2 because extracted BD)
-    HashSet<Path> allFiles = getAllFilesRecursive(movieDir, 4);
+    // need 5 levels (3 because of nested extras, 2 because extracted BD)
+    HashSet<Path> allFiles = getAllFilesRecursive(movieDir, 5);
     filesFound.add(movieDir.toAbsolutePath()); // our global cache
     filesFound.addAll(allFiles); // our global cache
 
