@@ -1,6 +1,6 @@
 Version 3.1.4
 =======================
-+ added Hindi to scraper languages #800
++ added some more scraper languages #800
 x (TV show) storing duplicate episodes filter
 
 

@@ -45,7 +45,7 @@ public class ITTmdbTvShowMetadataProviderTest {
 
     TvShowSearchAndScrapeOptions options = new TvShowSearchAndScrapeOptions();
     options.setTmdbId(160);
-    options.setLanguage(MediaLanguages.al); // unavailable
+    options.setLanguage(MediaLanguages.sq); // unavailable
 
     MediaMetadata md = mp.getMetadata(options);
 
