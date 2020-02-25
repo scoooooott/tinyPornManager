@@ -85,8 +85,8 @@ public class TvShowSettings extends AbstractSettings {
    */
   private static final String                      TV_SHOW_DATA_SOURCE            = "tvShowDataSource";
   private static final String                      ARTWORK_SCRAPERS               = "artworkScrapers";
-  private final static String                      TRAILER_SCRAPERS               = "trailerScrapers";
-  private final static String                      TRAILER_FILENAME               = "trailerFilename";
+  private static final String                      TRAILER_SCRAPERS               = "trailerScrapers";
+  private static final String                      TRAILER_FILENAME               = "trailerFilename";
 
   private static final String                      CERTIFICATION_COUNTRY          = "certificationCountry";
   private static final String                      RENAMER_SEASON_FOLDER          = "renamerSeasonFoldername";
@@ -1515,5 +1515,26 @@ public class TvShowSettings extends AbstractSettings {
     setCertificationStyle(CertificationStyle.SHORT);
 
     firePropertyChange("preset", false, true);
+  }
+
+  /**
+   * set the default scrapers for the movie module
+   */
+  public void setDefaultScrapers() {
+    // activate default scrapers
+    artworkScrapers.clear();
+    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.TV_SHOW_ARTWORK)) {
+      addTvShowArtworkScraper(ms.getId());
+    }
+
+    trailerScrapers.clear();
+    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.TVSHOW_TRAILER)) {
+      addTvShowTrailerScraper(ms.getId());
+    }
+
+    subtitleScrapers.clear();
+    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.SUBTITLE)) {
+      addTvShowSubtitleScraper(ms.getId());
+    }
   }
 }

@@ -2,6 +2,7 @@ Version 3.1.4
 =======================
 + added some more scraper languages #800
 x (TV show) storing duplicate episodes filter
++ (movie/TV show) pre-set all artwork/trailer/subtitle scrapers on first start
 
 
 Version 3.1.3
