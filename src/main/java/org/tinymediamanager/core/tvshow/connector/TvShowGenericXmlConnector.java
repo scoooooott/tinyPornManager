@@ -52,6 +52,7 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaGenres;
 import org.tinymediamanager.core.entities.MediaRating;
+import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -702,8 +703,11 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
    */
   protected void addTrailer() {
     Element trailer = document.createElement("trailer");
-    if (parser != null && StringUtils.isNotBlank(parser.trailer)) {
-      trailer.setTextContent(parser.trailer);
+    for (MediaTrailer mediaTrailer : new ArrayList<>(tvShow.getTrailer())) {
+      if (mediaTrailer.getInNfo() && !mediaTrailer.getUrl().startsWith("file")) {
+        trailer.setTextContent(mediaTrailer.getUrl());
+        break;
+      }
     }
     root.appendChild(trailer);
   }
