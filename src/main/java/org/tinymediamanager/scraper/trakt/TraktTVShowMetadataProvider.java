@@ -83,13 +83,13 @@ class TraktTVShowMetadataProvider {
 
     SortedSet<MediaSearchResult> results = new TreeSet<>();
     List<SearchResult> searchResults = null;
-    String lang = options.getLanguage().getLanguage();
-    lang = lang + ",en"; // fallback search (does this still work?)
+
+    // pass NO language here since trakt.tv returns less results when passing a language :(
 
     synchronized (api) {
       try {
         Response<List<SearchResult>> response = api.search()
-            .textQueryShow(searchString, null, null, lang, null, null, null, null, null, null, Extended.FULL, 1, 25).execute();
+            .textQueryShow(searchString, null, null, null, null, null, null, null, null, null, Extended.FULL, 1, 25).execute();
         if (!response.isSuccessful()) {
           LOGGER.warn("request was NOT successful: HTTP/{} - {}", response.code(), response.message());
           throw new HttpException(response.code(), response.message());

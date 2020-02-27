@@ -2,7 +2,8 @@ Version 3.1.4
 =======================
 + added some more scraper languages #800
 x (TV show) storing duplicate episodes filter
-+ (movie/TV show) pre-set all artwork/trailer/subtitle scrapers on first start
+x (movie/TV show) pre-set all artwork/trailer/subtitle scrapers on first start
+x (Trakt.tv) do not pass language to the search engine of Trakt.tv to improve the search result
 
 
 Version 3.1.3
