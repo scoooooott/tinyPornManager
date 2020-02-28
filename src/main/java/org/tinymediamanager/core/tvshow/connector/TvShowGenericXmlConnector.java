@@ -782,14 +782,14 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
    * @return the scraper where the default should be set
    */
   private String detectDefaultScraper() {
-    // IMDB first
-    if (tvShow.getIds().containsKey(MediaMetadata.IMDB)) {
-      return MediaMetadata.IMDB;
-    }
-
-    // TVDB second
+    // TVDB first
     if (tvShow.getIds().containsKey(MediaMetadata.TVDB)) {
       return MediaMetadata.TVDB;
+    }
+
+    // IMDB second
+    if (tvShow.getIds().containsKey(MediaMetadata.IMDB)) {
+      return MediaMetadata.IMDB;
     }
 
     // TMDB third
