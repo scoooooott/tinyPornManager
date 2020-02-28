@@ -48,6 +48,7 @@ import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortOrder;
 import org.tinymediamanager.ui.movies.MovieSelectionModel;
 import org.tinymediamanager.ui.movies.filters.IMovieUIFilter;
 import org.tinymediamanager.ui.movies.filters.MovieAspectRatioFilter;
+import org.tinymediamanager.ui.movies.filters.MovieAudioChannelFilter;
 import org.tinymediamanager.ui.movies.filters.MovieAudioCodecFilter;
 import org.tinymediamanager.ui.movies.filters.MovieCastFilter;
 import org.tinymediamanager.ui.movies.filters.MovieCertificationFilter;
@@ -151,6 +152,7 @@ public class MovieFilterDialog extends TmmDialog {
         addFilter(new MovieVideo3DFilter(), panelMediaData);
         addFilter(new MovieVideoContainerFilter(), panelMediaData);
         addFilter(new MovieAudioCodecFilter(), panelMediaData);
+        addFilter(new MovieAudioChannelFilter(), panelMediaData);
         addFilter(new MovieDatasourceFilter(), panelMediaData);
         addFilter(new MovieMediaSourceFilter(), panelMediaData);
         addFilter(new MovieVideoExtrasFilter(), panelMediaData);
@@ -162,7 +164,7 @@ public class MovieFilterDialog extends TmmDialog {
       {
         // panel sort
         JPanel panelSort = new JPanel();
-        panelSort.setLayout(new MigLayout("insets n 0 n 0", "[5lp!][10lp][100lp,grow][5lp!]", "[]"));
+        panelSort.setLayout(new MigLayout("insets n 0 n 0", "[5lp!][10lp][150lp,grow][5lp!]", "[]"));
 
         JSeparator separator = new JSeparator();
         panelSort.add(separator, "cell 0 1 4 1,growx,aligny top");

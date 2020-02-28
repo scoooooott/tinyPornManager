@@ -40,6 +40,7 @@ import org.tinymediamanager.ui.components.treetable.TmmTreeTable;
 import org.tinymediamanager.ui.dialogs.TmmDialog;
 import org.tinymediamanager.ui.tvshows.filters.ITvShowUIFilter;
 import org.tinymediamanager.ui.tvshows.filters.TvShowAspectRatioFilter;
+import org.tinymediamanager.ui.tvshows.filters.TvShowAudioChannelFilter;
 import org.tinymediamanager.ui.tvshows.filters.TvShowAudioCodecFilter;
 import org.tinymediamanager.ui.tvshows.filters.TvShowCastFilter;
 import org.tinymediamanager.ui.tvshows.filters.TvShowDatasourceFilter;
@@ -119,7 +120,7 @@ public class TvShowFilterDialog extends TmmDialog {
 
       {
         // panel media data
-        JPanel panelMediaData = new JPanel(new MigLayout("", "[][][100lp:n,grow]", "[]"));
+        JPanel panelMediaData = new JPanel(new MigLayout("", "[][][150lp:n,grow]", "[]"));
         JScrollPane scrollPaneMediaData = new JScrollPane(panelMediaData);
         scrollPaneMediaData.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         tabbedPane.addTab(BUNDLE.getString("metatag.mediainformation"), scrollPaneMediaData);
@@ -131,6 +132,7 @@ public class TvShowFilterDialog extends TmmDialog {
         addFilter(new TvShowFrameRateFilter(), panelMediaData);
         addFilter(new TvShowVideoContainerFilter(), panelMediaData);
         addFilter(new TvShowAudioCodecFilter(), panelMediaData);
+        addFilter(new TvShowAudioChannelFilter(), panelMediaData);
         addFilter(new TvShowMediaSourceFilter(), panelMediaData);
         addFilter(new TvShowDatasourceFilter(), panelMediaData);
         addFilter(new TvShowMissingMetadataFilter(), panelMediaData);
