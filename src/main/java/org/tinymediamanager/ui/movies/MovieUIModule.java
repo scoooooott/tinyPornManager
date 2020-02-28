@@ -155,11 +155,6 @@ public class MovieUIModule extends AbstractTmmUIModule {
       });
     }
 
-    // apply sorting
-    if (MovieModuleManager.SETTINGS.isStoreUiSorting()) {
-      selectionModel.sortMovies(MovieModuleManager.SETTINGS.getSortColumn(), MovieModuleManager.SETTINGS.isSortAscending());
-    }
-
     // init the table panel
     listPanel.init();
   }

@@ -56,7 +56,6 @@ import org.tinymediamanager.scraper.entities.MediaArtwork.FanartSizes;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaArtwork.PosterSizes;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
-import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortColumn;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -193,9 +192,6 @@ public class MovieSettings extends AbstractSettings {
 
   // ui
   private boolean                          storeUiFilters                      = false;
-  private boolean                          storeUiSorting                      = false;
-  private SortColumn                       sortColumn                          = SortColumn.TITLE;
-  private boolean                          sortAscending                       = true;
   private boolean                          showLogosPanel                      = true;
 
   public MovieSettings() {
@@ -908,38 +904,8 @@ public class MovieSettings extends AbstractSettings {
     firePropertyChange("storeUiFilters", oldValue, newValue);
   }
 
-  public boolean isStoreUiSorting() {
-    return storeUiSorting;
-  }
-
-  public void setStoreUiSorting(boolean newValue) {
-    boolean oldValue = this.storeUiSorting;
-    this.storeUiSorting = newValue;
-    firePropertyChange("storeUiSorting", oldValue, newValue);
-  }
-
   public boolean isStoreUiFilters() {
     return storeUiFilters;
-  }
-
-  public SortColumn getSortColumn() {
-    return sortColumn;
-  }
-
-  public void setSortColumn(SortColumn newValue) {
-    SortColumn oldValue = this.sortColumn;
-    this.sortColumn = newValue;
-    firePropertyChange("sortColumn", oldValue, newValue);
-  }
-
-  public boolean isSortAscending() {
-    return sortAscending;
-  }
-
-  public void setSortAscending(boolean newValue) {
-    boolean oldValue = this.sortAscending;
-    this.sortAscending = newValue;
-    firePropertyChange("sortAscending", oldValue, newValue);
   }
 
   public boolean isWriteActorImages() {

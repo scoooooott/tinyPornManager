@@ -64,7 +64,6 @@ public class MovieSettingsPanel extends JPanel {
   private JCheckBox                    chckbxPersistUiFilters;
   private JCheckBox                    chckbxBuildImageCache;
   private JCheckBox                    chckbxRuntimeFromMi;
-  private JCheckBox                    chckbxPersistUiSorting;
   private JCheckBox                    chckbxShowLogos;
   private JButton                      btnPresetKodi;
   private JButton                      btnPresetXbmc;
@@ -221,23 +220,19 @@ public class MovieSettingsPanel extends JPanel {
         panelUiSettings.add(chckbxPersistUiFilters, "cell 1 0 2 1");
       }
       {
-        chckbxPersistUiSorting = new JCheckBox(BUNDLE.getString("Settings.movie.persistuisorting"));
-        panelUiSettings.add(chckbxPersistUiSorting, "cell 1 1 2 1");
-      }
-      {
         chckbxShowLogos = new JCheckBox(BUNDLE.getString("Settings.showlogos"));
-        panelUiSettings.add(chckbxShowLogos, "cell 1 2 2 1");
+        panelUiSettings.add(chckbxShowLogos, "cell 1 1 2 1");
       }
       {
         JLabel lblRating = new JLabel(BUNDLE.getString("Settings.preferredrating"));
-        panelUiSettings.add(lblRating, "cell 1 3 2 1");
+        panelUiSettings.add(lblRating, "cell 1 2 2 1");
 
         cbRating = new AutocompleteComboBox<>(Arrays.asList("imdb", "tmdb", "rottenTomatoes"));
-        panelUiSettings.add(cbRating, "cell 1 3");
+        panelUiSettings.add(cbRating, "cell 1 2");
       }
       {
         chckbxPersonalRatingFirst = new JCheckBox(BUNDLE.getString("Settings.personalratingfirst"));
-        panelUiSettings.add(chckbxPersonalRatingFirst, "cell 2 4 2 1");
+        panelUiSettings.add(chckbxPersonalRatingFirst, "cell 2 3 2 1");
       }
     }
     {
@@ -369,11 +364,6 @@ public class MovieSettingsPanel extends JPanel {
     AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         movieSettingsBeanProperty_4, chckbxRuntimeFromMi, jCheckBoxBeanProperty);
     autoBinding_4.bind();
-    //
-    BeanProperty<MovieSettings, Boolean> movieSettingsBeanProperty_5 = BeanProperty.create("storeUiSorting");
-    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        movieSettingsBeanProperty_5, chckbxPersistUiSorting, jCheckBoxBeanProperty);
-    autoBinding_5.bind();
     //
     BeanProperty<MovieSettings, Boolean> movieSettingsBeanProperty_7 = BeanProperty.create("preferPersonalRating");
     AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
