@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +50,7 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.ScraperMetadataConfig;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.entities.MediaEntity;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tasks.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
@@ -61,6 +63,7 @@ import org.tinymediamanager.core.tvshow.filenaming.TvShowSeasonThumbNaming;
 import org.tinymediamanager.core.tvshow.tasks.TvShowExtraImageFetcherTask;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.thirdparty.VSMeta;
 
 /**
  * The class TvShowArtworkHelper . A helper class for managing TV show artwork
@@ -69,6 +72,10 @@ import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
  */
 public class TvShowArtworkHelper {
   private static final Logger LOGGER = LoggerFactory.getLogger(TvShowArtworkHelper.class);
+
+  private TvShowArtworkHelper() {
+    // use private constructor for utility classes
+  }
 
   /**
    * Manage downloading of the chosen artwork type
@@ -344,12 +351,8 @@ public class TvShowArtworkHelper {
    * @return true/false
    */
   public static boolean hasMissingArtwork(TvShowEpisode episode, List<TvShowEpisodeScraperMetadataConfig> config) {
-    if (config.contains(TvShowEpisodeScraperMetadataConfig.THUMB) && !TvShowModuleManager.SETTINGS.getEpisodeThumbFilenames().isEmpty()
-        && episode.getMediaFiles(MediaFileType.THUMB).isEmpty()) {
-      return true;
-    }
-
-    return false;
+    return config.contains(TvShowEpisodeScraperMetadataConfig.THUMB) && !TvShowModuleManager.SETTINGS.getEpisodeThumbFilenames().isEmpty()
+        && episode.getMediaFiles(MediaFileType.THUMB).isEmpty();
   }
 
   public static void downloadSeasonArtwork(TvShow show, int season, MediaArtworkType artworkType) {
@@ -367,7 +370,7 @@ public class TvShowArtworkHelper {
         break;
 
       default:
-        return;
+        break;
     }
   }
 
@@ -791,5 +794,86 @@ public class TvShowArtworkHelper {
     // get images in thread
     TvShowExtraImageFetcherTask task = new TvShowExtraImageFetcherTask(tvShow, type);
     TmmTaskManager.getInstance().addImageDownloadTask(task);
+  }
+
+  /**
+   * extract embedded artwork from a VSMETA file to the destinations specified in the settings
+   *
+   * @param tvShow
+   *          the {@link TvShow} to assign the new {@link MediaFile}s to
+   * @param vsMetaFile
+   *          the VSMETA {@link MediaFile}
+   * @param artworkType
+   *          the {@link MediaArtworkType}
+   * @return true if extraction was successful, false otherwise
+   */
+  public static boolean extractArtworkFromVsmeta(TvShow tvShow, MediaFile vsMetaFile, MediaArtworkType artworkType) {
+    return extractArtworkFromVsmetaInternal(tvShow, vsMetaFile, artworkType);
+  }
+
+  /**
+   * extract embedded artwork from a VSMETA file to the destinations specified in the settings
+   *
+   * @param tvShowEpisode
+   *          the {@link TvShow} to assign the new {@link MediaFile}s to
+   * @param vsMetaFile
+   *          the VSMETA {@link MediaFile}
+   * @param artworkType
+   *          the {@link MediaArtworkType}
+   * @return true if extraction was successful, false otherwise
+   */
+  public static boolean extractArtworkFromVsmeta(TvShowEpisode tvShowEpisode, MediaFile vsMetaFile, MediaArtworkType artworkType) {
+    return extractArtworkFromVsmetaInternal(tvShowEpisode, vsMetaFile, artworkType);
+  }
+
+  private static boolean extractArtworkFromVsmetaInternal(MediaEntity mediaEntity, MediaFile vsMetaFile, MediaArtworkType artworkType) {
+    VSMeta vsmeta = new VSMeta(vsMetaFile.getFileAsPath());
+    List<? extends IFileNaming> fileNamings;
+    byte[] bytes;
+
+    if (mediaEntity instanceof TvShow) {
+      switch (artworkType) {
+        case POSTER:
+          fileNamings = TvShowModuleManager.SETTINGS.getPosterFilenames();
+          bytes = vsmeta.getShowImageBytes();
+          break;
+
+        case BACKGROUND:
+          fileNamings = TvShowModuleManager.SETTINGS.getFanartFilenames();
+          bytes = vsmeta.getBackdropBytes();
+          break;
+
+        default:
+          return false;
+      }
+    }
+    else if (mediaEntity instanceof TvShowEpisode && artworkType == THUMB) {
+      fileNamings = TvShowModuleManager.SETTINGS.getEpisodeThumbFilenames();
+      bytes = vsmeta.getPosterBytes();
+    }
+    else {
+      return false;
+    }
+
+    if (fileNamings.isEmpty() || bytes.length == 0) {
+      return false;
+    }
+
+    // remove .ext.vsmeta
+    String basename = FilenameUtils.getBaseName(FilenameUtils.getBaseName(vsMetaFile.getFilename()));
+
+    for (IFileNaming fileNaming : fileNamings) {
+      try {
+        String filename = fileNaming.getFilename(basename, "jpg"); // need to force jpg here since we do know it better
+        MediaFile mf = new MediaFile(vsMetaFile.getFileAsPath().getParent().resolve(filename), MediaFileType.getMediaFileType(artworkType));
+        Files.write(mf.getFileAsPath(), bytes);
+        mediaEntity.addToMediaFiles(mf);
+      }
+      catch (Exception e) {
+        LOGGER.warn("could not extract VSMETA artwork: {}", e.getMessage());
+      }
+    }
+
+    return true;
   }
 }

@@ -58,6 +58,7 @@ import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tasks.MediaFileInformationFetcherTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.threading.TmmThreadPool;
+import org.tinymediamanager.core.tvshow.TvShowArtworkHelper;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser;
 import org.tinymediamanager.core.tvshow.TvShowEpisodeAndSeasonParser.EpisodeMatchingResult;
 import org.tinymediamanager.core.tvshow.TvShowList;
@@ -66,6 +67,7 @@ import org.tinymediamanager.core.tvshow.connector.TvShowEpisodeNfoParser;
 import org.tinymediamanager.core.tvshow.connector.TvShowNfoParser;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.util.ParserUtils;
 import org.tinymediamanager.thirdparty.VSMeta;
 
@@ -708,15 +710,6 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             VSMeta vsmeta = new VSMeta(meta.getFileAsPath());
             vsmeta.parseFile();
             vsMetaEP = vsmeta.getTvShowEpisode();
-
-            if (!TvShowModuleManager.SETTINGS.getPosterFilenames().isEmpty()) {
-              // we want some poster scraped, so we also can extract them
-              List<MediaFile> generated = vsmeta.generateMediaFile(vsMetaEP);
-              epFiles.addAll(generated);
-
-              List<MediaFile> generatedShow = vsmeta.generateMediaFile(tvShow);
-              tvShow.addToMediaFiles(generatedShow);
-            }
           }
 
           MediaFile epNfo = getMediaFile(epFiles, MediaFileType.NFO);
@@ -952,6 +945,44 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
       for (TvShowEpisode episode : tvShow.getEpisodes()) {
         episode.reEvaluateStacking();
         episode.saveToDb();
+      }
+
+      // if there is missing artwork AND we do have a VSMETA file, we probably can extract an artwork from there
+      if (!TvShowModuleManager.SETTINGS.isExtractArtworkFromVsmeta()) {
+        // TV show
+        boolean missingTvShowPosters = tvShow.getMediaFiles(MediaFileType.POSTER).isEmpty();
+        boolean missingTvShowFanarts = tvShow.getMediaFiles(MediaFileType.FANART).isEmpty();
+
+        for (TvShowEpisode episode : tvShow.getEpisodes()) {
+          List<MediaFile> episodeVsmetas = episode.getMediaFiles(MediaFileType.VSMETA);
+          if (episodeVsmetas.isEmpty()) {
+            continue;
+          }
+
+          if (episode.getMediaFiles(MediaFileType.THUMB).isEmpty() && !TvShowModuleManager.SETTINGS.getSeasonThumbFilenames().isEmpty()) {
+            LOGGER.debug("extracting episode THUMBs from VSMETA for {}", episode.getMainFile().getFileAsPath());
+            boolean ok = TvShowArtworkHelper.extractArtworkFromVsmeta(episode, episodeVsmetas.get(0), MediaArtwork.MediaArtworkType.THUMB);
+            if (ok) {
+              episode.saveToDb();
+            }
+          }
+
+          if (missingTvShowFanarts && !TvShowModuleManager.SETTINGS.getFanartFilenames().isEmpty()) {
+            LOGGER.debug("extracting TV show FANARTs from VSMETA for {}", episode.getMainFile().getFileAsPath());
+            boolean ok = TvShowArtworkHelper.extractArtworkFromVsmeta(tvShow, episodeVsmetas.get(0), MediaArtwork.MediaArtworkType.BACKGROUND);
+            if (ok) {
+              missingTvShowFanarts = false;
+            }
+          }
+
+          if (missingTvShowPosters && !TvShowModuleManager.SETTINGS.getPosterFilenames().isEmpty()) {
+            LOGGER.debug("extracting TV show POSTERs from VSMETA for {}", episode.getMainFile().getFileAsPath());
+            boolean ok = TvShowArtworkHelper.extractArtworkFromVsmeta(tvShow, episodeVsmetas.get(0), MediaArtwork.MediaArtworkType.POSTER);
+            if (ok) {
+              missingTvShowPosters = false;
+            }
+          }
+        }
       }
 
       tvShow.saveToDb();

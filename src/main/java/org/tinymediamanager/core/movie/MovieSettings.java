@@ -189,6 +189,7 @@ public class MovieSettings extends AbstractSettings {
   private boolean                          syncTrakt                           = false;
   private boolean                          preferPersonalRating                = true;
   private String                           preferredRating                     = "imdb";
+  private boolean                          extractArtworkFromVsmeta            = false;
 
   // ui
   private boolean                          storeUiFilters                      = false;
@@ -996,6 +997,16 @@ public class MovieSettings extends AbstractSettings {
     boolean oldValue = this.runtimeFromMediaInfo;
     this.runtimeFromMediaInfo = newValue;
     firePropertyChange("runtimeFromMediaInfo", oldValue, newValue);
+  }
+
+  public boolean isExtractArtworkFromVsmeta() {
+    return extractArtworkFromVsmeta;
+  }
+
+  public void setExtractArtworkFromVsmeta(boolean newValue) {
+    boolean oldValue = this.extractArtworkFromVsmeta;
+    this.extractArtworkFromVsmeta = newValue;
+    firePropertyChange("extractArtworkFromVsmeta", oldValue, newValue);
   }
 
   public boolean isIncludeExternalAudioStreams() {

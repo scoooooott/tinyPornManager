@@ -63,6 +63,7 @@ public class MovieSettingsPanel extends JPanel {
   private JCheckBox                    chckbxRenameAfterScrape;
   private JCheckBox                    chckbxPersistUiFilters;
   private JCheckBox                    chckbxBuildImageCache;
+  private JCheckBox                    chckbxExtractArtworkFromVsmeta;
   private JCheckBox                    chckbxRuntimeFromMi;
   private JCheckBox                    chckbxShowLogos;
   private JButton                      btnPresetKodi;
@@ -263,18 +264,21 @@ public class MovieSettingsPanel extends JPanel {
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelMisc, lblMiscT, true);
       add(collapsiblePanel, "cell 0 4,growx,wmin 0");
       {
+        chckbxExtractArtworkFromVsmeta = new JCheckBox(BUNDLE.getString("Settings.extractartworkfromvsmeta"));
+        panelMisc.add(chckbxExtractArtworkFromVsmeta, "cell 1 0 2 1");
+
         chckbxBuildImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecacheimport"));
-        panelMisc.add(chckbxBuildImageCache, "cell 1 0 2 1");
+        panelMisc.add(chckbxBuildImageCache, "cell 1 1 2 1");
 
         JLabel lblBuildImageCacheHint = new JLabel(IconManager.HINT);
         lblBuildImageCacheHint.setToolTipText(BUNDLE.getString("Settings.imagecacheimporthint"));
-        panelMisc.add(lblBuildImageCacheHint, "cell 1 0 2 1");
+        panelMisc.add(lblBuildImageCacheHint, "cell 1 1 2 1");
 
         chckbxRuntimeFromMi = new JCheckBox(BUNDLE.getString("Settings.runtimefrommediafile"));
-        panelMisc.add(chckbxRuntimeFromMi, "cell 1 1 2 1");
+        panelMisc.add(chckbxRuntimeFromMi, "cell 1 2 2 1");
 
         chckbxIncludeExternalAudioStreams = new JCheckBox(BUNDLE.getString("Settings.includeexternalstreamsinnfo"));
-        panelMisc.add(chckbxIncludeExternalAudioStreams, "cell 1 2 2 1");
+        panelMisc.add(chckbxIncludeExternalAudioStreams, "cell 1 3 2 1");
       }
       JLabel lblCheckImages = new JLabel(BUNDLE.getString("Settings.checkimages"));
       panelMisc.add(lblCheckImages, "cell 1 3 2 1");
@@ -385,5 +389,10 @@ public class MovieSettingsPanel extends JPanel {
     AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         movieSettingsBeanProperty_10, chckbxShowLogos, jCheckBoxBeanProperty);
     autoBinding_10.bind();
+    //
+    BeanProperty<MovieSettings, Boolean> movieSettingsBeanProperty_11 = BeanProperty.create("extractArtworkFromVsmeta");
+    AutoBinding<MovieSettings, Boolean, JCheckBox, Boolean> autoBinding_11 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        movieSettingsBeanProperty_11, chckbxExtractArtworkFromVsmeta, jCheckBoxBeanProperty);
+    autoBinding_11.bind();
   }
 }

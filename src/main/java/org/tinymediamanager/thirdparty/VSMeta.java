@@ -185,7 +185,7 @@ public class VSMeta {
    * @return
    */
   public List<MediaFile> generateMediaFile(MediaEntity entity) {
-    List<MediaFile> mfs = new ArrayList<MediaFile>();
+    List<MediaFile> mfs = new ArrayList<>();
 
     if (info.images.poster != null) {
       MediaFile mf = null;
@@ -572,6 +572,33 @@ public class VSMeta {
     catch (IOException e) {
       LOGGER.warn("Could not parse Synology VSMETA JSON part!", e);
     }
+  }
+
+  public byte[] getPosterBytes() {
+    // return an empty byte array if anything is null
+    if (info == null || info.images == null || info.images.poster == null) {
+      return new byte[0];
+    }
+
+    return info.images.poster;
+  }
+
+  public byte[] getBackdropBytes() {
+    // return an empty byte array if anything is null
+    if (info == null || info.images == null || info.images.backdrop == null) {
+      return new byte[0];
+    }
+
+    return info.images.backdrop;
+  }
+
+  public byte[] getShowImageBytes() {
+    // return an empty byte array if anything is null
+    if (info == null || info.images == null || info.images.showImage == null) {
+      return new byte[0];
+    }
+
+    return info.images.showImage;
   }
 
   public Movie getMovie() {

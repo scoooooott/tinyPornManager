@@ -145,7 +145,6 @@ public class TvShowSettings extends AbstractSettings {
   private final List<String>                       tvShowTableHiddenColumns       = ObservableCollections.observableList(new ArrayList<>());
 
   // data sources / NFO settings
-  private boolean                                  buildImageCacheOnImport        = false;
   private TvShowConnectors                         tvShowConnector                = TvShowConnectors.XBMC;
   private CertificationStyle                       certificationStyle             = CertificationStyle.LARGE;
   private boolean                                  writeCleanNfo                  = false;
@@ -190,10 +189,12 @@ public class TvShowSettings extends AbstractSettings {
   private LanguageStyle                            subtitleLanguageStyle          = LanguageStyle.ISO3T;
 
   // misc
+  private boolean                                  buildImageCacheOnImport        = false;
   private boolean                                  syncTrakt                      = false;
   private boolean                                  dvdOrder                       = false;
   private boolean                                  preferPersonalRating           = true;
   private String                                   preferredRating                = "tvdb";
+  private boolean                                  extractArtworkFromVsmeta       = false;
 
   // ui
   private boolean                                  storeUiFilters                 = false;
@@ -568,6 +569,16 @@ public class TvShowSettings extends AbstractSettings {
     boolean oldValue = this.buildImageCacheOnImport;
     this.buildImageCacheOnImport = newValue;
     firePropertyChange("buildImageCacheOnImport", oldValue, newValue);
+  }
+
+  public boolean isExtractArtworkFromVsmeta() {
+    return extractArtworkFromVsmeta;
+  }
+
+  public void setExtractArtworkFromVsmeta(boolean newValue) {
+    boolean oldValue = this.extractArtworkFromVsmeta;
+    this.extractArtworkFromVsmeta = newValue;
+    firePropertyChange("extractArtworkFromVsmeta", oldValue, newValue);
   }
 
   public boolean isAsciiReplacement() {
