@@ -49,6 +49,7 @@ import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.ScraperMetadataConfig;
 import org.tinymediamanager.core.Utils;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.tasks.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -560,7 +561,9 @@ public class TvShowArtworkHelper {
 
         // invalidate image cache
         if (tvShowSeason != null) {
-          tvShowSeason.setArtwork(destFile, artworkType);
+          MediaFile mf = new MediaFile(destFile, MediaFileType.getMediaFileType(artworkType));
+          mf.gatherMediaInformation();
+          tvShowSeason.setArtwork(mf);
         }
 
         // build up image cache
@@ -575,7 +578,9 @@ public class TvShowArtworkHelper {
         LOGGER.error("fetch image {} - {}", this.url, e);
         // fallback
         if (tvShowSeason != null && !oldFilename.isEmpty()) {
-          tvShowSeason.setArtwork(Paths.get(oldFilename), artworkType);
+          MediaFile mf = new MediaFile(Paths.get(oldFilename), MediaFileType.getMediaFileType(artworkType));
+          mf.gatherMediaInformation();
+          tvShowSeason.setArtwork(mf);
         }
         // build up image cache
         ImageCache.invalidateCachedImage(Paths.get(oldFilename));

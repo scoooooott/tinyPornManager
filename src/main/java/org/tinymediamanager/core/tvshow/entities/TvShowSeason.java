@@ -29,7 +29,6 @@ import static org.tinymediamanager.core.Constants.THUMB_URL;
 
 import java.awt.Dimension;
 import java.beans.PropertyChangeListener;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -252,9 +251,12 @@ public class TvShowSeason extends AbstractModelObject implements Comparable<TvSh
     return episodes;
   }
 
-  public void setArtwork(Path newValue, MediaArtworkType artworkType) {
+  public void setArtwork(MediaFile mediaFile) {
+    MediaArtworkType artworkType = MediaFileType.getMediaArtworkType(mediaFile.getType());
     String oldValue = getArtworkFilename(artworkType);
-    tvShow.setSeasonArtwork(season, artworkType, newValue);
+    String newValue = mediaFile.getFile().toString();
+
+    tvShow.setSeasonArtwork(season, mediaFile);
 
     switch (artworkType) {
       case SEASON_POSTER:
