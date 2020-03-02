@@ -96,16 +96,7 @@ public class TvShowExporter extends MediaEntityExporter {
     }
 
     // prepare listfile
-    Path listExportFile = null;
-    if (fileExtension.equalsIgnoreCase("html")) {
-      listExportFile = exportDir.resolve("tvshows.html");
-    }
-    if (fileExtension.equalsIgnoreCase("xml")) {
-      listExportFile = exportDir.resolve("tvshows.xml");
-    }
-    if (fileExtension.equalsIgnoreCase("csv")) {
-      listExportFile = exportDir.resolve("tvshows.csv");
-    }
+    Path listExportFile = exportDir.resolve("tvshows." + fileExtension);
     if (listExportFile == null) {
       throw new FileNotFoundException("error creating tv show list file");
     }
