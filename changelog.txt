@@ -3,6 +3,7 @@ Version 3.1.4
 + added some more scraper languages #800
 + added a filter for common audio channel setups
 + (movie/TV show) option to extract artwork from VSMETA on "update data sources"
++ (movie) added an M3U export template (thx @maricn)
 x (TV show) storing duplicate episodes filter
 x (movie/TV show) pre-set all artwork/trailer/subtitle scrapers on first start
 x (Trakt.tv) do not pass language to the search engine of Trakt.tv to improve the search result
