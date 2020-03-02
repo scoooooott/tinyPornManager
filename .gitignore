@@ -22,6 +22,9 @@ pom.xml.*
 #Eclipse
 /bin
 
+#Vim
+*.swp
+
 #tinyMediaManager
 cache
 jspf.cache

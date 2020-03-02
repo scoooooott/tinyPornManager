@@ -1,0 +1,4 @@
+\#EXTM3U
+${foreach movies movie}
+\#EXTINF\:${index_movie},${movie.title}
+${movie.mainVideoFile.file}${end}
