@@ -9,6 +9,7 @@ x (movie/TV show) pre-set all artwork/trailer/subtitle scrapers on first start
 x (Trakt.tv) do not pass language to the search engine of Trakt.tv to improve the search result
 x (TV show) set TVDB id as default in NFO #810
 x (movies) removed storing of sort order (because we can not store it completely)
+x evaluate movie extras even deeper
 
 
 Version 3.1.3
