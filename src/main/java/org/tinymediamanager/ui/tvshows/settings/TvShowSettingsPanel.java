@@ -58,6 +58,7 @@ class TvShowSettingsPanel extends JPanel {
 
   private TvShowSettings               settings         = TvShowModuleManager.SETTINGS;
   private JCheckBox                    chckbxImageCache;
+  private JCheckBox                    chckbxExtractArtworkFromVsmeta;
   private JCheckBox                    chckbxTraktTv;
   private JButton                      btnClearTraktTvShows;
   private JCheckBox                    chckbxPersistUiFilters;
@@ -327,20 +328,23 @@ class TvShowSettingsPanel extends JPanel {
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelMisc, lblMiscT, true);
       add(collapsiblePanel, "cell 0 4,growx,wmin 0");
       {
+        chckbxExtractArtworkFromVsmeta = new JCheckBox(BUNDLE.getString("Settings.extractartworkfromvsmeta"));
+        panelMisc.add(chckbxExtractArtworkFromVsmeta, "cell 1 0 2 1");
+
         chckbxImageCache = new JCheckBox(BUNDLE.getString("Settings.imagecacheimport"));
-        panelMisc.add(chckbxImageCache, "cell 1 0 2 1");
+        panelMisc.add(chckbxImageCache, "cell 1 1 2 1");
 
         JLabel lblBuildImageCacheHint = new JLabel(IconManager.HINT);
         lblBuildImageCacheHint.setToolTipText(BUNDLE.getString("Settings.imagecacheimporthint"));
-        panelMisc.add(lblBuildImageCacheHint, "cell 1 0");
+        panelMisc.add(lblBuildImageCacheHint, "cell 1 1");
 
         JLabel lblCheckImages = new JLabel(BUNDLE.getString("Settings.checkimages"));
-        panelMisc.add(lblCheckImages, "cell 1 1 2 1");
+        panelMisc.add(lblCheckImages, "cell 1 2 2 1");
 
         {
           JPanel panelCheckImages = new JPanel();
           panelCheckImages.setLayout(new MigLayout("hidemode 1, insets 0", "[][][][]", ""));
-          panelMisc.add(panelCheckImages, "cell 2 2");
+          panelMisc.add(panelCheckImages, "cell 2 3");
 
           JLabel lblTvShowCheckImages = new TmmLabel(BUNDLE.getString("metatag.tvshow"));
           panelCheckImages.add(lblTvShowCheckImages, "cell 0 0");
@@ -470,5 +474,10 @@ class TvShowSettingsPanel extends JPanel {
     AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_9 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
         tvShowSettingsBeanProperty_7, chckbxShowLogos, jCheckBoxBeanProperty);
     autoBinding_9.bind();
+    //
+    BeanProperty<TvShowSettings, Boolean> tvShowSettingsBeanProperty_8 = BeanProperty.create("extractArtworkFromVsmeta");
+    AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_10 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        tvShowSettingsBeanProperty_8, chckbxExtractArtworkFromVsmeta, jCheckBoxBeanProperty);
+    autoBinding_10.bind();
   }
 }

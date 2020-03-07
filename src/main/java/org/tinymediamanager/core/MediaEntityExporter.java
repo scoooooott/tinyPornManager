@@ -89,18 +89,17 @@ public abstract class MediaEntityExporter {
 
     // get other settings
     String detailTemplateFile = properties.getProperty("detail");
-    fileExtension = properties.getProperty("extension");
-    if (StringUtils.isBlank(fileExtension)) {
-      fileExtension = "html";
-    }
+    fileExtension = StringUtils.isBlank(properties.getProperty("extension")) 
+        ? "html" 
+        : properties.getProperty("extension").toLowerCase();
 
     // set up engine
     engine = Engine.createEngine();
 
-    if (fileExtension.equalsIgnoreCase("html")) {
+    if ("html".equals(fileExtension)) {
       engine.setEncoder(new HtmlEncoder()); // special char replacement
     }
-    if (fileExtension.equalsIgnoreCase("xml")) {
+    if ("xml".equals(fileExtension)) {
       engine.setEncoder(new XMLEncoder()); // special char replacement
     }
 

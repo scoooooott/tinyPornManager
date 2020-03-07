@@ -1821,21 +1821,6 @@ public class TvShow extends MediaEntity implements IMediaInformation {
    *
    * @param season
    *          the season
-   * @param artworkType
-   *          the artwork type
-   * @param file
-   *          the file
-   */
-  public void setSeasonArtwork(int season, MediaArtworkType artworkType, Path file) {
-    MediaFile mf = new MediaFile(file, MediaFileType.getMediaFileType(artworkType));
-    setSeasonArtwork(season, mf);
-  }
-
-  /**
-   * Sets the season artwork.
-   *
-   * @param season
-   *          the season
    * @param mf
    *          the media file
    */
@@ -1867,7 +1852,6 @@ public class TvShow extends MediaEntity implements IMediaInformation {
       return;
     }
 
-    mf.gatherMediaInformation();
     addToMediaFiles(mf);
 
     // add it

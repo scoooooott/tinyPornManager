@@ -52,6 +52,7 @@ import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaGenres;
 import org.tinymediamanager.core.entities.MediaRating;
+import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
@@ -702,8 +703,11 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
    */
   protected void addTrailer() {
     Element trailer = document.createElement("trailer");
-    if (parser != null && StringUtils.isNotBlank(parser.trailer)) {
-      trailer.setTextContent(parser.trailer);
+    for (MediaTrailer mediaTrailer : new ArrayList<>(tvShow.getTrailer())) {
+      if (mediaTrailer.getInNfo() && !mediaTrailer.getUrl().startsWith("file")) {
+        trailer.setTextContent(mediaTrailer.getUrl());
+        break;
+      }
     }
     root.appendChild(trailer);
   }
@@ -778,14 +782,14 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
    * @return the scraper where the default should be set
    */
   private String detectDefaultScraper() {
-    // IMDB first
-    if (tvShow.getIds().containsKey(MediaMetadata.IMDB)) {
-      return MediaMetadata.IMDB;
-    }
-
-    // TVDB second
+    // TVDB first
     if (tvShow.getIds().containsKey(MediaMetadata.TVDB)) {
       return MediaMetadata.TVDB;
+    }
+
+    // IMDB second
+    if (tvShow.getIds().containsKey(MediaMetadata.IMDB)) {
+      return MediaMetadata.IMDB;
     }
 
     // TMDB third

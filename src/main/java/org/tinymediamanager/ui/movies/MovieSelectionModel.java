@@ -24,7 +24,6 @@ import javax.swing.event.ListSelectionListener;
 
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.AbstractSettings;
-import org.tinymediamanager.core.movie.MovieModuleManager;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.movies.filters.IMovieUIFilter;
 
@@ -209,13 +208,6 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
   public void sortMovies(MovieExtendedComparator.SortColumn column, boolean ascending) {
     Comparator<Movie> comparator = new MovieExtendedComparator(column, ascending);
     sortedList.setComparator(comparator);
-
-    // store sorting
-    if (MovieModuleManager.SETTINGS.isStoreUiSorting()) {
-      MovieModuleManager.SETTINGS.setSortColumn(column);
-      MovieModuleManager.SETTINGS.setSortAscending(ascending);
-      MovieModuleManager.SETTINGS.saveSettings();
-    }
   }
 
   /**

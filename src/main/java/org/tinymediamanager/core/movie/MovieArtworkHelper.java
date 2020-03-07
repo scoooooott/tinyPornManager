@@ -15,10 +15,14 @@
  */
 package org.tinymediamanager.core.movie;
 
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.IFileNaming;
 import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.ScraperMetadataConfig;
@@ -39,6 +43,7 @@ import org.tinymediamanager.core.tasks.MediaEntityImageFetcherTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
+import org.tinymediamanager.thirdparty.VSMeta;
 
 /**
  * The class MovieArtworkHelper. A helper class for managing movie artwork
@@ -46,6 +51,7 @@ import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
  * @author Manuel Laggner
  */
 public class MovieArtworkHelper {
+  private static final Logger LOGGER = LoggerFactory.getLogger(MovieArtworkHelper.class);
 
   private MovieArtworkHelper() {
     // hide public constructor for utility classes
@@ -1130,5 +1136,58 @@ public class MovieArtworkHelper {
     }
 
     return fileNamings;
+  }
+
+  /**
+   * extract embedded artwork from a VSMETA file to the destinations specified in the settings
+   * 
+   * @param movie
+   *          the {@link Movie} to assign the new {@link MediaFile}s to
+   * @param vsMetaFile
+   *          the VSMETA {@link MediaFile}
+   * @param artworkType
+   *          the {@link MediaArtworkType}
+   * @return true if extraction was successful, false otherwise
+   */
+  public static boolean extractArtworkFromVsmeta(Movie movie, MediaFile vsMetaFile, MediaArtworkType artworkType) {
+    VSMeta vsmeta = new VSMeta(vsMetaFile.getFileAsPath());
+    List<? extends IFileNaming> fileNamings;
+    byte[] bytes;
+
+    switch (artworkType) {
+      case POSTER:
+        fileNamings = MovieModuleManager.SETTINGS.getPosterFilenames();
+        bytes = vsmeta.getPosterBytes();
+        break;
+
+      case BACKGROUND:
+        fileNamings = MovieModuleManager.SETTINGS.getFanartFilenames();
+        bytes = vsmeta.getBackdropBytes();
+        break;
+
+      default:
+        return false;
+    }
+
+    if (fileNamings.isEmpty() || bytes.length == 0) {
+      return false;
+    }
+
+    // remove .ext.vsmeta
+    String basename = FilenameUtils.getBaseName(FilenameUtils.getBaseName(vsMetaFile.getFilename()));
+
+    for (IFileNaming fileNaming : fileNamings) {
+      try {
+        String filename = fileNaming.getFilename(basename, "jpg"); // need to force jpg here since we do know it better
+        MediaFile mf = new MediaFile(vsMetaFile.getFileAsPath().getParent().resolve(filename), MediaFileType.getMediaFileType(artworkType));
+        Files.write(mf.getFileAsPath(), bytes);
+        movie.addToMediaFiles(mf);
+      }
+      catch (Exception e) {
+        LOGGER.warn("could not extract VSMETA artwork: {}", e.getMessage());
+      }
+    }
+
+    return true;
   }
 }

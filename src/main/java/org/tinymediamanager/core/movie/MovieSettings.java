@@ -56,7 +56,6 @@ import org.tinymediamanager.scraper.entities.MediaArtwork.FanartSizes;
 import org.tinymediamanager.scraper.entities.MediaArtwork.MediaArtworkType;
 import org.tinymediamanager.scraper.entities.MediaArtwork.PosterSizes;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
-import org.tinymediamanager.ui.movies.MovieExtendedComparator.SortColumn;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -190,12 +189,10 @@ public class MovieSettings extends AbstractSettings {
   private boolean                          syncTrakt                           = false;
   private boolean                          preferPersonalRating                = true;
   private String                           preferredRating                     = "imdb";
+  private boolean                          extractArtworkFromVsmeta            = false;
 
   // ui
   private boolean                          storeUiFilters                      = false;
-  private boolean                          storeUiSorting                      = false;
-  private SortColumn                       sortColumn                          = SortColumn.TITLE;
-  private boolean                          sortAscending                       = true;
   private boolean                          showLogosPanel                      = true;
 
   public MovieSettings() {
@@ -245,22 +242,6 @@ public class MovieSettings extends AbstractSettings {
     addCheckImagesMovie(MediaArtworkType.POSTER);
     addCheckImagesMovie(MediaArtworkType.BACKGROUND);
 
-    // activate default scrapers
-    artworkScrapers.clear();
-    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.MOVIE_ARTWORK)) {
-      addMovieArtworkScraper(ms.getId());
-    }
-
-    trailerScrapers.clear();
-    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.MOVIE_TRAILER)) {
-      addMovieTrailerScraper(ms.getId());
-    }
-
-    subtitleScrapers.clear();
-    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.SUBTITLE)) {
-      addMovieSubtitleScraper(ms.getId());
-    }
-
     scraperMetadataConfig.addAll(Arrays.asList(MovieScraperMetadataConfig.values()));
   }
 
@@ -307,7 +288,8 @@ public class MovieSettings extends AbstractSettings {
   @Override
   protected void writeDefaultSettings() {
     // hidden columns
-    setMovieTableHiddenColumns(Arrays.asList("originalTitle", "dateAdded", "filename", "path", "movieset", "fileSize", "audio", "video3d",
+    setMovieTableHiddenColumns(Arrays.asList("originalTitle", "sortTitle", "dateAdded", "filename", "path", "movieset", "fileSize", "audio",
+        "video3d",
         "videoFormat", "votes", "edition", "mediaSource", "certification"));
 
     addDefaultEntries();
@@ -924,38 +906,8 @@ public class MovieSettings extends AbstractSettings {
     firePropertyChange("storeUiFilters", oldValue, newValue);
   }
 
-  public boolean isStoreUiSorting() {
-    return storeUiSorting;
-  }
-
-  public void setStoreUiSorting(boolean newValue) {
-    boolean oldValue = this.storeUiSorting;
-    this.storeUiSorting = newValue;
-    firePropertyChange("storeUiSorting", oldValue, newValue);
-  }
-
   public boolean isStoreUiFilters() {
     return storeUiFilters;
-  }
-
-  public SortColumn getSortColumn() {
-    return sortColumn;
-  }
-
-  public void setSortColumn(SortColumn newValue) {
-    SortColumn oldValue = this.sortColumn;
-    this.sortColumn = newValue;
-    firePropertyChange("sortColumn", oldValue, newValue);
-  }
-
-  public boolean isSortAscending() {
-    return sortAscending;
-  }
-
-  public void setSortAscending(boolean newValue) {
-    boolean oldValue = this.sortAscending;
-    this.sortAscending = newValue;
-    firePropertyChange("sortAscending", oldValue, newValue);
   }
 
   public boolean isWriteActorImages() {
@@ -1046,6 +998,16 @@ public class MovieSettings extends AbstractSettings {
     boolean oldValue = this.runtimeFromMediaInfo;
     this.runtimeFromMediaInfo = newValue;
     firePropertyChange("runtimeFromMediaInfo", oldValue, newValue);
+  }
+
+  public boolean isExtractArtworkFromVsmeta() {
+    return extractArtworkFromVsmeta;
+  }
+
+  public void setExtractArtworkFromVsmeta(boolean newValue) {
+    boolean oldValue = this.extractArtworkFromVsmeta;
+    this.extractArtworkFromVsmeta = newValue;
+    firePropertyChange("extractArtworkFromVsmeta", oldValue, newValue);
   }
 
   public boolean isIncludeExternalAudioStreams() {
@@ -1539,5 +1501,26 @@ public class MovieSettings extends AbstractSettings {
     setCertificationStyle(CertificationStyle.SHORT);
 
     firePropertyChange("preset", false, true);
+  }
+
+  /**
+   * set the default scrapers for the movie module
+   */
+  public void setDefaultScrapers() {
+    // activate default scrapers
+    artworkScrapers.clear();
+    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.MOVIE_ARTWORK)) {
+      addMovieArtworkScraper(ms.getId());
+    }
+
+    trailerScrapers.clear();
+    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.MOVIE_TRAILER)) {
+      addMovieTrailerScraper(ms.getId());
+    }
+
+    subtitleScrapers.clear();
+    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.SUBTITLE)) {
+      addMovieSubtitleScraper(ms.getId());
+    }
   }
 }

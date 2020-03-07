@@ -94,6 +94,15 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     addColumn(col);
 
     /*
+     * sorttitle (hidden per default)
+     */
+    col = new Column(BUNDLE.getString("metatag.sorttitle"), "sortTitle", Movie::getSortTitle, String.class);
+    col.setColumnComparator(stringComparator);
+    col.setColumnResizeable(true);
+    col.setColumnTooltip(Movie::getSortTitle);
+    addColumn(col);
+
+    /*
      * year
      */
     col = new Column(BUNDLE.getString("metatag.year"), "year", MediaEntity::getYear, Movie.class);

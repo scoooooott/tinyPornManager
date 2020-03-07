@@ -1,3 +1,19 @@
+Version 3.1.4
+=======================
++ added some more scraper languages #800
++ added a filter for common audio channel setups
++ (movie/TV show) option to extract artwork from VSMETA on "update data sources"
++ (movie) added an M3U export template (thx @maricn)
++ (movie) added column for sort title
+x (TVDB) fixed artwork scraping due to recently changed artwork url
+x (TV show) storing duplicate episodes filter
+x (movie/TV show) pre-set all artwork/trailer/subtitle scrapers on first start
+x (Trakt.tv) do not pass language to the search engine of Trakt.tv to improve the search result
+x (TV show) set TVDB id as default in NFO #810
+x (movies) removed storing of sort order (because we can not store it completely)
+x evaluate movie extras even deeper
+
+
 Version 3.1.3
 =======================
 + clean empty subfolders after renaming movies/TV shows

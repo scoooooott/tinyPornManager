@@ -267,6 +267,12 @@ public class TinyMediaManager {
           // just instantiate static - will block (takes a few secs)
           MediaProviders.loadMediaProviders();
 
+          if (Globals.settings.isNewConfig()) {
+            // add/set default scrapers
+            MovieModuleManager.SETTINGS.setDefaultScrapers();
+            TvShowModuleManager.SETTINGS.setDefaultScrapers();
+          }
+
           if (g2 != null) {
             updateProgress(g2, "starting services", 60);
             splash.update();
@@ -322,8 +328,6 @@ public class TinyMediaManager {
               TinyMediaManagerWizard wizard = new TinyMediaManagerWizard();
               wizard.setVisible(true);
             }
-
-            TmmTaskManager.getInstance().addUnnamedTask(new PreloadTask());
 
             // show changelog
             if (newVersion && !ReleaseInfo.getVersion().equals(oldVersion)) {

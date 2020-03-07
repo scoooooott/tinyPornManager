@@ -17,7 +17,6 @@
 package org.tinymediamanager.ui.panels;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -25,7 +24,6 @@ import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -68,12 +66,15 @@ public class StatusBarPanel extends JPanel implements TmmTaskListener {
   private JLabel                      taskLabel;
   private JProgressBar                taskProgressBar;
   private JButton                     taskStopButton;
-  private Component                   spacer;
 
   public StatusBarPanel() {
     initComponents();
 
     // further initializations
+    btnNotifications.setVisible(false);
+    taskLabel.setVisible(false);
+    taskStopButton.setVisible(false);
+    taskProgressBar.setVisible(false);
 
     // task management
     taskSet = new HashSet<>();
@@ -121,13 +122,11 @@ public class StatusBarPanel extends JPanel implements TmmTaskListener {
     TmmUIMessageCollector.instance.addPropertyChangeListener(evt -> {
       if (Constants.MESSAGES.equals(evt.getPropertyName())) {
         if (TmmUIMessageCollector.instance.getNewMessagesCount() > 0) {
-          spacer.setVisible(true);
           btnNotifications.setVisible(true);
           btnNotifications.setEnabled(true);
           btnNotifications.setText("" + TmmUIMessageCollector.instance.getNewMessagesCount());
         }
         else {
-          spacer.setVisible(false);
           btnNotifications.setVisible(false);
           btnNotifications.setEnabled(false);
         }
@@ -140,7 +139,7 @@ public class StatusBarPanel extends JPanel implements TmmTaskListener {
   }
 
   private void initComponents() {
-    setLayout(new MigLayout("insets 0 n 0 n, hidemode 2", "[][50lp:n][grow][100lp][][15lp:n][]", "[20lp:n]"));
+    setLayout(new MigLayout("insets 0 n 0 n, hidemode 3", "[][50lp:n][grow][100lp][15lp:n][]", "[22lp:n]"));
     setOpaque(false);
     {
       lblMemory = new JLabel("");
@@ -167,18 +166,11 @@ public class StatusBarPanel extends JPanel implements TmmTaskListener {
       add(taskStopButton, "cell 4 0");
     }
     {
-      spacer = Box.createVerticalStrut(Math.max(taskLabel.getPreferredSize().height, taskStopButton.getPreferredSize().height));
-      spacer.setVisible(false);
-      add(spacer, "cell 5 0");
-    }
-    {
       btnNotifications = new FlatButton(IconManager.WARN_INTENSIFIED);
-      btnNotifications.setVisible(false);
-
       btnNotifications.setEnabled(false);
       btnNotifications.setForeground(Color.RED);
       btnNotifications.setToolTipText(BUNDLE.getString("notifications.new"));
-      add(btnNotifications, "cell 6 0");
+      add(btnNotifications, "cell 5 0");
     }
   }
 

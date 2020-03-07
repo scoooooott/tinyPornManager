@@ -94,16 +94,7 @@ public class MovieExporter extends MediaEntityExporter {
     }
 
     // prepare listfile
-    Path listExportFile = null;
-    if (fileExtension.equalsIgnoreCase("html")) {
-      listExportFile = exportDir.resolve("movielist.html");
-    }
-    if (fileExtension.equalsIgnoreCase("xml")) {
-      listExportFile = exportDir.resolve("movielist.xml");
-    }
-    if (fileExtension.equalsIgnoreCase("csv")) {
-      listExportFile = exportDir.resolve("movielist.csv");
-    }
+    Path listExportFile = exportDir.resolve("movielist." + fileExtension);
     if (listExportFile == null) {
       throw new FileNotFoundException("error creating movie list file");
     }

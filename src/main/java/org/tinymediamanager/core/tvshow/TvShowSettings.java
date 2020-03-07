@@ -85,8 +85,8 @@ public class TvShowSettings extends AbstractSettings {
    */
   private static final String                      TV_SHOW_DATA_SOURCE            = "tvShowDataSource";
   private static final String                      ARTWORK_SCRAPERS               = "artworkScrapers";
-  private final static String                      TRAILER_SCRAPERS               = "trailerScrapers";
-  private final static String                      TRAILER_FILENAME               = "trailerFilename";
+  private static final String                      TRAILER_SCRAPERS               = "trailerScrapers";
+  private static final String                      TRAILER_FILENAME               = "trailerFilename";
 
   private static final String                      CERTIFICATION_COUNTRY          = "certificationCountry";
   private static final String                      RENAMER_SEASON_FOLDER          = "renamerSeasonFoldername";
@@ -145,7 +145,6 @@ public class TvShowSettings extends AbstractSettings {
   private final List<String>                       tvShowTableHiddenColumns       = ObservableCollections.observableList(new ArrayList<>());
 
   // data sources / NFO settings
-  private boolean                                  buildImageCacheOnImport        = false;
   private TvShowConnectors                         tvShowConnector                = TvShowConnectors.XBMC;
   private CertificationStyle                       certificationStyle             = CertificationStyle.LARGE;
   private boolean                                  writeCleanNfo                  = false;
@@ -190,10 +189,12 @@ public class TvShowSettings extends AbstractSettings {
   private LanguageStyle                            subtitleLanguageStyle          = LanguageStyle.ISO3T;
 
   // misc
+  private boolean                                  buildImageCacheOnImport        = false;
   private boolean                                  syncTrakt                      = false;
   private boolean                                  dvdOrder                       = false;
   private boolean                                  preferPersonalRating           = true;
   private String                                   preferredRating                = "tvdb";
+  private boolean                                  extractArtworkFromVsmeta       = false;
 
   // ui
   private boolean                                  storeUiFilters                 = false;
@@ -570,6 +571,16 @@ public class TvShowSettings extends AbstractSettings {
     firePropertyChange("buildImageCacheOnImport", oldValue, newValue);
   }
 
+  public boolean isExtractArtworkFromVsmeta() {
+    return extractArtworkFromVsmeta;
+  }
+
+  public void setExtractArtworkFromVsmeta(boolean newValue) {
+    boolean oldValue = this.extractArtworkFromVsmeta;
+    this.extractArtworkFromVsmeta = newValue;
+    firePropertyChange("extractArtworkFromVsmeta", oldValue, newValue);
+  }
+
   public boolean isAsciiReplacement() {
     return asciiReplacement;
   }
@@ -734,7 +745,8 @@ public class TvShowSettings extends AbstractSettings {
   }
 
   public void setUiFilters(List<UIFilters> filters) {
-    uiFilters = filters;
+    uiFilters.clear();
+    uiFilters.addAll(filters);
     firePropertyChange(UI_FILTERS, null, uiFilters);
   }
 
@@ -1514,5 +1526,26 @@ public class TvShowSettings extends AbstractSettings {
     setCertificationStyle(CertificationStyle.SHORT);
 
     firePropertyChange("preset", false, true);
+  }
+
+  /**
+   * set the default scrapers for the movie module
+   */
+  public void setDefaultScrapers() {
+    // activate default scrapers
+    artworkScrapers.clear();
+    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.TV_SHOW_ARTWORK)) {
+      addTvShowArtworkScraper(ms.getId());
+    }
+
+    trailerScrapers.clear();
+    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.TVSHOW_TRAILER)) {
+      addTvShowTrailerScraper(ms.getId());
+    }
+
+    subtitleScrapers.clear();
+    for (MediaScraper ms : MediaScraper.getMediaScrapers(ScraperType.SUBTITLE)) {
+      addTvShowSubtitleScraper(ms.getId());
+    }
   }
 }

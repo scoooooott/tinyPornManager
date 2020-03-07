@@ -276,9 +276,8 @@ public class TvShowRenamer {
    */
   private static void renameSeasonArtwork(TvShow tvShow) {
     // all the good & needed mediafiles
-    ArrayList<MediaFile> needed = new ArrayList<>();
+    Set<MediaFile> needed = new LinkedHashSet<>();
     ArrayList<MediaFile> cleanup = new ArrayList<>();
-    cleanup.removeAll(Collections.singleton((MediaFile) null)); // remove all NULL ones!
 
     List<MediaArtworkType> types = Arrays.asList(SEASON_POSTER, SEASON_BANNER, SEASON_THUMB);
 
@@ -347,11 +346,6 @@ public class TvShowRenamer {
       ImageCache.invalidateCachedImage(gfx);
     }
 
-    // remove duplicate MediaFiles
-    Set<MediaFile> newMFs = new LinkedHashSet<>(needed);
-    needed.clear();
-    needed.addAll(newMFs);
-
     // ######################################################################
     // ## CLEANUP - delete all files marked for cleanup, which are not "needed"
     // ######################################################################
@@ -396,7 +390,7 @@ public class TvShowRenamer {
       }
     }
 
-    tvShow.addToMediaFiles(needed);
+    tvShow.addToMediaFiles(new ArrayList<>(needed));
     tvShow.saveToDb();
   }
 
