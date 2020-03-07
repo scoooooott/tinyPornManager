@@ -677,7 +677,7 @@ public class MediaFileHelper {
 
     // do not work further on 0 byte files
     if (mediaFile.getFilesize() == 0) {
-      LOGGER.warn("0 Byte file detected: {}", mediaFile.getFilename());
+      LOGGER.debug("0 Byte file detected: {}", mediaFile.getFilename());
       // set container format to do not trigger it again
       mediaFile.setContainerFormat(mediaFile.getExtension());
       return;
