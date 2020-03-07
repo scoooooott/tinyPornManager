@@ -98,7 +98,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
   public static final String                                  ID                  = "tvdb";
 
   private static final Logger                                 LOGGER              = LoggerFactory.getLogger(TheTvDbMetadataProvider.class);
-  private static final String                                 artworkUrl          = "http://thetvdb.com/banners/";
+  private static final String                                 ARTWORK_URL         = "https://artworks.thetvdb.com/banners/";
   private static final String                                 TMM_API_KEY         = ApiKey
       .decryptApikey("7bHHg4k0XhRERM8xd3l+ElhMUXOA5Ou4vQUEzYLGHt8=");
   private static final String                                 FALLBACK_LANGUAGE   = "fallbackLanguage";
@@ -296,7 +296,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       member.setName(actor.name);
       member.setRole(actor.role);
       if (StringUtils.isNotBlank(actor.image)) {
-        member.setThumbUrl(artworkUrl + actor.image);
+        member.setThumbUrl(ARTWORK_URL + actor.image);
       }
 
       md.addCastMember(member);
@@ -499,7 +499,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       }
 
       if (StringUtils.isNotBlank(show.poster)) {
-        result.setPosterUrl(artworkUrl + show.poster);
+        result.setPosterUrl(ARTWORK_URL + show.poster);
       }
 
       // calculate score
@@ -667,7 +667,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
           if (matcher.matches() && matcher.groupCount() > 1) {
             int width = Integer.parseInt(matcher.group(1));
             int height = Integer.parseInt(matcher.group(2));
-            ma.addImageSize(width, height, artworkUrl + image.fileName);
+            ma.addImageSize(width, height, ARTWORK_URL + image.fileName);
 
             // set image size
             switch (ma.getType()) {
@@ -719,9 +719,9 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
         ma.setSizeOrder(MediaArtwork.FanartSizes.MEDIUM.getOrder());
       }
 
-      ma.setDefaultUrl(artworkUrl + image.fileName);
+      ma.setDefaultUrl(ARTWORK_URL + image.fileName);
       if (StringUtils.isNotBlank(image.thumbnail)) {
-        ma.setPreviewUrl(artworkUrl + image.thumbnail);
+        ma.setPreviewUrl(ARTWORK_URL + image.thumbnail);
       }
       else {
         ma.setPreviewUrl(ma.getDefaultUrl());
@@ -866,8 +866,8 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
       // Thumb
       if (StringUtils.isNotBlank(ep.filename)) {
         MediaArtwork ma = new MediaArtwork(providerInfo.getId(), MediaArtworkType.THUMB);
-        ma.setPreviewUrl(artworkUrl + ep.filename);
-        ma.setDefaultUrl(artworkUrl + ep.filename);
+        ma.setPreviewUrl(ARTWORK_URL + ep.filename);
+        ma.setDefaultUrl(ARTWORK_URL + ep.filename);
         episode.addMediaArt(ma);
       }
 
