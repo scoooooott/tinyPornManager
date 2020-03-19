@@ -50,8 +50,8 @@ public class ParserUtils {
       "dvd9", "dvdivx", "dvdrip", "dvdscr", "dvdscreener", "emule", "etm", "extended", "fragment", "fs", "fps", "german", "h264", "hd", "hddvd",
       "hdrip", "hdtv", "hdtvrip", "hevc", "hrhd", "hrhdtv", "ind", "internal", "ld", "limited", "ma", "md", "multisubs", "nfo", "nfofix", "ntg",
       "ntsc", "ogg", "ogm", "pal", "pdtv", "proper", "pso", "r3", "r5", "read", "repack", "rerip", "remux", "retail", "roor", "rs", "rsvcd",
-      "screener", "se", "subbed", "svcd", "swedish", "tc", "telecine", "telesync", "ts", "truehd", "uncut", "unrated", "vcf", "webdl", "webrip",
-      "workprint", "ws", "www", "x264", "xf", "xvid", "xvidvd", "xxx" };
+      "screener", "se", "subbed", "svcd", "swedish", "tc", "telecine", "telesync", "ts", "truehd", "uncut", "unrated", "vcf", "vhs", "vhsrip", "webdl",
+      "webrip", "workprint", "ws", "www", "x264", "xf", "xvid", "xvidvd", "xxx" };
 
   // clean before splitting (needs delimiter in front!)
   public static final String[] CLEANWORDS = { "24\\.000", "23\\.976", "23\\.98", "24\\.00" };
