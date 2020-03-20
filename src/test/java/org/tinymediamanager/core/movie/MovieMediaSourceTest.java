@@ -32,6 +32,10 @@ public class MovieMediaSourceTest extends BasicTest {
     assertEqual(MediaSource.DVD, MediaSource.parseMediaSource("/media/jets/movies/Planes.(dvdrip).avi"));
     assertEqual(MediaSource.DVD, MediaSource.parseMediaSource("Batman.&.Robin[1997]DvDrip-aXXo.avi"));
 
+    // VHS
+    assertEqual(MediaSource.VHS, MediaSource.parseMediaSource("Last.Man.Standing.1987.VHS.x264"));
+    assertEqual(MediaSource.VHS, MediaSource.parseMediaSource("/media/jets/movies/Twin.Dragon.Encounter.1986.VHSRip.XViD"));
+
 
     // TS
     assertEqual(MediaSource.TS, MediaSource.parseMediaSource("Planet.der.Affen.Revolution.2014.German.AC3D.HDTS.720p.NEW.SOURCE.x264"));
