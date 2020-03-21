@@ -23,7 +23,6 @@ import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
 import java.util.Map;
 
-import javax.swing.JLabel;
 import javax.swing.UIManager;
 
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +35,7 @@ import org.tinymediamanager.ui.UIConstants;
  * @author Manuel Laggner
  */
 
-public class LinkLabel extends JLabel {
+public class LinkLabel extends ReadOnlyTextArea {
   private static final long serialVersionUID = 3762584745632060187L;
 
   protected String          link;
