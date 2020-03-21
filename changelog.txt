@@ -1,3 +1,7 @@
+Version 3.1.5
+=======================
+x (TVDB) catch even more connection problems #832
+
 Version 3.1.4
 =======================
 + added some more scraper languages #800
