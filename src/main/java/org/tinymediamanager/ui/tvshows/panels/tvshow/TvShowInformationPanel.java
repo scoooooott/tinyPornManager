@@ -25,6 +25,9 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.beans.PropertyChangeListener;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -38,16 +41,22 @@ import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.Message;
+import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.ui.ColumnLayout;
 import org.tinymediamanager.ui.TmmFontHelper;
+import org.tinymediamanager.ui.TmmUIHelper;
 import org.tinymediamanager.ui.components.ImageLabel;
 import org.tinymediamanager.ui.components.LinkLabel;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
@@ -71,6 +80,7 @@ public class TvShowInformationPanel extends JPanel {
   private static final long           serialVersionUID = 1911808562993073590L;
   /** @wbp.nls.resourceBundle messages */
   private static final ResourceBundle BUNDLE           = ResourceBundle.getBundle("messages", new UTF8Control());
+  private static final Logger         LOGGER           = LoggerFactory.getLogger(TvShowInformationPanel.class);
 
   private final TvShowSelectionModel  tvShowSelectionModel;
 
@@ -107,7 +117,7 @@ public class TvShowInformationPanel extends JPanel {
 
   /**
    * Instantiates a new tv show information panel.
-   * 
+   *
    * @param tvShowSelectionModel
    *          the tv show selection model
    */
@@ -118,6 +128,49 @@ public class TvShowInformationPanel extends JPanel {
 
     // beansbinding init
     initDataBindings();
+
+    // action listeners
+    lblImdbId.addActionListener(arg0 -> {
+      String url = "http://www.imdb.com/title/" + lblImdbId.getText();
+      try {
+        TmmUIHelper.browseUrl(url);
+      }
+      catch (Exception e) {
+        LOGGER.error("browse to imdbid", e);
+        MessageManager.instance
+            .pushMessage(new Message(Message.MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
+      }
+    });
+
+    lblThetvdbId.addActionListener(arg0 -> {
+      String url = "http://thetvdb.com/?tab=series&id=" + lblThetvdbId.getText();
+      try {
+        TmmUIHelper.browseUrl(url);
+      }
+      catch (Exception e) {
+        LOGGER.error("browse to thetvdb", e);
+        MessageManager.instance
+            .pushMessage(new Message(Message.MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
+      }
+    });
+
+    lblPath.addActionListener(e -> {
+      if (StringUtils.isNotBlank(lblPath.getText())) {
+        // get the location from the label
+        Path path = Paths.get(lblPath.getText());
+        try {
+          // check whether this location exists
+          if (Files.exists(path)) {
+            TmmUIHelper.openFile(path);
+          }
+        }
+        catch (Exception ex) {
+          LOGGER.error("open filemanager", ex);
+          MessageManager.instance
+              .pushMessage(new Message(Message.MessageLevel.ERROR, path, "message.erroropenfolder", new String[] { ":", ex.getLocalizedMessage() }));
+        }
+      }
+    });
 
     // manual coded binding
     PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
