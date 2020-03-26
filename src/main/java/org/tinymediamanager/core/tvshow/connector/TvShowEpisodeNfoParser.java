@@ -189,6 +189,7 @@ public class TvShowEpisodeNfoParser {
     public Date                       lastplayed          = null;
     public String                     code                = "";
     public Date                       dateadded           = null;
+    public String                     originalFileName    = "";
 
     private Episode(Element root) {
       this.root = root;
@@ -228,6 +229,7 @@ public class TvShowEpisodeNfoParser {
       parseTag(Episode::parseCode);
       parseTag(Episode::parseDateadded);
       parseTag(Episode::findUnsupportedElements);
+      parseTag(Episode::parseOriginalFilename);
     }
 
     /**
@@ -1148,6 +1150,17 @@ public class TvShowEpisodeNfoParser {
       return null;
     }
 
+    private Void parseOriginalFilename() {
+      supportedElements.add("original_filename");
+
+      Element element = getSingleElement(root,"original_filename");
+
+      if (element != null) {
+        originalFileName = element.ownText();
+      }
+      return null;
+    }
+
     /**
      * a trailer is usually in the trailer tag
      */
@@ -1342,6 +1355,9 @@ public class TvShowEpisodeNfoParser {
       for (String tag : tags) {
         episode.addToTags(tag);
       }
+
+      //Original Filename
+      episode.setOriginalFilename(originalFileName);
 
       return episode;
     }

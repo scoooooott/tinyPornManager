@@ -631,6 +631,7 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
   protected void addTinyMediaManagerTags(TvShowEpisode episode, TvShowEpisodeNfoParser.Episode parser) {
     root.appendChild(document.createComment("tinyMediaManager meta data"));
     addSource(episode, parser);
+    addOriginalFilename(episode, parser);
   }
 
   /**
@@ -640,6 +641,14 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
     Element source = document.createElement("source");
     source.setTextContent(episode.getMediaSource().name());
     root.appendChild(source);
+  }
+
+  protected void addOriginalFilename(TvShowEpisode episode, TvShowEpisodeNfoParser.Episode parser) {
+    if ( parser == null || parser.originalFileName.isEmpty()) {
+      Element originalFilename = document.createElement("original_filename");
+      originalFilename.setTextContent(episode.getMainFile().getFilename());
+      root.appendChild(originalFilename);
+    }
   }
 
   /**

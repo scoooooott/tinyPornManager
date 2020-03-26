@@ -748,6 +748,18 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
     root.appendChild(document.createComment("tinyMediaManager meta data"));
     addSource();
     addEdition();
+    addOriginalFilename();
+  }
+
+  protected  void addOriginalFilename() {
+    if (parser == null || parser.originalFilename.isEmpty()) {
+      Element originalFileName = document.createElement("original_filename");
+      originalFileName.setTextContent(movie.getMainFile().getFilename());
+      //for(MediaFile file : movie.getMediaFiles(MediaFileType.VIDEO)) {
+      //  originalFileName.setTextContent(file.getFilename());
+      //}
+      root.appendChild(originalFileName);
+    }
   }
 
   /**

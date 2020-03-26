@@ -89,6 +89,7 @@ public class MovieNfoParser {
   public MediaSource          source              = MediaSource.UNKNOWN;
   public MovieEdition         edition             = MovieEdition.NONE;
   public String               trailer             = "";
+  public String               originalFilename    = "";
 
   public Map<String, Object>  ids                 = new HashMap<>();
   public Map<String, Rating>  ratings             = new HashMap<>();
@@ -169,6 +170,7 @@ public class MovieNfoParser {
     parseTag(MovieNfoParser::parseCode);
     parseTag(MovieNfoParser::parseDateadded);
     parseTag(MovieNfoParser::findUnsupportedElements);
+    parseTag(MovieNfoParser::parseOriginalFilename);
   }
 
   /**
@@ -1301,6 +1303,17 @@ public class MovieNfoParser {
     return null;
   }
 
+  private Void parseOriginalFilename() {
+    supportedElements.add("original_filename");
+
+    Element element = getSingleElement(root, "original_filename");
+
+    if (element != null) {
+      originalFilename = element.ownText();
+    }
+    return null;
+  }
+
   /**
    * a trailer is usually in the trailer tag
    */
@@ -1598,6 +1611,9 @@ public class MovieNfoParser {
     for (String tag : tags) {
       movie.addToTags(tag);
     }
+
+    //Original Filename
+    movie.setOriginalFilename(originalFilename);
 
     return movie;
   }
