@@ -1,9 +1,11 @@
 Version 3.1.5
 =======================
 + re-layouted information panels for better visibility on low resolution devices
-x (TVDB) catch even more connection problems #832
 + preserve original file name in NFO (movie / tvshow)
++ added support CMYK JPEGs
+x (TVDB) catch even more connection problems #832
 x show medium dateformat and added date / time format in default Locale
+
 
 Version 3.1.4
 =======================
