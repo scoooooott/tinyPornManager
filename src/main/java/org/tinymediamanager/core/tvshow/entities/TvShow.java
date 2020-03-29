@@ -1205,7 +1205,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
     if (this.firstAired == null) {
       return "";
     }
-    return TmmDateFormat.SHORT_DATE_FORMAT.format(firstAired);
+    return TmmDateFormat.MEDIUM_DATE_FORMAT.format(firstAired);
   }
 
   /**
