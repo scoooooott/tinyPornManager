@@ -173,6 +173,9 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
         // add unsupported tags
         addUnsupportedTags();
 
+        // add tinyMediaManagers own data
+        addTinyMediaManagerTags();
+
         // serialize to string
         Writer out = new StringWriter();
         getTransformer().transform(new DOMSource(document), new StreamResult(out));
@@ -729,6 +732,23 @@ public abstract class TvShowGenericXmlConnector implements ITvShowConnector {
         }
       }
     }
+  }
+
+  /**
+   * add the missing meta data for tinyMediaManager to this NFO
+   */
+  protected void addTinyMediaManagerTags() {
+    root.appendChild(document.createComment("tinyMediaManager meta data"));
+    addUserNote();
+  }
+
+  /**
+   * add the user note in <user_note>xxx</user_note>
+   */
+  protected void addUserNote() {
+    Element user_note = document.createElement("user_note");
+    user_note.setTextContent(tvShow.getNote());
+    root.appendChild(user_note);
   }
 
   /**

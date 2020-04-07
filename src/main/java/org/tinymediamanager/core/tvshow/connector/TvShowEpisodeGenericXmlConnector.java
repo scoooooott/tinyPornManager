@@ -632,6 +632,7 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
     root.appendChild(document.createComment("tinyMediaManager meta data"));
     addSource(episode, parser);
     addOriginalFilename(episode, parser);
+    addUserNote(episode, parser);
   }
 
   /**
@@ -643,12 +644,22 @@ public abstract class TvShowEpisodeGenericXmlConnector implements ITvShowEpisode
     root.appendChild(source);
   }
 
+  /**
+   * add the original filename (which we picked up in tmm before renaming) in <original_filename>xxx</original_filename>
+   */
   protected void addOriginalFilename(TvShowEpisode episode, TvShowEpisodeNfoParser.Episode parser) {
-    if ( parser == null || parser.originalFileName.isEmpty()) {
-      Element originalFilename = document.createElement("original_filename");
-      originalFilename.setTextContent(episode.getMainFile().getFilename());
-      root.appendChild(originalFilename);
-    }
+    Element originalFilename = document.createElement("original_filename");
+    originalFilename.setTextContent(episode.getMainFile().getFilename());
+    root.appendChild(originalFilename);
+  }
+
+  /**
+   * add the user note in <user_note>xxx</user_note>
+   */
+  protected void addUserNote(TvShowEpisode episode, TvShowEpisodeNfoParser.Episode parser) {
+    Element user_note = document.createElement("user_note");
+    user_note.setTextContent(episode.getNote());
+    root.appendChild(user_note);
   }
 
   /**

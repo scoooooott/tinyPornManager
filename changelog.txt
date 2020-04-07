@@ -6,6 +6,7 @@ Version 3.1.5
 + remember last used rating id in the rating editor #788
 x (TVDB) catch even more connection problems #832
 x show medium dateformat and added date / time format in default Locale
+x store user notes in the NFO files
 
 
 Version 3.1.4

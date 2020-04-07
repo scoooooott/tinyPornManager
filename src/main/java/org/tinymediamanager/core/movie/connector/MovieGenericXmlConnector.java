@@ -749,17 +749,25 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
     addSource();
     addEdition();
     addOriginalFilename();
+    addUserNote();
   }
 
-  protected  void addOriginalFilename() {
-    if (parser == null || parser.originalFilename.isEmpty()) {
-      Element originalFileName = document.createElement("original_filename");
-      originalFileName.setTextContent(movie.getMainFile().getFilename());
-      //for(MediaFile file : movie.getMediaFiles(MediaFileType.VIDEO)) {
-      //  originalFileName.setTextContent(file.getFilename());
-      //}
-      root.appendChild(originalFileName);
-    }
+  /**
+   * add the user note in <user_note>xxx</user_note>
+   */
+  protected void addUserNote() {
+    Element user_note = document.createElement("user_note");
+    user_note.setTextContent(movie.getNote());
+    root.appendChild(user_note);
+  }
+
+  /**
+   * add the original filename (which we picked up in tmm before renaming) in <original_filename>xxx</original_filename>
+   */
+  protected void addOriginalFilename() {
+    Element originalFileName = document.createElement("original_filename");
+    originalFileName.setTextContent(movie.getMainFile().getFilename());
+    root.appendChild(originalFileName);
   }
 
   /**
