@@ -1336,13 +1336,12 @@ public class TvShowRenamer {
 
     // replace spaces with underscores if needed (filename only)
     if (spaceSubstitution) {
-      String replacement = spaceReplacement;
-      destination = destination.replace(" ", replacement);
+      destination = destination.replace(" ", spaceReplacement);
 
       // also replace now multiple replacements with one to avoid strange looking results
       // example:
       // Abraham Lincoln - Vapire Hunter -> Abraham-Lincoln---Vampire-Hunter
-      destination = destination.replaceAll(Pattern.quote(replacement) + "+", replacement);
+      destination = destination.replaceAll(Pattern.quote(spaceReplacement) + "+", spaceReplacement);
     }
 
     // ASCII replacement
