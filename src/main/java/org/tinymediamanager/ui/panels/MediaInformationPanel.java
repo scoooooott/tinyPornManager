@@ -81,6 +81,7 @@ abstract public class MediaInformationPanel extends JPanel {
   protected LinkLabel                       lblPath;
   protected JLabel                          lblDateAdded;
   protected JLabel                          lblOriginalFilename;
+  protected JLabel                          lblHdrFormat;
 
   protected MediaFilesPanel                 panelMediaFiles;
 
@@ -119,10 +120,10 @@ abstract public class MediaInformationPanel extends JPanel {
     }
     {
       JLabel lblOriginalFilenameT = new TmmLabel(BUNDLE.getString("metatag.originalfile"));
-      add(lblOriginalFilenameT,"cell 0 2");
+      add(lblOriginalFilenameT, "cell 0 2");
 
       lblOriginalFilename = new JLabel("");
-      add(lblOriginalFilename,"cell 1 2");
+      add(lblOriginalFilename, "cell 1 2");
     }
     {
       add(new JSeparator(), "cell 0 3 6 1,growx");
@@ -135,7 +136,13 @@ abstract public class MediaInformationPanel extends JPanel {
       add(lblSourceT, "cell 1 4");
 
       lblSource = new JLabel("");
-      add(lblSource, "cell 2 4 3 1");
+      add(lblSource, "cell 2 4");
+
+      JLabel lblHdrFormatT = new TmmLabel(BUNDLE.getString("metatag.hdrformat"));
+      add(lblHdrFormatT, "cell 4 4");
+
+      lblHdrFormat = new JLabel("");
+      add(lblHdrFormat, "cell 5 4");
 
       JLabel lblRuntimeT = new TmmLabel(BUNDLE.getString("metatag.runtime"));
       add(lblRuntimeT, "cell 1 5");

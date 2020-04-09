@@ -134,6 +134,7 @@ public class MovieMediaInformationPanel extends MediaInformationPanel {
     lblSource.setText(movie.getMediaSource().toString());
     lblFrameRate.setText(String.format("%.2f fps", mediaFile.getFrameRate()));
     lblOriginalFilename.setText(movie.getOriginalFilename());
+    lblHdrFormat.setText(mediaFile.getHdrFormat());
   }
 
   @Override
@@ -210,7 +211,7 @@ public class MovieMediaInformationPanel extends MediaInformationPanel {
     BeanProperty<MovieSelectionModel, String> movieSelectionModelBeanProperty_3 = BeanProperty.create("selectedMovie.originalFilename");
     BeanProperty<JLabel, String> jLabelBeanProperty_2 = BeanProperty.create("text");
     AutoBinding<MovieSelectionModel, String, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
-            movieSelectionModelBeanProperty_3, lblOriginalFilename, jLabelBeanProperty_2);
+        movieSelectionModelBeanProperty_3, lblOriginalFilename, jLabelBeanProperty_2);
     autoBinding_3.bind();
   }
 }
