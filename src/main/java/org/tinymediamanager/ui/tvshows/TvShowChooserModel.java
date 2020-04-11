@@ -24,12 +24,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.AbstractModelObject;
-import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.UTF8Control;
-import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
@@ -378,18 +376,6 @@ public class TvShowChooserModel extends AbstractModelObject {
         } catch (MissingIdException ignored) {
           LOGGER.debug("no id found for scraper {}", trailerScraper.getMediaProvider().getProviderInfo().getId());
         }
-      }
-
-      // add local trailers!
-      for (MediaFile mf : tvShowtoScrape.getMediaFiles(MediaFileType.TRAILER)) {
-        LOGGER.debug("adding local trailer {}", mf.getFilename());
-        MediaTrailer mt = new MediaTrailer();
-        mt.setName(mf.getFilename());
-        mt.setProvider("downloaded");
-        mt.setQuality(mf.getVideoFormat());
-        mt.setInNfo(false);
-        mt.setUrl(mf.getFile().toUri().toString());
-        trailer.add(0, mt); // add as first
       }
 
       tvShowtoScrape.setTrailers(trailer);

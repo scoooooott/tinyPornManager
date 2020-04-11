@@ -1112,6 +1112,10 @@ public abstract class MediaEntity extends AbstractModelObject {
     firePropertyChange(NEWLY_ADDED, oldValue, newValue);
   }
 
+  public void callbackForGatheredMediainformation(MediaFile mediaFile) {
+    // empty - to be used in subclasses
+  }
+
   abstract public void saveToDb();
 
   abstract public void deleteFromDb();

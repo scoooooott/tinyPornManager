@@ -60,7 +60,6 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.movie.MovieArtworkHelper;
 import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.core.movie.MovieList;
@@ -932,24 +931,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             break;
 
           case TRAILER:
-
-            MediaTrailer mt = new MediaTrailer();
-            mt.setName(mf.getFilename());
-            mt.setProvider("downloaded");
-            mt.setInNfo(false);
-            mt.setUrl(mf.getFileAsPath().toUri().toString());
-            movie.addTrailer(mt);
             movie.addToMediaFiles(mf);
-
-            // get quality async
-            Runnable miTask = new MediaFileInformationFetcherTask(mf, movie, false) {
-              @Override
-              public void callback() {
-                super.callback();
-                mt.setQuality(mediaFile.getVideoFormat());
-              }
-            };
-            miTasks.add(miTask);
 
             break;
 

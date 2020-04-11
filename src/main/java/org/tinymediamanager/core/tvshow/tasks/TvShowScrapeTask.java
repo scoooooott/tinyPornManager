@@ -22,13 +22,11 @@ import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tinymediamanager.core.MediaFileType;
 import org.tinymediamanager.core.Message;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.ScraperMetadataConfig;
 import org.tinymediamanager.core.UTF8Control;
-import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.threading.TmmTask;
@@ -306,18 +304,6 @@ public class TvShowScrapeTask extends TmmThreadPool {
 
     private List<MediaTrailer> getTrailers(TvShow tvShow, MediaMetadata metadata, List<MediaScraper> trailerScrapers) {
       List<MediaTrailer> trailers = new ArrayList<>();
-
-      // add local trailers!
-      for (MediaFile mf : tvShow.getMediaFiles(MediaFileType.TRAILER)) {
-        LOGGER.debug("adding local trailer {}", mf.getFilename());
-        MediaTrailer mt = new MediaTrailer();
-        mt.setName(mf.getFilename());
-        mt.setProvider("downloaded");
-        mt.setQuality(mf.getVideoFormat());
-        mt.setInNfo(false);
-        mt.setUrl(mf.getFile().toUri().toString());
-        trailers.add(mt);
-      }
 
       TrailerSearchAndScrapeOptions options = new TrailerSearchAndScrapeOptions(MediaType.TV_SHOW);
 

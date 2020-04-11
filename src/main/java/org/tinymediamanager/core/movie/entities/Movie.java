@@ -281,6 +281,16 @@ public class Movie extends MediaEntity implements IMediaInformation {
     return MEDIA_FILE_COMPARATOR;
   }
 
+  @Override
+  public void addToMediaFiles(MediaFile mediaFile) {
+    super.addToMediaFiles(mediaFile);
+
+    // if we have added a trailer, also update the trailer list
+    if (mediaFile.getType() == MediaFileType.TRAILER) {
+      mixinLocalTrailers();
+    }
+  }
+
   /**
    * checks if this movie has been scraped.<br>
    * On a fresh DB, just reading local files, everything is again "unscraped". <br>
@@ -1000,6 +1010,9 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
       addTrailer(trailer);
     }
+
+    // mix in local trailer
+    mixinLocalTrailers();
   }
 
   /**
@@ -2413,6 +2426,39 @@ public class Movie extends MediaEntity implements IMediaInformation {
       default:
         break;
 
+    }
+  }
+
+  private void mixinLocalTrailers() {
+    // remove local ones
+    for (int i = trailer.size() - 1; i >= 0; i--) {
+      MediaTrailer mediaTrailer = trailer.get(i);
+      if ("downloaded".equalsIgnoreCase(mediaTrailer.getProvider())) {
+        trailer.remove(i);
+      }
+    }
+
+    // add local trailers (in the front)!
+    for (MediaFile mf : getMediaFiles(MediaFileType.TRAILER)) {
+      LOGGER.debug("adding local trailer {}", mf.getFilename());
+      MediaTrailer mt = new MediaTrailer();
+      mt.setName(mf.getFilename());
+      mt.setProvider("downloaded");
+      mt.setQuality(mf.getVideoFormat());
+      mt.setInNfo(false);
+      mt.setUrl(mf.getFile().toUri().toString());
+      trailer.add(0, mt);
+      firePropertyChange(TRAILER, null, trailer);
+    }
+  }
+
+  @Override
+  public void callbackForGatheredMediainformation(MediaFile mediaFile) {
+    super.callbackForGatheredMediainformation(mediaFile);
+
+    if (mediaFile.getType() == MediaFileType.TRAILER) {
+      // re-write the trailer list
+      mixinLocalTrailers();
     }
   }
 }

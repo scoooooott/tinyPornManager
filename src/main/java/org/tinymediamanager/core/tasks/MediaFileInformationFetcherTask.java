@@ -88,6 +88,7 @@ public class MediaFileInformationFetcherTask implements Runnable {
     callback();
 
     if (mediaEntity != null) {
+      mediaEntity.callbackForGatheredMediainformation(mediaFile);
       mediaEntity.saveToDb();
       mediaEntity.firePropertyChange(MEDIA_INFORMATION, false, true);
       return;
