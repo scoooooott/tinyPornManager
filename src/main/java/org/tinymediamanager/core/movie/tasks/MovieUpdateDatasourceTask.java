@@ -709,6 +709,20 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     else {
       LOGGER.error("could not add '{}' because no VIDEO file found", movieDir);
     }
+
+    // if there is missing artwork AND we do have a VSMETA file, we probably can extract an artwork from there
+    if (MovieModuleManager.SETTINGS.isExtractArtworkFromVsmeta()) {
+      List<MediaFile> vsmetas = movie.getMediaFiles(MediaFileType.VSMETA);
+
+      if (movie.getMediaFiles(MediaFileType.POSTER).isEmpty() && !vsmetas.isEmpty() && !MovieModuleManager.SETTINGS.getPosterFilenames().isEmpty()) {
+        LOGGER.debug("extracting POSTERs from VSMETA for {}", movie.getMainFile().getFileAsPath());
+        MovieArtworkHelper.extractArtworkFromVsmeta(movie, vsmetas.get(0), MediaArtwork.MediaArtworkType.POSTER);
+      }
+      if (movie.getMediaFiles(MediaFileType.FANART).isEmpty() && !vsmetas.isEmpty() && !MovieModuleManager.SETTINGS.getFanartFilenames().isEmpty()) {
+        LOGGER.debug("extracting FANARTs from VSMETA for {}", movie.getMainFile().getFileAsPath());
+        MovieArtworkHelper.extractArtworkFromVsmeta(movie, vsmetas.get(0), MediaArtwork.MediaArtworkType.BACKGROUND);
+      }
+    }
   }
 
   /**

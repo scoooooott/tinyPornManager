@@ -1151,6 +1151,7 @@ public class MovieArtworkHelper {
    */
   public static boolean extractArtworkFromVsmeta(Movie movie, MediaFile vsMetaFile, MediaArtworkType artworkType) {
     VSMeta vsmeta = new VSMeta(vsMetaFile.getFileAsPath());
+    vsmeta.parseFile();
     List<? extends IFileNaming> fileNamings;
     byte[] bytes;
 

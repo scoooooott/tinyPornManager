@@ -13,6 +13,7 @@ x show medium dateformat and added date / time format in default Locale
 x store user notes in the NFO files
 x (TV show) catch occasional errors in NFO parsing #837
 x fixed calculation for file size in the renamer #843
+x fixed extracting of VSMETA artwork for some movies #760
 
 
 Version 3.1.4
