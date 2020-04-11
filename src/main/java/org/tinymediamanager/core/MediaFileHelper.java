@@ -1725,7 +1725,8 @@ public class MediaFileHelper {
     mediaFile.setVideo3DFormat(video3DFormat);
 
     // prefer commercial "hdr10+" naming over technical
-    mediaFile.setHdrFormat(getMediaInfo(miSnapshot, MediaInfo.StreamKind.Video, 0, "HDR_Format_Commercial"));
+    mediaFile
+        .setHdrFormat(getMediaInfo(miSnapshot, MediaInfo.StreamKind.Video, 0, "HDR_Format_Commercial", "HDR_Format_Compatibility", "HDR_Format"));
 
     // TODO: season/episode parsing
     // int season = parseToInt(getMediaInfo(StreamKind.General, 0, "Season"));
@@ -1738,6 +1739,7 @@ public class MediaFileHelper {
     // $BOXTYPE_DESC = "desc"; # short description - max is 255 characters
     // $BOXTYPE_TVSN = "tvsn"; # season
     // $BOXTYPE_STIK = "stik"; # "magic" to make it realize it's a TV show
+
   }
 
   /**
