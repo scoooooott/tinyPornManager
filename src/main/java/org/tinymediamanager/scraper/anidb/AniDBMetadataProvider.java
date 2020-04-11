@@ -175,6 +175,10 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
         getRating(md, e);
       }
 
+      if ("tags".equalsIgnoreCase(e.tagName())) {
+        getTags(md, e);
+      }
+
       if ("picture".equalsIgnoreCase(e.tagName())) {
         // Poster
         MediaArtwork ma = new MediaArtwork(providerInfo.getId(), MediaArtwork.MediaArtworkType.POSTER);
@@ -260,6 +264,15 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
         catch (NumberFormatException ex) {
           LOGGER.debug("could not rating: {} - {}", rating.text(), rating.attr("count"));
         }
+      }
+    }
+  }
+
+  private void getTags(MediaMetadata md, Element e) {
+    for (Element tag : e.children()) {
+      Element name = tag.getElementsByTag("name").first();
+      if (name != null) {
+        md.addTag(name.text());
       }
     }
   }

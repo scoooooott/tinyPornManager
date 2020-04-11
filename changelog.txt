@@ -8,6 +8,7 @@ Version 3.1.5
 + remember last used rating id in the rating editor #788
 + show video bit depth and hdr format in the media files tab and in the editors
 + added Trakt.tv id (movies) and TMDB id (TV shows) with links to the UI
++ enabled scraping of tags from AniDB #836
 x (TVDB) catch even more connection problems #832
 x show medium dateformat and added date / time format in default Locale
 x store user notes in the NFO files
