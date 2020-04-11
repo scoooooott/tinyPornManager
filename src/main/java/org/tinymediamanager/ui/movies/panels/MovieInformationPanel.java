@@ -120,6 +120,7 @@ public class MovieInformationPanel extends JPanel {
   private JLabel                      lblReleaseDate;
   private JTextArea                   taNote;
   private JLabel                      lblCertificationLogo;
+  private LinkLabel                   lblTraktTvId;
 
   /**
    * Instantiates a new movie information panel.
@@ -137,7 +138,7 @@ public class MovieInformationPanel extends JPanel {
 
     // action listeners
     lblTmdbid.addActionListener(arg0 -> {
-      String url = "http://www.themoviedb.org/movie/" + lblTmdbid.getText();
+      String url = "https://www.themoviedb.org/movie/" + lblTmdbid.getText();
       try {
         TmmUIHelper.browseUrl(url);
       }
@@ -149,12 +150,24 @@ public class MovieInformationPanel extends JPanel {
     });
 
     lblImdbid.addActionListener(arg0 -> {
-      String url = "http://www.imdb.com/title/" + lblImdbid.getText();
+      String url = "https://www.imdb.com/title/" + lblImdbid.getText();
       try {
         TmmUIHelper.browseUrl(url);
       }
       catch (Exception e) {
         LOGGER.error("browse to imdbid", e);
+        MessageManager.instance
+            .pushMessage(new Message(Message.MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
+      }
+    });
+
+    lblTraktTvId.addActionListener(arg0 -> {
+      String url = "https://trakt.tv/movies/" + lblTraktTvId.getText();
+      try {
+        TmmUIHelper.browseUrl(url);
+      }
+      catch (Exception e) {
+        LOGGER.error("browse to trakt.tv", e);
         MessageManager.instance
             .pushMessage(new Message(Message.MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
       }
@@ -286,7 +299,7 @@ public class MovieInformationPanel extends JPanel {
       {
         JPanel panelTopDetails = new JPanel();
         panelRight.add(panelTopDetails, "cell 0 0,grow");
-        panelTopDetails.setLayout(new MigLayout("insets 0", "[][][40lp][][grow][]", "[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]"));
+        panelTopDetails.setLayout(new MigLayout("insets 0", "[][][40lp][][grow][]", "[]2lp[]2lp[grow]2lp[]2lp[]2lp[]2lp[]2lp[]"));
 
         {
           JLabel lblYearT = new TmmLabel(BUNDLE.getString("metatag.year"));
@@ -304,7 +317,7 @@ public class MovieInformationPanel extends JPanel {
         }
         {
           lblCertificationLogo = new JLabel("");
-          panelTopDetails.add(lblCertificationLogo, "cell 5 0 1 2");
+          panelTopDetails.add(lblCertificationLogo, "cell 5 0 1 3, top");
         }
         {
           JLabel lblReleaseDateT = new TmmLabel(BUNDLE.getString("metatag.releasedate"));
@@ -327,13 +340,19 @@ public class MovieInformationPanel extends JPanel {
           lblCertification = new JLabel("");
           panelTopDetails.add(lblCertification, "cell 1 2,growx");
         }
+        {
+          JLabel lblTraktTvIdT = new TmmLabel("Trakt.tv ID");
+          panelTopDetails.add(lblTraktTvIdT, "cell 3 2");
 
+          lblTraktTvId = new LinkLabel();
+          panelTopDetails.add(lblTraktTvId, "cell 4 2");
+        }
         {
           JLabel lblOtherIdsT = new TmmLabel(BUNDLE.getString("metatag.otherids"));
-          panelTopDetails.add(lblOtherIdsT, "cell 3 2");
+          panelTopDetails.add(lblOtherIdsT, "cell 3 3");
 
           taOtherIds = new ReadOnlyTextArea();
-          panelTopDetails.add(taOtherIds, "cell 4 2 2 2,growx,wmin 0,aligny top");
+          panelTopDetails.add(taOtherIds, "cell 4 3 2 1,growx,wmin 0");
         }
         {
           JLabel lblRunningTimeT = new TmmLabel(BUNDLE.getString("metatag.runtime"));
@@ -619,5 +638,11 @@ public class MovieInformationPanel extends JPanel {
         movieSelectionModel, movieSelectionModelBeanProperty_23, lblCertificationLogo, jLabelBeanProperty_2);
     autoBinding_23.setConverter(new CertificationImageConverter());
     autoBinding_23.bind();
+    //
+    BeanProperty<MovieSelectionModel, Integer> movieSelectionModelBeanProperty_24 = BeanProperty.create("selectedMovie.traktTvId");
+    AutoBinding<MovieSelectionModel, Integer, JTextArea, String> autoBinding_24 = Bindings.createAutoBinding(UpdateStrategy.READ, movieSelectionModel,
+        movieSelectionModelBeanProperty_24, lblTraktTvId, jTextAreaBeanProperty);
+    autoBinding_24.setConverter(new ZeroIdConverter());
+    autoBinding_24.bind();
   }
 }

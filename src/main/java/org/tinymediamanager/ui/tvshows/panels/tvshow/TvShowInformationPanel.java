@@ -65,6 +65,7 @@ import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.converter.CertificationImageConverter;
 import org.tinymediamanager.ui.converter.RatingConverter;
 import org.tinymediamanager.ui.converter.VoteCountConverter;
+import org.tinymediamanager.ui.converter.ZeroIdConverter;
 import org.tinymediamanager.ui.panels.MediaInformationLogosPanel;
 import org.tinymediamanager.ui.tvshows.TvShowOtherIdsConverter;
 import org.tinymediamanager.ui.tvshows.TvShowSelectionModel;
@@ -88,6 +89,7 @@ public class TvShowInformationPanel extends JPanel {
   private JLabel                      lblCertification;
   private LinkLabel                   lblThetvdbId;
   private LinkLabel                   lblImdbId;
+  private LinkLabel                   lblTmdbId;
   private LinkLabel                   lblPath;
   private JLabel                      lblPremiered;
   private JTextArea                   taStudio;
@@ -131,7 +133,7 @@ public class TvShowInformationPanel extends JPanel {
 
     // action listeners
     lblImdbId.addActionListener(arg0 -> {
-      String url = "http://www.imdb.com/title/" + lblImdbId.getText();
+      String url = "https://www.imdb.com/title/" + lblImdbId.getText();
       try {
         TmmUIHelper.browseUrl(url);
       }
@@ -143,12 +145,24 @@ public class TvShowInformationPanel extends JPanel {
     });
 
     lblThetvdbId.addActionListener(arg0 -> {
-      String url = "http://thetvdb.com/?tab=series&id=" + lblThetvdbId.getText();
+      String url = "https://thetvdb.com/?tab=series&id=" + lblThetvdbId.getText();
       try {
         TmmUIHelper.browseUrl(url);
       }
       catch (Exception e) {
         LOGGER.error("browse to thetvdb", e);
+        MessageManager.instance
+            .pushMessage(new Message(Message.MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
+      }
+    });
+
+    lblTmdbId.addActionListener(arg0 -> {
+      String url = "https://www.themoviedb.org/tv/" + lblTmdbId.getText();
+      try {
+        TmmUIHelper.browseUrl(url);
+      }
+      catch (Exception e) {
+        LOGGER.error("browse to tmdb", e);
         MessageManager.instance
             .pushMessage(new Message(Message.MessageLevel.ERROR, url, "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));
       }
@@ -270,7 +284,7 @@ public class TvShowInformationPanel extends JPanel {
       {
         JPanel panelTopDetails = new JPanel();
         panelRight.add(panelTopDetails, "cell 0 0,growx");
-        panelTopDetails.setLayout(new MigLayout("insets 0", "[][][40lp][][grow][]", "[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]2lp[]"));
+        panelTopDetails.setLayout(new MigLayout("insets 0", "[][][40lp][][grow][]", "[]2lp[]2lp[grow]2lp[]2lp[]2lp[]2lp[]2lp[]"));
         {
           JLabel lblYearT = new TmmLabel(BUNDLE.getString("metatag.year"));
           panelTopDetails.add(lblYearT, "flowy,cell 0 0");
@@ -279,7 +293,7 @@ public class TvShowInformationPanel extends JPanel {
           panelTopDetails.add(lblYear, "cell 1 0");
         }
         {
-          JLabel lblImdbIdT = new TmmLabel("IMDB Id");
+          JLabel lblImdbIdT = new TmmLabel("IMDB ID");
           panelTopDetails.add(lblImdbIdT, "cell 3 0");
 
           lblImdbId = new LinkLabel("");
@@ -287,7 +301,7 @@ public class TvShowInformationPanel extends JPanel {
         }
         {
           lblCertificationLogo = new JLabel("");
-          panelTopDetails.add(lblCertificationLogo, "cell 5 0 1 2");
+          panelTopDetails.add(lblCertificationLogo, "cell 5 0 1 3, top");
         }
         {
           JLabel lblPremieredT = new TmmLabel(BUNDLE.getString("metatag.premiered"));
@@ -297,7 +311,8 @@ public class TvShowInformationPanel extends JPanel {
           panelTopDetails.add(lblPremiered, "cell 1 1");
         }
         {
-          JLabel lblThetvdbIdT = new TmmLabel("TheTVDB Id");
+          JLabel lblThetvdbIdT = new TmmLabel("TheTVDB ID");
+          lblThetvdbIdT.setText("TheTVDB ID");
           panelTopDetails.add(lblThetvdbIdT, "cell 3 1");
 
           lblThetvdbId = new LinkLabel("");
@@ -311,11 +326,18 @@ public class TvShowInformationPanel extends JPanel {
           panelTopDetails.add(lblCertification, "cell 1 2");
         }
         {
+          JLabel lblTmdbIdT = new TmmLabel(BUNDLE.getString("metatag.tmdb"));
+          panelTopDetails.add(lblTmdbIdT, "cell 3 2");
+
+          lblTmdbId = new LinkLabel();
+          panelTopDetails.add(lblTmdbId, "cell 4 2");
+        }
+        {
           JLabel lblOtherIdsT = new TmmLabel(BUNDLE.getString("metatag.otherids"));
-          panelTopDetails.add(lblOtherIdsT, "cell 3 2");
+          panelTopDetails.add(lblOtherIdsT, "cell 3 3");
 
           taOtherIds = new ReadOnlyTextArea();
-          panelTopDetails.add(taOtherIds, "cell 4 2 2 2,growx,wmin 0,aligny top");
+          panelTopDetails.add(taOtherIds, "cell 4 3 2 1,growx,wmin 0");
         }
         {
           JLabel lblRuntimeT = new TmmLabel(BUNDLE.getString("metatag.runtime"));
@@ -569,5 +591,11 @@ public class TvShowInformationPanel extends JPanel {
         tvShowSelectionModel, tvShowSelectionModelBeanProperty_20, lblCertificationLogo, jLabelBeanProperty_1);
     autoBinding_20.setConverter(new CertificationImageConverter());
     autoBinding_20.bind();
+    //
+    BeanProperty<TvShowSelectionModel, Integer> tvShowSelectionModelBeanProperty_21 = BeanProperty.create("selectedTvShow.tmdbId");
+    AutoBinding<TvShowSelectionModel, Integer, LinkLabel, String> autoBinding_21 = Bindings.createAutoBinding(UpdateStrategy.READ,
+        tvShowSelectionModel, tvShowSelectionModelBeanProperty_21, lblTmdbId, linkLabelBeanProperty);
+    autoBinding_21.setConverter(new ZeroIdConverter());
+    autoBinding_21.bind();
   }
 }

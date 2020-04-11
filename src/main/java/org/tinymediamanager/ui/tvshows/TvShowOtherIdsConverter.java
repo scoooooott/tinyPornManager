@@ -37,11 +37,13 @@ public class TvShowOtherIdsConverter extends Converter<Map<String, Object>, Stri
       switch (entry.getKey()) {
         case MediaMetadata.TVDB:
         case MediaMetadata.IMDB:
+        case MediaMetadata.TMDB:
           // already in UI - skip
           continue;
 
         case "imdbId":
         case "traktId":
+        case "tvShowSeason":
           // legacy format
           continue;
 

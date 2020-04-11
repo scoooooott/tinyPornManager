@@ -36,6 +36,7 @@ import static org.tinymediamanager.core.Constants.STATUS;
 import static org.tinymediamanager.core.Constants.TAG;
 import static org.tinymediamanager.core.Constants.TAGS_AS_STRING;
 import static org.tinymediamanager.core.Constants.TITLE_SORTABLE;
+import static org.tinymediamanager.core.Constants.TMDB;
 import static org.tinymediamanager.core.Constants.TRAILER;
 import static org.tinymediamanager.core.Constants.TRAKT;
 import static org.tinymediamanager.core.Constants.TVDB;
@@ -1157,13 +1158,32 @@ public class TvShow extends MediaEntity implements IMediaInformation {
   }
 
   /**
-   * Sets the TvRage id.
+   * Sets the TraktTv id.
    *
    * @param newValue
    *          the new TraktTV id
    */
   public void setTraktId(int newValue) {
     this.setId(TRAKT, newValue);
+  }
+
+  /**
+   * Gets the TMDB id.
+   *
+   * @return the TTMDB id
+   */
+  public int getTmdbId() {
+    return this.getIdAsInt(TMDB);
+  }
+
+  /**
+   * Sets the TMDB id.
+   *
+   * @param newValue
+   *          the new TMDB id
+   */
+  public void setTmdbId(int newValue) {
+    this.setId(TMDB, newValue);
   }
 
   /**

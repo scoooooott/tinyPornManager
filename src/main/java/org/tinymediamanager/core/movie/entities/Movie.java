@@ -42,6 +42,7 @@ import static org.tinymediamanager.core.Constants.TITLE_SORTABLE;
 import static org.tinymediamanager.core.Constants.TMDB;
 import static org.tinymediamanager.core.Constants.TOP250;
 import static org.tinymediamanager.core.Constants.TRAILER;
+import static org.tinymediamanager.core.Constants.TRAKT;
 import static org.tinymediamanager.core.Constants.VIDEO_IN_3D;
 import static org.tinymediamanager.core.Constants.WATCHED;
 import static org.tinymediamanager.core.Constants.WRITERS;
@@ -580,6 +581,25 @@ public class Movie extends MediaEntity implements IMediaInformation {
    */
   public void setTmdbId(int newValue) {
     this.setId(TMDB, newValue);
+  }
+
+  /**
+   * Gets the trakt.tv id.
+   *
+   * @return the trakt.tv id
+   */
+  public int getTraktTvId() {
+    return this.getIdAsInt(TRAKT);
+  }
+
+  /**
+   * Sets the trakt.tv id.
+   *
+   * @param newValue
+   *          the new trakt.tv id
+   */
+  public void setTraktTvId(int newValue) {
+    this.setId(TRAKT, newValue);
   }
 
   /**
