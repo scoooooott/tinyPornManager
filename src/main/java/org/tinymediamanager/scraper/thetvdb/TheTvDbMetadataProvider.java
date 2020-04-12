@@ -584,8 +584,11 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
     List<SeriesImageQueryResult> images = new ArrayList<>();
     try {
       // get all types of artwork we can get
-      SeriesImagesQueryParamResponse response = tvdb.series().imagesQueryParams(id).execute().body();
-      for (SeriesImagesQueryParam param : response.data) {
+      Response<SeriesImagesQueryParamResponse> response = tvdb.series().imagesQueryParams(id).execute();
+      if (!response.isSuccessful()) {
+        throw new HttpException(response.code(), response.message());
+      }
+      for (SeriesImagesQueryParam param : response.body().data) {
         if (options.getArtworkType() == ALL || ("fanart".equals(param.keyType) && options.getArtworkType() == BACKGROUND)
             || ("poster".equals(param.keyType) && options.getArtworkType() == POSTER)
             || ("season".equals(param.keyType) && options.getArtworkType() == SEASON_POSTER)

@@ -748,6 +748,26 @@ public abstract class MovieGenericXmlConnector implements IMovieConnector {
     root.appendChild(document.createComment("tinyMediaManager meta data"));
     addSource();
     addEdition();
+    addOriginalFilename();
+    addUserNote();
+  }
+
+  /**
+   * add the user note in <user_note>xxx</user_note>
+   */
+  protected void addUserNote() {
+    Element user_note = document.createElement("user_note");
+    user_note.setTextContent(movie.getNote());
+    root.appendChild(user_note);
+  }
+
+  /**
+   * add the original filename (which we picked up in tmm before renaming) in <original_filename>xxx</original_filename>
+   */
+  protected void addOriginalFilename() {
+    Element originalFileName = document.createElement("original_filename");
+    originalFileName.setTextContent(movie.getMainFile().getFilename());
+    root.appendChild(originalFileName);
   }
 
   /**

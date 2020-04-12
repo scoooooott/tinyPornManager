@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.IMediaInformation;
 import org.tinymediamanager.core.MediaSource;
 import org.tinymediamanager.core.Settings;
-import org.tinymediamanager.ui.converter.CertificationImageConverter;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -37,55 +36,46 @@ import net.miginfocom.swing.MigLayout;
  * The class MediaInformationLogosPanel is used to display all media info related logos
  */
 public class MediaInformationLogosPanel extends JPanel {
-  private static final long           serialVersionUID            = -3403472105793548302L;
-  private static final Logger         LOGGER                      = LoggerFactory.getLogger(MediaInformationLogosPanel.class);
+  private static final long   serialVersionUID = -3403472105793548302L;
+  private static final Logger LOGGER           = LoggerFactory.getLogger(MediaInformationLogosPanel.class);
 
-  private final String                imageSource;
+  private final String        imageSource;
 
-  private IMediaInformation           mediaInformationSource;
+  private IMediaInformation   mediaInformationSource;
 
-  private CertificationImageConverter certificationImageConverter = new CertificationImageConverter();
-
-  private JLabel                      lblCertification            = new JLabel();
-  private JLabel                      lblVideoFormat              = new JLabel();
-  private JLabel                      lblAspectRatio              = new JLabel();
-  private JLabel                      lblVideoCodec               = new JLabel();
-  private JLabel                      lblVideo3d                  = new JLabel();
-  private JLabel                      lblAudioCodec               = new JLabel();
-  private JLabel                      lblAudioChannels            = new JLabel();
-  private JLabel                      lblContainer                = new JLabel();
-  private JLabel                      lblSource                   = new JLabel();
+  private JLabel              lblVideoFormat   = new JLabel();
+  private JLabel              lblAspectRatio   = new JLabel();
+  private JLabel              lblVideoCodec    = new JLabel();
+  private JLabel              lblVideo3d       = new JLabel();
+  private JLabel              lblAudioCodec    = new JLabel();
+  private JLabel              lblAudioChannels = new JLabel();
+  private JLabel              lblSource        = new JLabel();
 
   public MediaInformationLogosPanel() {
     imageSource = "/org/tinymediamanager/ui/plaf/" + Settings.getInstance().getTheme().toLowerCase(Locale.ROOT) + "/images";
 
-    setLayout(new MigLayout("hidemode 3, insets n n n 15lp", "[][][][][][10lp][][][10lp][][]", "[]"));
+    setLayout(new MigLayout("hidemode 3", "[][][][][10lp][][][10lp][]", "[]"));
 
-    add(lblCertification, "cell 0 0, gapright 15lp");
+    add(lblVideoFormat, "cell 0 0");
+    add(lblAspectRatio, "cell 1 0");
+    add(lblVideoCodec, "cell 2 0");
+    add(lblVideo3d, "cell 3 0");
 
-    add(lblVideoFormat, "cell 1 0");
-    add(lblAspectRatio, "cell 2 0");
-    add(lblVideoCodec, "cell 3 0");
-    add(lblVideo3d, "cell 4 0");
+    add(lblAudioChannels, "cell 5 0");
+    add(lblAudioCodec, "cell 6 0");
 
-    add(lblAudioChannels, "cell 6 0");
-    add(lblAudioCodec, "cell 7 0");
-
-    add(lblSource, "cell 9 0");
-    // add(lblContainer, "cell 10 0");
+    add(lblSource, "cell 8 0");
   }
 
   public void setMediaInformationSource(IMediaInformation source) {
     this.mediaInformationSource = source;
 
-    setIcon(lblCertification, getCertificationIcon());
     setIcon(lblVideoFormat, getVideoFormatIcon());
     setIcon(lblAspectRatio, getAspectRatioIcon());
     setIcon(lblVideoCodec, getVideoCodecIcon());
     setIcon(lblVideo3d, getVideo3dIcon());
     setIcon(lblAudioCodec, getAudioCodecIcon());
     setIcon(lblAudioChannels, getAudioChannelsIcon());
-    setIcon(lblContainer, getContainerIcon());
     setIcon(lblSource, getSourceIcon());
   }
 
@@ -97,21 +87,6 @@ public class MediaInformationLogosPanel extends JPanel {
     else {
       label.setVisible(false);
     }
-  }
-
-  /**
-   * get the right icon for the given certification
-   * 
-   * @return the icon or null
-   */
-  private Icon getCertificationIcon() {
-    Icon icon = certificationImageConverter.convertForward(mediaInformationSource.getCertification());
-
-    if (icon == null || icon == CertificationImageConverter.emptyImage) {
-      return null;
-    }
-
-    return icon;
   }
 
   /**
@@ -293,33 +268,6 @@ public class MediaInformationLogosPanel extends JPanel {
 
     try {
       URL file = this.getClass().getResource(imageSource + "/video/3d.png");
-      if (file != null) {
-        return new ImageIcon(file);
-      }
-    }
-    catch (Exception e) {
-      LOGGER.warn(e.getMessage());
-    }
-
-    // we did not get any file: return the empty
-    return null;
-  }
-
-  /**
-   * get the right icon for the container
-   * 
-   * @return the icon or null
-   */
-  private Icon getContainerIcon() {
-    String container = mediaInformationSource.getMediaInfoContainerFormat();
-
-    // a) return null if the container is empty
-    if (StringUtils.isEmpty(container)) {
-      return null;
-    }
-
-    try {
-      URL file = this.getClass().getResource(imageSource + "/container/" + container.toLowerCase(Locale.ROOT) + ".png");
       if (file != null) {
         return new ImageIcon(file);
       }

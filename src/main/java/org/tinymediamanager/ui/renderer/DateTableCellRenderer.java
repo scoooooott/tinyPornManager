@@ -38,7 +38,7 @@ public class DateTableCellRenderer extends DefaultTableCellRenderer {
    * Create a new DateTableCellRenderer that renders Dates as formatted Strings.
    */
   public DateTableCellRenderer() {
-    this.dateFormat = TmmDateFormat.SHORT_DATE_FORMAT;
+    this.dateFormat = TmmDateFormat.MEDIUM_DATE_FORMAT;
   }
 
   /**

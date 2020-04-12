@@ -30,6 +30,7 @@ import static org.tinymediamanager.core.Constants.LOGO;
 import static org.tinymediamanager.core.Constants.MEDIA_FILES;
 import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
 import static org.tinymediamanager.core.Constants.NEWLY_ADDED;
+import static org.tinymediamanager.core.Constants.ORIGINAL_FILENAME;
 import static org.tinymediamanager.core.Constants.ORIGINAL_TITLE;
 import static org.tinymediamanager.core.Constants.PATH;
 import static org.tinymediamanager.core.Constants.PLOT;
@@ -118,6 +119,9 @@ public abstract class MediaEntity extends AbstractModelObject {
   protected boolean                    duplicate         = false;
   protected ReadWriteLock              readWriteLock     = new ReentrantReadWriteLock();
 
+  @JsonProperty
+  protected String                     originalFilename  = "";
+
   public MediaEntity() {
   }
 
@@ -161,6 +165,7 @@ public abstract class MediaEntity extends AbstractModelObject {
     setYear(year == 0 || force ? other.year : year);
     setPlot(StringUtils.isEmpty(plot) || force ? other.plot : plot);
     setProductionCompany(StringUtils.isEmpty(productionCompany) || force ? other.productionCompany : productionCompany);
+    setOriginalFilename(StringUtils.isEmpty(originalFilename) || force ? other.originalFilename : originalFilename);
 
     // when force is set, clear the lists/maps and add all other values
     if (force) {
@@ -279,6 +284,10 @@ public abstract class MediaEntity extends AbstractModelObject {
    */
   public String getPath() {
     return this.path;
+  }
+
+  public String getOriginalFilename() {
+    return this.originalFilename;
   }
 
   /**
@@ -410,6 +419,12 @@ public abstract class MediaEntity extends AbstractModelObject {
     String oldValue = path;
     path = newValue;
     firePropertyChange(PATH, oldValue, newValue);
+  }
+
+  public void setOriginalFilename(String newValue) {
+    String oldValue = originalFilename;
+    originalFilename = newValue;
+    firePropertyChange(ORIGINAL_FILENAME, oldValue, newValue);
   }
 
   public void removeRating(String id) {
@@ -1095,6 +1110,10 @@ public abstract class MediaEntity extends AbstractModelObject {
     boolean oldValue = this.newlyAdded;
     this.newlyAdded = newValue;
     firePropertyChange(NEWLY_ADDED, oldValue, newValue);
+  }
+
+  public void callbackForGatheredMediainformation(MediaFile mediaFile) {
+    // empty - to be used in subclasses
   }
 
   abstract public void saveToDb();

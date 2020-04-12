@@ -111,8 +111,12 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
   private JComboBox<TvShowPreviewContainer>        cbTvShowForPreview;
   private EnhancedTextField                        tfSeasonFolderName;
   private JCheckBox                                chckbxAsciiReplacement;
-  private JComboBox<String>                        cbSpaceReplacement;
-  private JCheckBox                                chckbxSpaceReplacement;
+  private JCheckBox                                chckbxShowFoldernameSpaceReplacement;
+  private JComboBox                                cbShowFoldernameSpaceReplacement;
+  private JCheckBox                                chckbxSeasonFoldernameSpaceReplacement;
+  private JComboBox                                cbSeasonFoldernameSpaceReplacement;
+  private JCheckBox                                chckbxFilenameSpaceReplacement;
+  private JComboBox                                cbFilenameSpaceReplacement;
   private JComboBox<TvShowEpisodePreviewContainer> cbEpisodeForPreview;
   private TmmTable                                 tableExamples;
   private EnhancedTextField                        tfTvShowFolder;
@@ -155,11 +159,25 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
       createRenamerExample();
     });
 
-    // space replacement
-    String spaceReplacement = settings.getRenamerSpaceReplacement();
-    int index = this.spaceReplacements.indexOf(spaceReplacement);
+    // show folder name space replacement
+    String replacement = settings.getRenamerShowPathnameSpaceReplacement();
+    int index = spaceReplacements.indexOf(replacement);
     if (index >= 0) {
-      cbSpaceReplacement.setSelectedIndex(index);
+      cbShowFoldernameSpaceReplacement.setSelectedIndex(index);
+    }
+
+    // season folder name space replacement
+    replacement = settings.getRenamerSeasonPathnameSpaceReplacement();
+    index = spaceReplacements.indexOf(replacement);
+    if (index >= 0) {
+      cbSeasonFoldernameSpaceReplacement.setSelectedIndex(index);
+    }
+
+    // filename space replacement
+    replacement = settings.getRenamerFilenameSpaceReplacement();
+    index = spaceReplacements.indexOf(replacement);
+    if (index >= 0) {
+      cbFilenameSpaceReplacement.setSelectedIndex(index);
     }
 
     // colon replacement
@@ -215,10 +233,15 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
       checkChanges();
       createRenamerExample();
     };
-    chckbxSpaceReplacement.addActionListener(renamerActionListener);
+
+    chckbxShowFoldernameSpaceReplacement.addActionListener(renamerActionListener);
+    chckbxSeasonFoldernameSpaceReplacement.addActionListener(renamerActionListener);
+    chckbxFilenameSpaceReplacement.addActionListener(renamerActionListener);
     chckbxAsciiReplacement.addActionListener(renamerActionListener);
     cbEpisodeForPreview.addActionListener(arg0 -> createRenamerExample());
-    cbSpaceReplacement.addActionListener(renamerActionListener);
+    cbShowFoldernameSpaceReplacement.addActionListener(renamerActionListener);
+    cbSeasonFoldernameSpaceReplacement.addActionListener(renamerActionListener);
+    cbFilenameSpaceReplacement.addActionListener(renamerActionListener);
     cbColonReplacement.addActionListener(renamerActionListener);
 
     // force the size of the table
@@ -326,28 +349,44 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
       CollapsiblePanel collapsiblePanel = new CollapsiblePanel(panelAdvancedOptions, lblAdvancedOptions, true);
       add(collapsiblePanel, "cell 0 2,growx");
       {
-        chckbxSpaceReplacement = new JCheckBox(BUNDLE.getString("Settings.renamer.spacereplacement"));
-        chckbxSpaceReplacement.setToolTipText(BUNDLE.getString("Settings.renamer.spacereplacement.hint"));
-        panelAdvancedOptions.add(chckbxSpaceReplacement, "cell 1 0 2 1");
+        chckbxShowFoldernameSpaceReplacement = new JCheckBox(BUNDLE.getString("Settings.renamer.showfolderspacereplacement"));
+        chckbxShowFoldernameSpaceReplacement.setToolTipText(BUNDLE.getString("Settings.renamer.folderspacereplacement.hint"));
+        panelAdvancedOptions.add(chckbxShowFoldernameSpaceReplacement, "cell 1 0 2 1");
 
-        cbSpaceReplacement = new JComboBox(spaceReplacements.toArray());
-        panelAdvancedOptions.add(cbSpaceReplacement, "cell 1 0");
+        cbShowFoldernameSpaceReplacement = new JComboBox(spaceReplacements.toArray());
+        panelAdvancedOptions.add(cbShowFoldernameSpaceReplacement, "cell 1 0");
+      }
+      {
+        chckbxSeasonFoldernameSpaceReplacement = new JCheckBox(BUNDLE.getString("Settings.renamer.seasonfolderspacereplacement"));
+        chckbxSeasonFoldernameSpaceReplacement.setToolTipText(BUNDLE.getString("Settings.renamer.folderspacereplacement.hint"));
+        panelAdvancedOptions.add(chckbxSeasonFoldernameSpaceReplacement, "cell 1 1 2 1");
+
+        cbSeasonFoldernameSpaceReplacement = new JComboBox(spaceReplacements.toArray());
+        panelAdvancedOptions.add(cbSeasonFoldernameSpaceReplacement, "cell 1 1");
+      }
+      {
+        chckbxFilenameSpaceReplacement = new JCheckBox(BUNDLE.getString("Settings.renamer.spacereplacement"));
+        chckbxFilenameSpaceReplacement.setToolTipText(BUNDLE.getString("Settings.renamer.spacereplacement.hint"));
+        panelAdvancedOptions.add(chckbxFilenameSpaceReplacement, "cell 1 2 2 1");
+
+        cbFilenameSpaceReplacement = new JComboBox(spaceReplacements.toArray());
+        panelAdvancedOptions.add(cbFilenameSpaceReplacement, "cell 1 2");
       }
       {
         JLabel lblColonReplacement = new JLabel(BUNDLE.getString("Settings.renamer.colonreplacement"));
-        panelAdvancedOptions.add(lblColonReplacement, "cell 2 1");
+        panelAdvancedOptions.add(lblColonReplacement, "cell 2 3");
         lblColonReplacement.setToolTipText(BUNDLE.getString("Settings.renamer.colonreplacement.hint"));
 
         cbColonReplacement = new JComboBox(colonReplacements.toArray());
-        panelAdvancedOptions.add(cbColonReplacement, "cell 2 1");
+        panelAdvancedOptions.add(cbColonReplacement, "cell 2 3");
       }
 
       {
         chckbxAsciiReplacement = new JCheckBox(BUNDLE.getString("Settings.renamer.asciireplacement"));
-        panelAdvancedOptions.add(chckbxAsciiReplacement, "cell 1 2 2 1");
+        panelAdvancedOptions.add(chckbxAsciiReplacement, "cell 1 4 2 1");
 
         JLabel lblAsciiHint = new JLabel(BUNDLE.getString("Settings.renamer.asciireplacement.hint"));
-        panelAdvancedOptions.add(lblAsciiHint, "cell 2 3");
+        panelAdvancedOptions.add(lblAsciiHint, "cell 2 5");
         TmmFontHelper.changeFont(lblAsciiHint, L2);
       }
     }
@@ -474,8 +513,17 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
   }
 
   private void checkChanges() {
-    String spaceReplacement = (String) cbSpaceReplacement.getSelectedItem();
-    settings.setRenamerSpaceReplacement(spaceReplacement);
+    // show folder name space replacement
+    String spaceReplacement = (String) cbShowFoldernameSpaceReplacement.getSelectedItem();
+    settings.setRenamerShowPathnameSpaceReplacement(spaceReplacement);
+
+    // season folder name space replacement
+    spaceReplacement = (String) cbSeasonFoldernameSpaceReplacement.getSelectedItem();
+    settings.setRenamerSeasonPathnameSpaceReplacement(spaceReplacement);
+
+    // filename space replacement
+    spaceReplacement = (String) cbFilenameSpaceReplacement.getSelectedItem();
+    settings.setRenamerFilenameSpaceReplacement(spaceReplacement);
 
     String colonReplacement = (String) cbColonReplacement.getSelectedItem();
     settings.setRenamerColonReplacement(colonReplacement);
@@ -620,10 +668,20 @@ public class TvShowRenamerSettingsPanel extends JPanel implements HierarchyListe
         settingsBeanProperty_6, chckbxAsciiReplacement, jCheckBoxBeanProperty);
     autoBinding_5.bind();
     //
-    BeanProperty<TvShowSettings, Boolean> tvShowSettingsBeanProperty = BeanProperty.create("renamerSpaceSubstitution");
+    BeanProperty<TvShowSettings, Boolean> tvShowSettingsBeanProperty = BeanProperty.create("renamerShowPathnameSpaceSubstitution");
     AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_4 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
-        tvShowSettingsBeanProperty, chckbxSpaceReplacement, jCheckBoxBeanProperty);
+        tvShowSettingsBeanProperty, chckbxShowFoldernameSpaceReplacement, jCheckBoxBeanProperty);
     autoBinding_4.bind();
+    //
+    BeanProperty<TvShowSettings, Boolean> tvShowSettingsBeanProperty_7 = BeanProperty.create("renamerSeasonPathnameSpaceSubstitution");
+    AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_6 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        tvShowSettingsBeanProperty_7, chckbxSeasonFoldernameSpaceReplacement, jCheckBoxBeanProperty);
+    autoBinding_6.bind();
+    //
+    BeanProperty<TvShowSettings, Boolean> tvShowSettingsBeanProperty_8 = BeanProperty.create("renamerFilenameSpaceSubstitution");
+    AutoBinding<TvShowSettings, Boolean, JCheckBox, Boolean> autoBinding_7 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, settings,
+        tvShowSettingsBeanProperty_8, chckbxFilenameSpaceReplacement, jCheckBoxBeanProperty);
+    autoBinding_7.bind();
     //
     BeanProperty<TvShowSettings, String> tvShowSettingsBeanProperty_1 = BeanProperty.create("renamerTvShowFoldername");
     BeanProperty<JTextField, String> jTextFieldBeanProperty_1 = BeanProperty.create("text");

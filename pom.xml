@@ -287,6 +287,16 @@
 			<version>1.4</version>
 		</dependency>
 		<dependency>
+			<groupId>com.twelvemonkeys.imageio</groupId>
+			<artifactId>imageio-jpeg</artifactId>
+			<version>3.5</version>
+		</dependency>
+		<dependency>
+			<groupId>com.twelvemonkeys.imageio</groupId>
+			<artifactId>imageio-jpeg</artifactId>
+			<version>3.5</version>
+		</dependency>
+		<dependency>
 			<groupId>org.mp4parser</groupId>
 			<artifactId>muxer</artifactId>
 			<version>1.9.39</version>

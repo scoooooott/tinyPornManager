@@ -60,7 +60,6 @@ import org.tinymediamanager.core.MessageManager;
 import org.tinymediamanager.core.UTF8Control;
 import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.core.entities.MediaFile;
-import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.movie.MovieArtworkHelper;
 import org.tinymediamanager.core.movie.MovieEdition;
 import org.tinymediamanager.core.movie.MovieList;
@@ -709,6 +708,20 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
     else {
       LOGGER.error("could not add '{}' because no VIDEO file found", movieDir);
     }
+
+    // if there is missing artwork AND we do have a VSMETA file, we probably can extract an artwork from there
+    if (MovieModuleManager.SETTINGS.isExtractArtworkFromVsmeta()) {
+      List<MediaFile> vsmetas = movie.getMediaFiles(MediaFileType.VSMETA);
+
+      if (movie.getMediaFiles(MediaFileType.POSTER).isEmpty() && !vsmetas.isEmpty() && !MovieModuleManager.SETTINGS.getPosterFilenames().isEmpty()) {
+        LOGGER.debug("extracting POSTERs from VSMETA for {}", movie.getMainFile().getFileAsPath());
+        MovieArtworkHelper.extractArtworkFromVsmeta(movie, vsmetas.get(0), MediaArtwork.MediaArtworkType.POSTER);
+      }
+      if (movie.getMediaFiles(MediaFileType.FANART).isEmpty() && !vsmetas.isEmpty() && !MovieModuleManager.SETTINGS.getFanartFilenames().isEmpty()) {
+        LOGGER.debug("extracting FANARTs from VSMETA for {}", movie.getMainFile().getFileAsPath());
+        MovieArtworkHelper.extractArtworkFromVsmeta(movie, vsmetas.get(0), MediaArtwork.MediaArtworkType.BACKGROUND);
+      }
+    }
   }
 
   /**
@@ -918,24 +931,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
             break;
 
           case TRAILER:
-
-            MediaTrailer mt = new MediaTrailer();
-            mt.setName(mf.getFilename());
-            mt.setProvider("downloaded");
-            mt.setInNfo(false);
-            mt.setUrl(mf.getFileAsPath().toUri().toString());
-            movie.addTrailer(mt);
             movie.addToMediaFiles(mf);
-
-            // get quality async
-            Runnable miTask = new MediaFileInformationFetcherTask(mf, movie, false) {
-              @Override
-              public void callback() {
-                super.callback();
-                mt.setQuality(mediaFile.getVideoFormat());
-              }
-            };
-            miTasks.add(miTask);
 
             break;
 

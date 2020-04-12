@@ -76,7 +76,7 @@ class UiSettingsPanel extends JPanel {
 
   private JComboBox                   cbLanguage;
   private JLabel                      lblFontChangeHint;
-  private LinkLabel                   lblLinkTransifex;
+  private LinkLabel                   lblLinkTranslate;
   private JComboBox                   cbFontSize;
   private JComboBox                   cbFontFamily;
   private JLabel                      lblLanguageChangeHint;
@@ -127,14 +127,14 @@ class UiSettingsPanel extends JPanel {
       cbTheme.setSelectedIndex(0);
     }
 
-    lblLinkTransifex.addActionListener(arg0 -> {
+    lblLinkTranslate.addActionListener(arg0 -> {
       try {
-        TmmUIHelper.browseUrl(lblLinkTransifex.getText());
+        TmmUIHelper.browseUrl(lblLinkTranslate.getText());
       }
       catch (Exception e) {
         LOGGER.error(e.getMessage());
         MessageManager.instance.pushMessage(
-            new Message(MessageLevel.ERROR, lblLinkTransifex.getText(), "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));//$NON-NLS-2$
+            new Message(MessageLevel.ERROR, lblLinkTranslate.getText(), "message.erroropenurl", new String[] { ":", e.getLocalizedMessage() }));//$NON-NLS-2$
       }
     });
 
@@ -163,8 +163,8 @@ class UiSettingsPanel extends JPanel {
         panelLanguage.add(lblLanguageHint, "cell 1 1 2 1");
       }
       {
-        lblLinkTransifex = new LinkLabel("https://forum.kodi.tv/showthread.php?tid=174987");
-        panelLanguage.add(lblLinkTransifex, "cell 1 2 2 1");
+        lblLinkTranslate = new LinkLabel("https://forum.kodi.tv/showthread.php?tid=174987");
+        panelLanguage.add(lblLinkTranslate, "cell 1 2 2 1, grow, wmin 0");
       }
       {
         lblLanguageChangeHint = new JLabel("");

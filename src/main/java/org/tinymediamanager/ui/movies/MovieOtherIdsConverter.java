@@ -16,6 +16,8 @@
 
 package org.tinymediamanager.ui.movies;
 
+import static org.tinymediamanager.core.Constants.TRAKT;
+
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -37,6 +39,7 @@ public class MovieOtherIdsConverter extends Converter<Map<String, Object>, Strin
       switch (entry.getKey()) {
         case MediaMetadata.IMDB:
         case MediaMetadata.TMDB:
+        case TRAKT:
           // already in UI - skip
           continue;
 

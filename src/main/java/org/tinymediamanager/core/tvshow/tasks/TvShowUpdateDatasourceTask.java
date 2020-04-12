@@ -717,9 +717,14 @@ public class TvShowUpdateDatasourceTask extends TmmThreadPool {
             LOGGER.info("found episode NFO - try to parse '{}'", showDir.relativize(epNfo.getFileAsPath()));
             List<TvShowEpisode> episodesInNfo = new ArrayList<>();
 
-            TvShowEpisodeNfoParser parser = TvShowEpisodeNfoParser.parseNfo(epNfo.getFileAsPath());
-            if (parser.isValidNfo()) {
-              episodesInNfo.addAll(parser.toTvShowEpisodes());
+            try {
+              TvShowEpisodeNfoParser parser = TvShowEpisodeNfoParser.parseNfo(epNfo.getFileAsPath());
+              if (parser.isValidNfo()) {
+                episodesInNfo.addAll(parser.toTvShowEpisodes());
+              }
+            }
+            catch (Exception e) {
+              LOGGER.debug("could not parse episode NFO: {}", e.getMessage());
             }
 
             // did we find any episodes in the NFO?

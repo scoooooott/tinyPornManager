@@ -986,7 +986,10 @@ public class TvShowRenamer {
         result = TvShowEpisodeAndSeasonParser.detectEpisodeFromFilenameAlternative(mf.getFilename(), tvShow.getTitle());
 
         MediaFile other = new MediaFile(mf);
-        other.setFile(seasonFolder.resolve(cleanupDestination(newFilename + "-" + result.cleanedName) + "." + mf.getExtension()));
+        boolean spaceSubstitution = SETTINGS.isRenamerFilenameSpaceSubstitution();
+        String spaceReplacement = SETTINGS.getRenamerFilenameSpaceReplacement();
+        String destination = cleanupDestination(newFilename + "-" + result.cleanedName, spaceSubstitution, spaceReplacement);
+        other.setFile(seasonFolder.resolve(destination + "." + mf.getExtension()));
         newFiles.add(other);
         break;
 
@@ -1148,7 +1151,10 @@ public class TvShowRenamer {
       return "";
     }
 
-    return cleanupDestination(getTokenValue(show, null, template));
+    boolean spaceSubstitution = SETTINGS.isRenamerShowPathnameSpaceSubstitution();
+    String spaceReplacement = SETTINGS.getRenamerShowPathnameSpaceReplacement();
+
+    return cleanupDestination(getTokenValue(show, null, template), spaceSubstitution, spaceReplacement);
   }
 
   /**
@@ -1166,7 +1172,10 @@ public class TvShowRenamer {
     }
 
     String newDestination = getTokenValue(season.getTvShow(), episode, template);
-    newDestination = cleanupDestination(newDestination);
+    boolean spaceSubstitution = SETTINGS.isRenamerSeasonPathnameSpaceSubstitution();
+    String spaceReplacement = SETTINGS.getRenamerSeasonPathnameSpaceReplacement();
+
+    newDestination = cleanupDestination(newDestination, spaceSubstitution, spaceReplacement);
     return newDestination;
   }
 
@@ -1283,7 +1292,10 @@ public class TvShowRenamer {
       newDestination = getTokenValue(firstEp.getTvShow(), firstEp, newDestination);
     } // end multi episodes
 
-    newDestination = cleanupDestination(newDestination);
+    boolean spaceSubstitution = SETTINGS.isRenamerFilenameSpaceSubstitution();
+    String spaceReplacement = SETTINGS.getRenamerFilenameSpaceReplacement();
+
+    newDestination = cleanupDestination(newDestination, spaceSubstitution, spaceReplacement);
 
     return newDestination;
   }
@@ -1293,9 +1305,13 @@ public class TvShowRenamer {
    * 
    * @param destination
    *          the string to be cleaned up
+   * @param spaceSubstitution
+   *          replace spaces (=true)? or not (=false)
+   * @param spaceReplacement
+   *          the replacement string for spaces
    * @return the cleaned up string
    */
-  private static String cleanupDestination(String destination) {
+  private static String cleanupDestination(String destination, Boolean spaceSubstitution, String spaceReplacement) {
     // replace empty brackets
     destination = destination.replaceAll("\\([ ]?\\)", "");
     destination = destination.replaceAll("\\[[ ]?\\]", "");
@@ -1319,14 +1335,13 @@ public class TvShowRenamer {
     }
 
     // replace spaces with underscores if needed (filename only)
-    if (SETTINGS.isRenamerSpaceSubstitution()) {
-      String replacement = SETTINGS.getRenamerSpaceReplacement();
-      destination = destination.replace(" ", replacement);
+    if (spaceSubstitution) {
+      destination = destination.replace(" ", spaceReplacement);
 
       // also replace now multiple replacements with one to avoid strange looking results
       // example:
       // Abraham Lincoln - Vapire Hunter -> Abraham-Lincoln---Vampire-Hunter
-      destination = destination.replaceAll(Pattern.quote(replacement) + "+", replacement);
+      destination = destination.replaceAll(Pattern.quote(spaceReplacement) + "+", spaceReplacement);
     }
 
     // ASCII replacement
@@ -1543,6 +1558,9 @@ public class TvShowRenamer {
    */
   private static String getStackingString(MediaFile mf) {
     String delimiter = ".";
+    if (TvShowModuleManager.SETTINGS.isRenamerFilenameSpaceSubstitution()) {
+      delimiter = TvShowModuleManager.SETTINGS.getRenamerFilenameSpaceReplacement();
+    }
     if (!mf.getStackingMarker().isEmpty()) {
       return delimiter + mf.getStackingMarker();
     }

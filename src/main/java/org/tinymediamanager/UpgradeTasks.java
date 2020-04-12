@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -50,6 +51,7 @@ import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
 import org.tinymediamanager.scraper.util.StrgUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jna.Platform;
 
 /**
@@ -120,6 +122,32 @@ public class UpgradeTasks {
         Utils.deleteFileSafely(Paths.get("native", "mac", "liblwjgl.dylib"));
         Utils.deleteFileSafely(Paths.get("native", "mac", "liblwjgl_nfd.dylib"));
       }
+    }
+
+    // adopt space substitution settings for TV shows
+    if (StrgUtils.compareVersion(v, "3.1.5") < 0) {
+      LOGGER.info("Performing upgrade tasks to version 3.1");
+
+      try {
+        ObjectMapper mapper = new ObjectMapper();
+        Map settingsMap = mapper.readValue(new File("data/tvShows.json"), Map.class);
+
+        Boolean renamerSpaceSubstitution = (Boolean) settingsMap.get("renamerSpaceSubstitution");
+        String renamerSpaceReplacement = (String) settingsMap.get("renamerSpaceReplacement");
+        if (renamerSpaceSubstitution != null && renamerSpaceReplacement != null) {
+          TvShowSettings.getInstance().setRenamerFilenameSpaceSubstitution(renamerSpaceSubstitution);
+          TvShowSettings.getInstance().setRenamerFilenameSpaceReplacement(renamerSpaceReplacement);
+          TvShowSettings.getInstance().setRenamerSeasonPathnameSpaceSubstitution(renamerSpaceSubstitution);
+          TvShowSettings.getInstance().setRenamerSeasonPathnameSpaceReplacement(renamerSpaceReplacement);
+          TvShowSettings.getInstance().setRenamerShowPathnameSpaceSubstitution(renamerSpaceSubstitution);
+          TvShowSettings.getInstance().setRenamerShowPathnameSpaceReplacement(renamerSpaceReplacement);
+          TvShowSettings.getInstance().saveSettings();
+        }
+      }
+      catch (Exception e) {
+        LOGGER.warn("could not adopt space substitution settings: {}", e.getMessage());
+      }
+
     }
   }
 
@@ -307,7 +335,7 @@ public class UpgradeTasks {
       for (Movie movie : MovieList.getInstance().getMovies()) {
         boolean dirty = false;
         for (MediaFile mf : movie.getMediaFiles()) {
-          if (mf.HDR && mf.getHdrFormat().isEmpty()) {
+          if (mf.isHDR() && StringUtils.isBlank(mf.getHdrFormat())) {
             mf.setHdrFormat("HDR10");
             dirty = true;
           }
@@ -325,7 +353,7 @@ public class UpgradeTasks {
         for (TvShowEpisode episode : tvShow.getEpisodes()) {
           boolean dirty = false;
           for (MediaFile mf : episode.getMediaFiles()) {
-            if (mf.HDR && mf.getHdrFormat().isEmpty()) {
+            if (mf.isHDR() && StringUtils.isBlank(mf.getHdrFormat())) {
               mf.setHdrFormat("HDR10");
               dirty = true;
             }

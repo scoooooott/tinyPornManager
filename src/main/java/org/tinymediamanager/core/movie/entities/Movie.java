@@ -42,6 +42,7 @@ import static org.tinymediamanager.core.Constants.TITLE_SORTABLE;
 import static org.tinymediamanager.core.Constants.TMDB;
 import static org.tinymediamanager.core.Constants.TOP250;
 import static org.tinymediamanager.core.Constants.TRAILER;
+import static org.tinymediamanager.core.Constants.TRAKT;
 import static org.tinymediamanager.core.Constants.VIDEO_IN_3D;
 import static org.tinymediamanager.core.Constants.WATCHED;
 import static org.tinymediamanager.core.Constants.WRITERS;
@@ -278,6 +279,16 @@ public class Movie extends MediaEntity implements IMediaInformation {
   @Override
   protected Comparator<MediaFile> getMediaFileComparator() {
     return MEDIA_FILE_COMPARATOR;
+  }
+
+  @Override
+  public void addToMediaFiles(MediaFile mediaFile) {
+    super.addToMediaFiles(mediaFile);
+
+    // if we have added a trailer, also update the trailer list
+    if (mediaFile.getType() == MediaFileType.TRAILER) {
+      mixinLocalTrailers();
+    }
   }
 
   /**
@@ -580,6 +591,25 @@ public class Movie extends MediaEntity implements IMediaInformation {
    */
   public void setTmdbId(int newValue) {
     this.setId(TMDB, newValue);
+  }
+
+  /**
+   * Gets the trakt.tv id.
+   *
+   * @return the trakt.tv id
+   */
+  public int getTraktTvId() {
+    return this.getIdAsInt(TRAKT);
+  }
+
+  /**
+   * Sets the trakt.tv id.
+   *
+   * @param newValue
+   *          the new trakt.tv id
+   */
+  public void setTraktTvId(int newValue) {
+    this.setId(TRAKT, newValue);
   }
 
   /**
@@ -980,6 +1010,9 @@ public class Movie extends MediaEntity implements IMediaInformation {
 
       addTrailer(trailer);
     }
+
+    // mix in local trailer
+    mixinLocalTrailers();
   }
 
   /**
@@ -1771,7 +1804,7 @@ public class Movie extends MediaEntity implements IMediaInformation {
     if (this.releaseDate == null) {
       return "";
     }
-    return TmmDateFormat.SHORT_DATE_FORMAT.format(releaseDate);
+    return TmmDateFormat.MEDIUM_DATE_FORMAT.format(releaseDate);
   }
 
   /**
@@ -2393,6 +2426,39 @@ public class Movie extends MediaEntity implements IMediaInformation {
       default:
         break;
 
+    }
+  }
+
+  private void mixinLocalTrailers() {
+    // remove local ones
+    for (int i = trailer.size() - 1; i >= 0; i--) {
+      MediaTrailer mediaTrailer = trailer.get(i);
+      if ("downloaded".equalsIgnoreCase(mediaTrailer.getProvider())) {
+        trailer.remove(i);
+      }
+    }
+
+    // add local trailers (in the front)!
+    for (MediaFile mf : getMediaFiles(MediaFileType.TRAILER)) {
+      LOGGER.debug("adding local trailer {}", mf.getFilename());
+      MediaTrailer mt = new MediaTrailer();
+      mt.setName(mf.getFilename());
+      mt.setProvider("downloaded");
+      mt.setQuality(mf.getVideoFormat());
+      mt.setInNfo(false);
+      mt.setUrl(mf.getFile().toUri().toString());
+      trailer.add(0, mt);
+      firePropertyChange(TRAILER, null, trailer);
+    }
+  }
+
+  @Override
+  public void callbackForGatheredMediainformation(MediaFile mediaFile) {
+    super.callbackForGatheredMediainformation(mediaFile);
+
+    if (mediaFile.getType() == MediaFileType.TRAILER) {
+      // re-write the trailer list
+      mixinLocalTrailers();
     }
   }
 }

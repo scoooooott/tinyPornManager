@@ -175,6 +175,10 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
         getRating(md, e);
       }
 
+      if ("tags".equalsIgnoreCase(e.tagName())) {
+        getTags(md, e);
+      }
+
       if ("picture".equalsIgnoreCase(e.tagName())) {
         // Poster
         MediaArtwork ma = new MediaArtwork(providerInfo.getId(), MediaArtwork.MediaArtworkType.POSTER);
@@ -264,6 +268,15 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     }
   }
 
+  private void getTags(MediaMetadata md, Element e) {
+    for (Element tag : e.children()) {
+      Element name = tag.getElementsByTag("name").first();
+      if (name != null) {
+        md.addTag(name.text());
+      }
+    }
+  }
+
   private void parseTitle(MediaMetadata md, String langu, Element e) {
     String titleEN = "";
     String titleScraperLangu = "";
@@ -327,16 +340,16 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
         for (Element episodeInfo : e.children()) {
           if ("epno".equalsIgnoreCase(episodeInfo.tagName())) {
             try {
-              episode.episode = Integer.parseInt(episodeInfo.text());
-
               // looks like anidb is storing anything in a single season, so put
               // 1 to season, if type = 1
               if ("1".equals(episodeInfo.attr("type"))) {
                 episode.season = 1;
+                episode.episode = Integer.parseInt(episodeInfo.text());
               }
               else {
                 // else - we see them as "specials"
                 episode.season = 0;
+                episode.episode = Integer.parseInt(episodeInfo.text().replaceAll("[^0-9]+", ""));
               }
 
             }

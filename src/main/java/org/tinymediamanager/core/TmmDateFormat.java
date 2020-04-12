@@ -145,19 +145,19 @@ public class TmmDateFormat {
     if (formats == null || formats.length < 11) {
       // @formatter:off
       formats = new DateFormat[] { 
-        DateFormat.getDateInstance(DateFormat.SHORT),
-        DateFormat.getDateInstance(DateFormat.MEDIUM),
-        DateFormat.getDateInstance(DateFormat.LONG),
+        DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault()),
+        DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault()),
+        DateFormat.getDateInstance(DateFormat.LONG, Locale.getDefault()),
               
-        DateFormat.getTimeInstance(DateFormat.SHORT),
-        DateFormat.getTimeInstance(DateFormat.MEDIUM), 
+        DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault()),
+        DateFormat.getTimeInstance(DateFormat.MEDIUM, Locale.getDefault()),
               
-        DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT),
-        DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM),
-        DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT),
-        DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM),
-        DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT),
-        DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM)
+        DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.getDefault()),
+        DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM, Locale.getDefault()),
+        DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.getDefault()),
+        DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.getDefault()),
+        DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT, Locale.getDefault()),
+        DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM, Locale.getDefault())
       };
       // @formatter:on
     }

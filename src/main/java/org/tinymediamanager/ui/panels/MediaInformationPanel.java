@@ -80,6 +80,8 @@ abstract public class MediaInformationPanel extends JPanel {
   protected JLabel                          lblSource;
   protected LinkLabel                       lblPath;
   protected JLabel                          lblDateAdded;
+  protected JLabel                          lblOriginalFilename;
+  protected JLabel                          lblHdrFormat;
 
   protected MediaFilesPanel                 panelMediaFiles;
 
@@ -117,53 +119,66 @@ abstract public class MediaInformationPanel extends JPanel {
       add(chckbxWatched, "cell 4 1 2 1");
     }
     {
-      add(new JSeparator(), "cell 0 2 6 1,growx");
+      JLabel lblOriginalFilenameT = new TmmLabel(BUNDLE.getString("metatag.originalfile"));
+      add(lblOriginalFilenameT, "cell 0 2");
+
+      lblOriginalFilename = new JLabel("");
+      add(lblOriginalFilename, "cell 1 2");
+    }
+    {
+      add(new JSeparator(), "cell 0 3 6 1,growx");
     }
     {
       JLabel lblVideoT = new TmmLabel(BUNDLE.getString("metatag.video"));
-      add(lblVideoT, "cell 0 3");
+      add(lblVideoT, "cell 0 4");
 
       JLabel lblSourceT = new TmmLabel(BUNDLE.getString("metatag.source"));
-      add(lblSourceT, "cell 1 3");
+      add(lblSourceT, "cell 1 4");
 
       lblSource = new JLabel("");
-      add(lblSource, "cell 2 3 3 1");
+      add(lblSource, "cell 2 4");
+
+      JLabel lblHdrFormatT = new TmmLabel(BUNDLE.getString("metatag.hdrformat"));
+      add(lblHdrFormatT, "cell 4 4");
+
+      lblHdrFormat = new JLabel("");
+      add(lblHdrFormat, "cell 5 4");
 
       JLabel lblRuntimeT = new TmmLabel(BUNDLE.getString("metatag.runtime"));
-      add(lblRuntimeT, "cell 1 4");
+      add(lblRuntimeT, "cell 1 5");
 
       lblRuntime = new JLabel("");
-      add(lblRuntime, "cell 2 4");
+      add(lblRuntime, "cell 2 5");
 
       JLabel lblCodecT = new TmmLabel(BUNDLE.getString("metatag.videocodec"));
-      add(lblCodecT, "cell 1 5");
+      add(lblCodecT, "cell 1 6");
 
       lblVideoCodec = new JLabel("");
-      add(lblVideoCodec, "cell 2 5");
+      add(lblVideoCodec, "cell 2 6");
 
       JLabel lblFrameRateT = new TmmLabel(BUNDLE.getString("metatag.framerate"));
-      add(lblFrameRateT, "cell 4 5");
+      add(lblFrameRateT, "cell 4 6");
 
       lblFrameRate = new JLabel("");
-      add(lblFrameRate, "cell 5 5");
+      add(lblFrameRate, "cell 5 6");
 
       JLabel lblResolutionT = new TmmLabel(BUNDLE.getString("metatag.resolution"));
-      add(lblResolutionT, "cell 1 6");
+      add(lblResolutionT, "cell 1 7");
 
       lblVideoResolution = new JLabel("");
-      add(lblVideoResolution, "cell 2 6");
+      add(lblVideoResolution, "cell 2 7");
 
       JLabel lblVideoBitrateT = new TmmLabel(BUNDLE.getString("metatag.videobitrate"));
-      add(lblVideoBitrateT, "cell 4 6");
+      add(lblVideoBitrateT, "cell 4 7");
 
       lblVideoBitrate = new JLabel("");
-      add(lblVideoBitrate, "cell 5 6");
+      add(lblVideoBitrate, "cell 5 7");
 
       JLabel lblVideoBitDepthT = new TmmLabel(BUNDLE.getString("metatag.videobitdepth"));
-      add(lblVideoBitDepthT, "cell 1 7");
+      add(lblVideoBitDepthT, "cell 4 5");
 
       lblVideoBitDepth = new JLabel("");
-      add(lblVideoBitDepth, "cell 2 7");
+      add(lblVideoBitDepth, "cell 5 5");
     }
     {
       JLabel lblAudioT = new TmmLabel(BUNDLE.getString("metatag.audio"));

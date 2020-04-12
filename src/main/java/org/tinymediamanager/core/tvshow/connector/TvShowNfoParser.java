@@ -80,6 +80,7 @@ public class TvShowNfoParser {
   public MediaAiredStatus           status              = MediaAiredStatus.UNKNOWN;
   public boolean                    watched             = false;
   public int                        playcount           = 0;
+  public String                     userNote            = "";
 
   public Map<String, Object>        ids                 = new HashMap<>();
   public Map<String, Rating>        ratings             = new HashMap<>();
@@ -158,6 +159,8 @@ public class TvShowNfoParser {
     parseTag(TvShowNfoParser::parseDateadded);
     parseTag(TvShowNfoParser::parseEpisodeguide);
     parseTag(TvShowNfoParser::findUnsupportedElements);
+
+    parseTag(TvShowNfoParser::parseUserNote);
   }
 
   /**
@@ -1141,6 +1144,19 @@ public class TvShowNfoParser {
   }
 
   /**
+   * the user note is usually in the user_note tag
+   */
+  private Void parseUserNote() {
+    supportedElements.add("user_note");
+
+    Element element = getSingleElement(root, "user_note");
+    if (element != null) {
+      userNote = element.ownText();
+    }
+    return null;
+  }
+
+  /**
    * morph this instance to a TvShow object
    *
    * @return the TvShow object
@@ -1228,6 +1244,8 @@ public class TvShowNfoParser {
     for (String tag : tags) {
       show.addToTags(tag);
     }
+
+    show.setNote(userNote);
 
     return show;
   }

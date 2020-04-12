@@ -152,7 +152,7 @@ class KodiUtil {
     // http://wiki.xbmc.org/?title=Userdata
     String[] appFolder = { "Kodi", ".kodi", "kodi", "XMBC", ".xbmc", "xbmc" };
     String[] userFolder = { System.getenv("APPDATA"), System.getProperty("user.home"),
-        "/Users/" + System.getProperty("user.name") + "/Library/Application Support" };
+        System.getProperty("user.home") + "/Library/Application Support" };
 
     for (String u : userFolder) {
       if (StringUtils.isEmpty(u)) {

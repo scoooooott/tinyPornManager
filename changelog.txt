@@ -1,3 +1,24 @@
+Version 3.1.5
+=======================
++ splitted space substitution in the TV show renamer into setting for TV show/season folder and episode filename (thx @dimitricappelle)
+  NOTE: you may have to review your renamer settings if you used space substitution in the TV show renamer
++ re-layouted information panels for better visibility on low resolution devices
++ preserve original file name in NFO (movie / tvshow)
++ added support CMYK JPEGs
++ remember last used rating id in the rating editor #788
++ show video bit depth and hdr format in the media files tab and in the editors
++ added Trakt.tv id (movies) and TMDB id (TV shows) with links to the UI
++ enabled scraping of tags from AniDB #836
+x (TVDB) catch even more connection problems #832
+x show medium dateformat and added date / time format in default Locale
+x store user notes in the NFO files
+x (TV show) catch occasional errors in NFO parsing #837
+x fixed calculation for file size in the renamer #843
+x fixed extracting of VSMETA artwork for some movies #760
+x fixed displaying of downloaded trailer #838
+x (AniDB) fixed reading of specials #827
+
+
 Version 3.1.4
 =======================
 + added some more scraper languages #800

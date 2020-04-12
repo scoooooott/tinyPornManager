@@ -164,6 +164,7 @@ public class TvShowEpisodeNfoParser {
     public boolean                    watched             = false;
     public int                        playcount           = 0;
     public MediaSource                source              = MediaSource.UNKNOWN;
+    public String                     userNote            = "";
 
     public Map<String, Object>        ids                 = new HashMap<>();
     public Map<String, Rating>        ratings             = new HashMap<>();
@@ -189,6 +190,7 @@ public class TvShowEpisodeNfoParser {
     public Date                       lastplayed          = null;
     public String                     code                = "";
     public Date                       dateadded           = null;
+    public String                     originalFileName    = "";
 
     private Episode(Element root) {
       this.root = root;
@@ -228,6 +230,9 @@ public class TvShowEpisodeNfoParser {
       parseTag(Episode::parseCode);
       parseTag(Episode::parseDateadded);
       parseTag(Episode::findUnsupportedElements);
+      parseTag(Episode::parseOriginalFilename);
+
+      parseTag(Episode::parseUserNote);
     }
 
     /**
@@ -1148,6 +1153,17 @@ public class TvShowEpisodeNfoParser {
       return null;
     }
 
+    private Void parseOriginalFilename() {
+      supportedElements.add("original_filename");
+
+      Element element = getSingleElement(root, "original_filename");
+
+      if (element != null) {
+        originalFileName = element.ownText();
+      }
+      return null;
+    }
+
     /**
      * a trailer is usually in the trailer tag
      */
@@ -1273,6 +1289,19 @@ public class TvShowEpisodeNfoParser {
     }
 
     /**
+     * the user note is usually in the user_note tag
+     */
+    private Void parseUserNote() {
+      supportedElements.add("user_note");
+
+      Element element = getSingleElement(root, "user_note");
+      if (element != null) {
+        userNote = element.ownText();
+      }
+      return null;
+    }
+
+    /**
      * morph this instance to a TvShowEpisode object
      *
      * @return the TvShowEpisode Object
@@ -1342,6 +1371,9 @@ public class TvShowEpisodeNfoParser {
       for (String tag : tags) {
         episode.addToTags(tag);
       }
+
+      episode.setOriginalFilename(originalFileName);
+      episode.setNote(userNote);
 
       return episode;
     }

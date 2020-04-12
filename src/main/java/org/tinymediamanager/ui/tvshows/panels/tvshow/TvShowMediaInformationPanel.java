@@ -28,6 +28,7 @@ import java.util.ResourceBundle;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.beansbinding.AutoBinding;
@@ -185,8 +186,9 @@ public class TvShowMediaInformationPanel extends JPanel {
     autoBinding_3.bind();
     //
     BeanProperty<TvShowSelectionModel, String> tvShowSelectionModelBeanProperty_13 = BeanProperty.create("selectedTvShow.path");
-    AutoBinding<TvShowSelectionModel, String, JLabel, String> autoBinding_19 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
-        tvShowSelectionModelBeanProperty_13, lblTvShowPath, jLabelBeanProperty);
+    BeanProperty<JTextArea, String> jTextAreaBeanProperty = BeanProperty.create("text");
+    AutoBinding<TvShowSelectionModel, String, JTextArea, String> autoBinding_19 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+        tvShowSelectionModelBeanProperty_13, lblTvShowPath, jTextAreaBeanProperty);
     autoBinding_19.bind();
   }
 }

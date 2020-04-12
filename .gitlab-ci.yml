@@ -74,7 +74,7 @@ include:
 
 dependency_scanning:
   variables:
-    MAVEN_CLI_OPTS: "-s .ci/settings.xml -DskipTests --batch-mode"	
+    MAVEN_CLI_OPTS: "-DskipTests --batch-mode"
   only:
     variables:
       - $QA_BUILD == "true"

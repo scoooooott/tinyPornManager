@@ -27,6 +27,7 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tinymediamanager.core.TmmProperties;
 import org.tinymediamanager.ui.components.MediaRatingTable;
 
 import net.miginfocom.swing.MigLayout;
@@ -38,6 +39,8 @@ import net.miginfocom.swing.MigLayout;
  */
 public class RatingEditorDialog extends TmmDialog {
   private static final long                  serialVersionUID = 535315882962742572L;
+  private static final String                DIALOG_ID        = "ratingEditor";
+
   private final MediaRatingTable.MediaRating ratingToEdit;
 
   private JTextField                         tfProviderId;
@@ -46,7 +49,7 @@ public class RatingEditorDialog extends TmmDialog {
   private JSpinner                           spVotes;
 
   public RatingEditorDialog(Window owner, String title, MediaRatingTable.MediaRating mediaRating) {
-    super(owner, title, "ratingEditor");
+    super(owner, title, DIALOG_ID);
     ratingToEdit = mediaRating;
 
     initComponents();
@@ -55,6 +58,11 @@ public class RatingEditorDialog extends TmmDialog {
     spRating.setValue(ratingToEdit.value);
     spMaxValue.setValue(ratingToEdit.maxValue);
     spVotes.setValue(ratingToEdit.votes);
+
+    // if there is not rating set (new one) enter the last remembered one
+    if (StringUtils.isBlank(ratingToEdit.key) && ratingToEdit.value == 0) {
+      tfProviderId.setText(TmmProperties.getInstance().getProperty(DIALOG_ID + ".ratingid"));
+    }
   }
 
   private void initComponents() {
@@ -114,6 +122,10 @@ public class RatingEditorDialog extends TmmDialog {
         ratingToEdit.value = rating;
         ratingToEdit.maxValue = maxValue;
         ratingToEdit.votes = (int) spVotes.getValue();
+
+        // store the ID for the next usage
+        TmmProperties.getInstance().putProperty(DIALOG_ID + ".ratingid", ratingToEdit.key);
+
         setVisible(false);
       });
       addDefaultButton(btnOk);

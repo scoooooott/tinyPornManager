@@ -183,7 +183,7 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
     col.setColumnResizeable(false);
     try {
       Date date = StrgUtils.parseDate("2012-12-12");
-      col.setMinWidth((int) (fontMetrics.stringWidth(TmmDateFormat.SHORT_DATE_FORMAT.format(date)) * 1.2f));
+      col.setMinWidth((int) (fontMetrics.stringWidth(TmmDateFormat.MEDIUM_DATE_FORMAT.format(date)) * 1.2f));
     }
     catch (Exception ignored) {
     }

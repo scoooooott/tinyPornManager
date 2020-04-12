@@ -133,6 +133,8 @@ public class TvShowEpisodeMediaInformationPanel extends MediaInformationPanel {
     lblVideoBitDepth.setText(mediaFile.getBitDepthString());
     lblSource.setText(tvShowEpisode.getMediaSource().toString());
     lblFrameRate.setText(String.format("%.2f fps", mediaFile.getFrameRate()));
+    lblOriginalFilename.setText(tvShowEpisode.getOriginalFilename());
+    lblHdrFormat.setText(mediaFile.getHdrFormat());
   }
 
   @Override
@@ -207,5 +209,12 @@ public class TvShowEpisodeMediaInformationPanel extends MediaInformationPanel {
     AutoBinding<TvShowEpisodeSelectionModel, Boolean, JCheckBox, Boolean> autoBinding_2 = Bindings.createAutoBinding(UpdateStrategy.READ,
         selectionModel, tvShowEpisodeSelectionModelBeanProperty_2, this.chckbxWatched, jCheckBoxBeanProperty);
     autoBinding_2.bind();
+    //
+    BeanProperty<TvShowEpisodeSelectionModel, String> tvShowEpisodeSelectionModelBeanProperty_3 = BeanProperty
+            .create("selectedTvShowEpisode.originalFilename");
+    BeanProperty<JLabel, String> jLabelBeanProperty_1 = BeanProperty.create("text");
+    AutoBinding<TvShowEpisodeSelectionModel, String, JLabel, String> autoBinding_3 = Bindings.createAutoBinding(UpdateStrategy.READ, selectionModel,
+            tvShowEpisodeSelectionModelBeanProperty_3, this.lblOriginalFilename, jLabelBeanProperty_1);
+    autoBinding_3.bind();
   }
 }
