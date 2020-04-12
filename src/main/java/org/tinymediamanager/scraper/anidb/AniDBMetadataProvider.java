@@ -340,16 +340,16 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
         for (Element episodeInfo : e.children()) {
           if ("epno".equalsIgnoreCase(episodeInfo.tagName())) {
             try {
-              episode.episode = Integer.parseInt(episodeInfo.text());
-
               // looks like anidb is storing anything in a single season, so put
               // 1 to season, if type = 1
               if ("1".equals(episodeInfo.attr("type"))) {
                 episode.season = 1;
+                episode.episode = Integer.parseInt(episodeInfo.text());
               }
               else {
                 // else - we see them as "specials"
                 episode.season = 0;
+                episode.episode = Integer.parseInt(episodeInfo.text().replaceAll("[^0-9]+", ""));
               }
 
             }
