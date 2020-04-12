@@ -102,9 +102,6 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   private boolean                    isISO             = false;
   @JsonProperty
   private boolean                    isAnimatedGraphic = false;
-  @Deprecated
-  @JsonProperty
-  public boolean                     HDR               = false;
   @JsonProperty
   private String                     hdrFormat         = "";
 
@@ -1305,15 +1302,30 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     this.isAnimatedGraphic = isAnimatedGraphic;
   }
 
-  @Deprecated
+  /**
+   * is this file in HDR format? (checks only if the HdrFormat has been set)
+   *
+   * @return true/false
+   */
   public boolean isHDR() {
-    return HDR;
+    return StringUtils.isNotBlank(hdrFormat);
   }
 
+  /**
+   * set the HDR format
+   * 
+   * @param format
+   *          the HDR format
+   */
   public void setHdrFormat(String format) {
     this.hdrFormat = format;
   }
 
+  /**
+   * get the HDR format (HDR10, HDR10+, ...) what has been reported by libmediainfo
+   * 
+   * @return the HDR format or an empty String
+   */
   public String getHdrFormat() {
     return this.hdrFormat;
   }

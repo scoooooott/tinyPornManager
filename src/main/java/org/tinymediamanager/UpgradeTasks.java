@@ -335,7 +335,7 @@ public class UpgradeTasks {
       for (Movie movie : MovieList.getInstance().getMovies()) {
         boolean dirty = false;
         for (MediaFile mf : movie.getMediaFiles()) {
-          if (mf.HDR && mf.getHdrFormat().isEmpty()) {
+          if (mf.isHDR() && StringUtils.isBlank(mf.getHdrFormat())) {
             mf.setHdrFormat("HDR10");
             dirty = true;
           }
@@ -353,7 +353,7 @@ public class UpgradeTasks {
         for (TvShowEpisode episode : tvShow.getEpisodes()) {
           boolean dirty = false;
           for (MediaFile mf : episode.getMediaFiles()) {
-            if (mf.HDR && mf.getHdrFormat().isEmpty()) {
+            if (mf.isHDR() && StringUtils.isBlank(mf.getHdrFormat())) {
               mf.setHdrFormat("HDR10");
               dirty = true;
             }
