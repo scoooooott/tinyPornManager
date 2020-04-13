@@ -2,6 +2,7 @@ Version 3.1.5
 =======================
 + splitted space substitution in the TV show renamer into setting for TV show/season folder and episode filename (thx @dimitricappelle)
   NOTE: you may have to review your renamer settings if you used space substitution in the TV show renamer
++ updated libmediainfo to 20.03
 + re-layouted information panels for better visibility on low resolution devices
 + preserve original file name in NFO (movie / tvshow)
 + added support CMYK JPEGs
