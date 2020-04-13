@@ -20,6 +20,7 @@ public class UtilsTest extends BasicTest {
   @BeforeClass
   public static void setup() {
     // create a fresh default config
+    deleteSettingsFolder();
     Settings.getInstance(getSettingsFolder());
   }
 
