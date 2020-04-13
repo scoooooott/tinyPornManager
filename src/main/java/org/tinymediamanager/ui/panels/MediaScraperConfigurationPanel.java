@@ -28,7 +28,9 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.event.DocumentEvent;
@@ -132,6 +134,15 @@ public class MediaScraperConfigurationPanel extends JPanel {
           comp = checkbox;
           break;
 
+        case INTEGER:
+          // display as a spinner
+          JSpinner spinner = new JSpinner(new SpinnerNumberModel(entry.getValue().getValueAsInteger().intValue(), 0, Integer.MAX_VALUE, 1));
+          spinner.addChangeListener(e -> dirty = true);
+          // make the spinner smaller
+          ((JSpinner.DefaultEditor) spinner.getEditor()).getTextField().setColumns(5);
+          comp = spinner;
+          break;
+
         case SELECT:
         case SELECT_INDEX:
           // display as combobox
@@ -231,6 +242,9 @@ public class MediaScraperConfigurationPanel extends JPanel {
           }
           else if (comp instanceof JComboBox) {
             mediaProvider.getProviderInfo().getConfig().setValue(entry.getKey(), ((JComboBox) comp).getSelectedItem().toString());
+          }
+          else if (comp instanceof JSpinner) {
+            mediaProvider.getProviderInfo().getConfig().setValue(entry.getKey(), (Integer) (((JSpinner) comp).getValue()));
           }
           else {
             mediaProvider.getProviderInfo().getConfig().setValue(entry.getKey(), ((JTextField) comp).getText());

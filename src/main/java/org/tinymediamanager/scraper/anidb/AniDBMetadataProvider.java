@@ -84,9 +84,15 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
   private HashMap<String, List<AniDBShow>> showsForLookup    = new HashMap<>();
 
   private static MediaProviderInfo createMediaProviderInfo() {
-    return new MediaProviderInfo(ID, "aniDB",
+    MediaProviderInfo providerInfo = new MediaProviderInfo(ID, "aniDB",
         "<html><h3>aniDB</h3><br />AniDB stands for Anime DataBase. AniDB is a non-profit anime database that is open freely to the public.</html>",
         AniDBMetadataProvider.class.getResource("/org/tinymediamanager/scraper/anidb_net.png"));
+
+    // configure/load settings
+    providerInfo.getConfig().addInteger("numberOfTags", 10);
+    providerInfo.getConfig().load();
+
+    return providerInfo;
   }
 
   @Override
@@ -269,10 +275,14 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
   }
 
   private void getTags(MediaMetadata md, Element e) {
+    Integer maxTags = providerInfo.getConfig().getValueAsInteger("numberOfTags");
     for (Element tag : e.children()) {
       Element name = tag.getElementsByTag("name").first();
       if (name != null) {
         md.addTag(name.text());
+        if (md.getTags().size() >= maxTags) {
+          break;
+        }
       }
     }
   }
