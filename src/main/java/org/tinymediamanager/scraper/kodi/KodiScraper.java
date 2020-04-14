@@ -165,38 +165,20 @@ public class KodiScraper implements IMediaProvider {
       if (!langFolder.exists()) {
         lang = (Locale.getDefault().getCountry() + "_" + Locale.getDefault().getLanguage()).toLowerCase(Locale.ROOT);
         langFolder = new File(scraperFolder, "resources/language/resource.language." + lang);
-        if (!langFolder.exists()) {
-          langFolder = new File(scraperFolder, "resources/language/English");
-          if (!langFolder.exists()) {
-            langFolder = new File(scraperFolder, "resources/language/resource.language.en_us");
-          }
+      }
+
+      File fallbackLangFolder = new File(scraperFolder, "resources/language/English");
+      if (!fallbackLangFolder.exists()) {
+        fallbackLangFolder = new File(scraperFolder, "resources/language/resource.language.en_us");
+        if (!fallbackLangFolder.exists()) {
+          fallbackLangFolder = new File(scraperFolder, "resources/language/resource.language.en_gb");
         }
       }
 
-      File langFile = new File(langFolder, "strings.xml");
-      if (langFile.exists()) {
-        // parse XML
-        Document set = Jsoup.parse(langFile, "UTF-8", "");
-        Elements strings = set.getElementsByTag("string");
-        for (Element el : strings) {
-          labelmap.put(el.id(), el.text());
-        }
-      }
-      else {
-        langFile = new File(langFolder, "strings.po");
-        if (langFile.exists()) {
-          // parse PO
-          String labels = Utils.readFileToString(langFile.toPath());
-          Pattern p = Pattern.compile("msgctxt \"#(.*?)\"(?:\\r\\n|\\n|\\r)msgid \"(.*?)\"(?:\\r\\n|\\n|\\r)msgstr \"(.*?)\"");
-          Matcher m = p.matcher(labels);
-          while (m.find()) {
-            // msgctxt "#30030"
-            // msgid "Certification prefix"
-            // msgstr ""
-            labelmap.put(m.group(1), m.group(3).isEmpty() ? m.group(2) : m.group(3));
-          }
-        }
-      }
+      // put default names
+      labelmap.putAll(getLocalizationFromFile(fallbackLangFolder));
+      // overwrite with localized ones
+      labelmap.putAll(getLocalizationFromFile(langFolder));
 
       // =====================================================
       // parse default settings and build TMM config
@@ -318,6 +300,37 @@ public class KodiScraper implements IMediaProvider {
     catch (IOException e) {
       LOGGER.error("Unable to generate Kodi scraper for folder {}", scraperFolder, e);
     }
+  }
+
+  private HashMap<String, String> getLocalizationFromFile(File langFolder) throws IOException {
+    HashMap<String, String> labelmap = new HashMap<>();
+    if (langFolder != null) {
+      File langFile = new File(langFolder, "strings.xml");
+      if (langFile.exists()) {
+        // parse XML
+        Document set = Jsoup.parse(langFile, "UTF-8", "");
+        Elements strings = set.getElementsByTag("string");
+        for (Element el : strings) {
+          labelmap.put(el.id(), el.text());
+        }
+      }
+      else {
+        langFile = new File(langFolder, "strings.po");
+        if (langFile.exists()) {
+          // parse PO
+          String labels = Utils.readFileToString(langFile.toPath());
+          Pattern p = Pattern.compile("msgctxt \"#(.*?)\"(?:\\r\\n|\\n|\\r)msgid \"(.*?)\"(?:\\r\\n|\\n|\\r)msgstr \"(.*?)\"");
+          Matcher m = p.matcher(labels);
+          while (m.find()) {
+            // msgctxt "#30030"
+            // msgid "Certification prefix"
+            // msgstr ""
+            labelmap.put(m.group(1), m.group(3).isEmpty() ? m.group(2) : m.group(3));
+          }
+        }
+      }
+    }
+    return labelmap;
   }
 
   /**
