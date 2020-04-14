@@ -19,7 +19,7 @@ x fixed calculation for file size in the renamer #843
 x fixed extracting of VSMETA artwork for some movies #760
 x fixed displaying of downloaded trailer #838
 x (AniDB) fixed reading of specials #827
-
+x Fix localization of Kodi plugins #848
 
 Version 3.1.4
 =======================

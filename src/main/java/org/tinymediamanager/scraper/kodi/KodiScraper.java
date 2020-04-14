@@ -26,7 +26,6 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -34,6 +33,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.core.Utils;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.interfaces.IMediaProvider;
@@ -163,7 +163,14 @@ public class KodiScraper implements IMediaProvider {
       String lang = Locale.getDefault().getDisplayLanguage(Locale.ENGLISH);
       File langFolder = new File(scraperFolder, "resources/language/" + lang);
       if (!langFolder.exists()) {
-        langFolder = new File(scraperFolder, "resources/language/English");
+        lang = (Locale.getDefault().getCountry() + "_" + Locale.getDefault().getLanguage()).toLowerCase(Locale.ROOT);
+        langFolder = new File(scraperFolder, "resources/language/resource.language." + lang);
+        if (!langFolder.exists()) {
+          langFolder = new File(scraperFolder, "resources/language/English");
+          if (!langFolder.exists()) {
+            langFolder = new File(scraperFolder, "resources/language/resource.language.en_us");
+          }
+        }
       }
 
       File langFile = new File(langFolder, "strings.xml");
@@ -179,8 +186,8 @@ public class KodiScraper implements IMediaProvider {
         langFile = new File(langFolder, "strings.po");
         if (langFile.exists()) {
           // parse PO
-          String labels = FileUtils.readFileToString(langFile);
-          Pattern p = Pattern.compile("msgctxt \"#(.*?)\"\nmsgid \"(.*?)\"\nmsgstr \"(.*?)\"");
+          String labels = Utils.readFileToString(langFile.toPath());
+          Pattern p = Pattern.compile("msgctxt \"#(.*?)\"(?:\\r\\n|\\n|\\r)msgid \"(.*?)\"(?:\\r\\n|\\n|\\r)msgstr \"(.*?)\"");
           Matcher m = p.matcher(labels);
           while (m.find()) {
             // msgctxt "#30030"
