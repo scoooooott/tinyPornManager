@@ -138,6 +138,11 @@ public class KodiRPC {
 
   // -----------------------------------------------------------------------------------
 
+  public void LibraryVideoClean() {
+    final VideoLibrary.Clean call = new VideoLibrary.Clean(true);
+    send(call);
+  }
+
   public void LibraryVideoScan() {
     final VideoLibrary.Scan call = new VideoLibrary.Scan(null, true);
     send(call);
@@ -378,6 +383,11 @@ public class KodiRPC {
   }
 
   // -----------------------------------------------------------------------------------
+
+  public void LibraryAudioClean() {
+    final AudioLibrary.Clean call = new AudioLibrary.Clean(true);
+    send(call);
+  }
 
   public void LibraryAudioScan() {
     final AudioLibrary.Scan call = new AudioLibrary.Scan(null);

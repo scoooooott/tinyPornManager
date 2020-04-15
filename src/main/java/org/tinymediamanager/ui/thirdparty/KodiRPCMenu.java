@@ -87,6 +87,10 @@ public class KodiRPCMenu {
   private static JMenu VideoDatasources() {
     JMenu m = new JMenu("Video Library");
 
+    JMenuItem cleanLibraryMenuItem = new JMenuItem("Clean video library");
+    cleanLibraryMenuItem.addActionListener(new CleanVideoLibraryListener());
+    m.add(cleanLibraryMenuItem);
+
     JMenu m2 = new JMenu("Scan for new content");
     JMenuItem i = new JMenuItem("Scan ALL Datasources");
     i.addActionListener(new VideoDatasourceScanListener(null));
@@ -107,12 +111,15 @@ public class KodiRPCMenu {
       }
     }
     m.add(m2);
-
     return m;
   }
 
   private static JMenu AudioDatasources() {
     JMenu m = new JMenu("Audio Library");
+
+    JMenuItem cleanLibraryMenuItem = new JMenuItem("Clean audio library");
+    cleanLibraryMenuItem.addActionListener(new CleanAudioLibraryListener());
+    m.add(cleanLibraryMenuItem);
 
     JMenu m2 = new JMenu("Scan for new content");
     JMenuItem i = new JMenuItem("Scan ALL Datasources");
@@ -184,6 +191,18 @@ public class KodiRPCMenu {
 
     public void actionPerformed(ActionEvent e) {
       KodiRPC.getInstance().ApplicationVolume(vol);
+    }
+  }
+
+  private static class CleanAudioLibraryListener implements ActionListener {
+    public void actionPerformed(ActionEvent e) {
+      KodiRPC.getInstance().LibraryAudioClean();
+    }
+  }
+
+  private static class CleanVideoLibraryListener implements ActionListener {
+    public void actionPerformed(ActionEvent e) {
+      KodiRPC.getInstance().LibraryVideoClean();
     }
   }
 
