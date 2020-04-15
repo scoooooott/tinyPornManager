@@ -11,6 +11,7 @@ Version 3.1.5
 + added Trakt.tv id (movies) and TMDB id (TV shows) with links to the UI
 + enabled scraping of tags from AniDB #836
 + make the scraped amount of keywords in IMDB and tags in AniDB configurable
++ added Kodi RPC call to clean video/audio libraries (thx @max3163)
 x (TVDB) catch even more connection problems #832
 x show medium dateformat and added date / time format in default Locale
 x store user notes in the NFO files
