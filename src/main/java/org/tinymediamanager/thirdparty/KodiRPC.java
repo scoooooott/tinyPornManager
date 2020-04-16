@@ -175,11 +175,7 @@ public class KodiRPC {
       }
 
       // sort by length (longest first)
-      Comparator<String> c = new Comparator<String>() {
-        public int compare(String s1, String s2) {
-          return Integer.compare(s1.length(), s2.length());
-        }
-      };
+      Comparator<String> c = Comparator.comparingInt(String::length);
       Collections.sort(this.videodatasourcesAsString, c);
       Collections.reverse(this.videodatasourcesAsString);
     }
@@ -203,7 +199,7 @@ public class KodiRPC {
     if (call.getResults() != null && !call.getResults().isEmpty()) {
 
       // cache our video files/paths as SplitUris
-      Map<SplitUri, UUID> tmmFiles = new HashMap<SplitUri, UUID>();
+      Map<SplitUri, UUID> tmmFiles = new HashMap<>();
       for (Movie movie : MovieList.getInstance().getMovies()) {
         MediaFile main = movie.getMainVideoFile();
         if (movie.isDisc()) {
@@ -274,7 +270,7 @@ public class KodiRPC {
     if (call.getResults() != null && !call.getResults().isEmpty()) {
 
       // cache our video files/paths as SplitUris
-      Map<SplitUri, UUID> tmmFiles = new HashMap<SplitUri, UUID>();
+      Map<SplitUri, UUID> tmmFiles = new HashMap<>();
       for (TvShow show : TvShowList.getInstance().getTvShows()) {
         tmmFiles.put(new SplitUri(show.getDataSource(), show.getPathNIO().toString()), show.getDbId()); // folder
 
@@ -514,7 +510,7 @@ public class KodiRPC {
       catch (ApiException e) {
         LOGGER.error("Error calling Kodi: {}", e.getMessage());
       }
-    });
+    }).start();
   }
 
   /**
