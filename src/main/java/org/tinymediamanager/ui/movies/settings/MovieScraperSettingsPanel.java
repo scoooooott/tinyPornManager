@@ -77,6 +77,7 @@ class MovieScraperSettingsPanel extends JPanel {
    * UI Elements
    */
   private JPanel                      panelScraperOptions;
+  private JScrollPane                 scrollPaneScraperDetails;
   private JTextPane                   tpScraperDescription;
 
   private TmmTable                    tableScraper;
@@ -151,7 +152,8 @@ class MovieScraperSettingsPanel extends JPanel {
         if (scrapers.get(index).getMediaProvider().getProviderInfo().getConfig().hasConfig()) {
           panelScraperOptions.add(new MediaScraperConfigurationPanel(scrapers.get(index).getMediaProvider()));
         }
-        panelScraperOptions.revalidate();
+        scrollPaneScraperDetails.revalidate();
+        scrollPaneScraperDetails.repaint();
       }
     });
 
@@ -178,7 +180,7 @@ class MovieScraperSettingsPanel extends JPanel {
         JSeparator separator = new JSeparator();
         panelScraper.add(separator, "cell 1 1,growx");
 
-        JScrollPane scrollPaneScraperDetails = new JScrollPane();
+        scrollPaneScraperDetails = new JScrollPane();
         panelScraper.add(scrollPaneScraperDetails, "cell 1 2,grow");
 
         scrollPaneScraperDetails.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
