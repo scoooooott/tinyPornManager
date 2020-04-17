@@ -90,6 +90,7 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
 
     // configure/load settings
     providerInfo.getConfig().addInteger("numberOfTags", 10);
+    providerInfo.getConfig().addInteger("minimumTagsWeight", 200);
     providerInfo.getConfig().load();
 
     return providerInfo;
@@ -276,9 +277,17 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
 
   private void getTags(MediaMetadata md, Element e) {
     Integer maxTags = providerInfo.getConfig().getValueAsInteger("numberOfTags");
+    Integer minWeight = providerInfo.getConfig().getValueAsInteger("minimumTagsWeight");
     for (Element tag : e.children()) {
       Element name = tag.getElementsByTag("name").first();
-      if (name != null) {
+      int weight = 0;
+      try {
+        weight = Integer.parseInt(tag.attr("weight"));
+      }
+      catch (Exception ex) {
+        LOGGER.trace("Could not parse tags weight: {}", ex.getMessage());
+      }
+      if (name != null && weight >= minWeight) {
         md.addTag(name.text());
         if (md.getTags().size() >= maxTags) {
           break;
