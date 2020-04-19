@@ -18,6 +18,7 @@ public class MovieMediaFileTest extends BasicTest {
 
   @BeforeClass
   public static void beforeClass() {
+    deleteSettingsFolder();
     Settings.getInstance(getSettingsFolder());
   }
 

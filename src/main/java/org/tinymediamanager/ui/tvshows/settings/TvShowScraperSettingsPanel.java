@@ -76,6 +76,7 @@ class TvShowScraperSettingsPanel extends JPanel {
   /** UI components */
   private TmmTable                    tableScraper;
   private JTextPane                   tpScraperDescription;
+  private JScrollPane                 scrollPaneScraperDetails;
   private JPanel                      panelScraperOptions;
 
   /**
@@ -148,7 +149,8 @@ class TvShowScraperSettingsPanel extends JPanel {
         if (scrapers.get(index).getMediaProvider().getProviderInfo().getConfig().hasConfig()) {
           panelScraperOptions.add(new MediaScraperConfigurationPanel(scrapers.get(index).getMediaProvider()));
         }
-        panelScraperOptions.revalidate();
+        scrollPaneScraperDetails.revalidate();
+        scrollPaneScraperDetails.repaint();
       }
     });
 
@@ -156,18 +158,6 @@ class TvShowScraperSettingsPanel extends JPanel {
     if (!scrapers.isEmpty()) {
       tableScraper.getSelectionModel().setSelectionInterval(selectedIndex, selectedIndex);
     }
-
-    // implement selection listener to load settings
-    tableScraper.getSelectionModel().addListSelectionListener(e -> {
-      int index = tableScraper.convertRowIndexToModel(tableScraper.getSelectedRow());
-      if (index > -1) {
-        panelScraperOptions.removeAll();
-        if (scrapers.get(index).getMediaProvider().getProviderInfo().getConfig().hasConfig()) {
-          panelScraperOptions.add(new MediaScraperConfigurationPanel(scrapers.get(index).getMediaProvider()));
-        }
-        panelScraperOptions.revalidate();
-      }
-    });
   }
 
   private void initComponents() {
@@ -187,7 +177,7 @@ class TvShowScraperSettingsPanel extends JPanel {
         JSeparator separator = new JSeparator();
         panelScraper.add(separator, "cell 1 1,growx");
 
-        JScrollPane scrollPaneScraperDetails = new JScrollPane();
+        scrollPaneScraperDetails = new JScrollPane();
         panelScraper.add(scrollPaneScraperDetails, "cell 1 2,grow");
 
         scrollPaneScraperDetails.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);

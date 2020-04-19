@@ -74,7 +74,7 @@ public class MediaProviderConfig {
     Path conf = Paths.get(folder, "scraper_" + id + ".conf");
     try (InputStream stream = Files.newInputStream(conf)) {
       p.load(stream);
-      LOGGER.info("load settings '" + conf + "'");
+      LOGGER.info("load settings '{}'", conf);
       for (MediaProviderConfigObject co : settings.values()) {
         String value = p.getProperty(co.getKey());
         if (co.isEncrypt()) {
@@ -84,7 +84,7 @@ public class MediaProviderConfig {
       }
     }
     catch (Exception e) {
-      LOGGER.trace("Cannot load settings '" + conf + "' - using defaults");
+      LOGGER.trace("Cannot load settings '{}' - using defaults", conf);
     }
   }
 
@@ -113,7 +113,7 @@ public class MediaProviderConfig {
       p.store(stream, "");
     }
     catch (IOException e) {
-      LOGGER.warn("Cannot write settings " + conf);
+      LOGGER.warn("Cannot write settings '{}' : {}", conf, e.getMessage());
     }
   }
 
@@ -153,7 +153,7 @@ public class MediaProviderConfig {
   public MediaProviderConfigObject getConfigObject(String key) {
     MediaProviderConfigObject co = settings.get(key);
     if (co == null) {
-      LOGGER.warn("Could not get configuration object for key '" + key + "' - key not defined!");
+      LOGGER.warn("Could not get configuration object for key '{}' - key not defined!", key);
       return new MediaProviderConfigObject();
     }
     return co;
@@ -199,6 +199,18 @@ public class MediaProviderConfig {
   }
 
   /**
+   * If you know that this key is an Integer, use that :)<br>
+   * will return NULL if it cannot be parsed as Integer
+   *
+   * @param key
+   *          the key for the config value to get
+   * @return the Integer or NULL
+   */
+  public Integer getValueAsInteger(String key) {
+    return getConfigObject(key).getValueAsInteger();
+  }
+
+  /**
    * set the given value to the config (String variant)
    * 
    * @param key
@@ -223,6 +235,22 @@ public class MediaProviderConfig {
    *          the value to be set
    */
   public void setValue(String key, boolean value) {
+    MediaProviderConfigObject co = getConfigObject(key);
+    if (co.isEmpty()) {
+      return;
+    }
+    co.setValue(value);
+  }
+
+  /**
+   * set the given value to the config (Integer variant)
+   *
+   * @param key
+   *          the to set the value for
+   * @param value
+   *          the value to be set
+   */
+  public void setValue(String key, Integer value) {
     MediaProviderConfigObject co = getConfigObject(key);
     if (co.isEmpty()) {
       return;
@@ -289,7 +317,7 @@ public class MediaProviderConfig {
   }
 
   /**
-   * adds an encrypts text parameter to the configuration (useful for sensitive information)
+   * adds an encrypted text parameter to the configuration (useful for sensitive information)
    *
    * @param key
    *          the config key
@@ -303,7 +331,7 @@ public class MediaProviderConfig {
   }
 
   /**
-   * adds an encrypts text parameter to the configuration (useful for sensitive information)
+   * adds an encrypted text parameter to the configuration (useful for sensitive information)
    *
    * @param key
    *          the config key
@@ -322,6 +350,38 @@ public class MediaProviderConfig {
     co.setDefaultValue(defaultValue);
     co.setValue(defaultValue);
     co.setEncrypt(encrypt);
+    settings.put(key, co);
+  }
+
+  /**
+   * adds an Integer value to the configuration
+   * 
+   * @param key
+   *          the config key
+   * @param defaultValue
+   *          the default value
+   */
+  public void addInteger(String key, Integer defaultValue) {
+    addInteger(key, "", defaultValue);
+  }
+
+  /**
+   * adds an Integer value to the configuration
+   * 
+   * @param key
+   *          the config key
+   * @param keyDescription
+   *          the key description
+   * @param defaultValue
+   *          the default value
+   */
+  public void addInteger(String key, String keyDescription, Integer defaultValue) {
+    MediaProviderConfigObject co = new MediaProviderConfigObject();
+    co.setType(MediaProviderConfigObject.ConfigType.INTEGER);
+    co.setKey(key);
+    co.setKeyDescription(keyDescription);
+    co.setDefaultValue(defaultValue.toString());
+    co.setValue(defaultValue);
     settings.put(key, co);
   }
 

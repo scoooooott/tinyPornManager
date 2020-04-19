@@ -97,7 +97,13 @@ public class MovieAssignMovieSetTask extends TmmThreadPool {
         }
 
         MediaMetadata md = ((IMovieMetadataProvider) movieScraper.getMediaProvider()).getMetadata(movieOptions);
-        int collectionId = (int) md.getId(MediaMetadata.TMDB_SET);
+        int collectionId = 0;
+        try {
+          collectionId = (int) md.getId(MediaMetadata.TMDB_SET);
+        }
+        catch (Exception e) {
+          LOGGER.warn("Could not parse collectionId: {}", md.getId(MediaMetadata.TMDB_SET));
+        }
 
         if (collectionId > 0) {
           String collectionName = md.getCollectionName();

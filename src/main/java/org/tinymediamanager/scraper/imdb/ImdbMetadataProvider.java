@@ -68,6 +68,7 @@ public class ImdbMetadataProvider implements IMovieMetadataProvider, ITvShowMeta
     providerInfo.getConfig().addBoolean("localReleaseDate", true);
     providerInfo.getConfig().addBoolean("scrapeLanguageNames", true);
     providerInfo.getConfig().addBoolean("scrapeKeywordsPage", false);
+    providerInfo.getConfig().addInteger("maxKeywordCount", 10);
 
     providerInfo.getConfig().load();
 

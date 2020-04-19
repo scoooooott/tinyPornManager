@@ -31,19 +31,21 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.filenaming.MovieNfoNaming;
 
 public class MovieConnectorTest extends BasicTest {
+
   @BeforeClass
   public static void setup() {
+    deleteSettingsFolder();
     Settings.getInstance(getSettingsFolder());
-  }
-
-  @Test
-  public void testMovieToXbmcConnectorKodi() {
     try {
       Files.createDirectories(Paths.get(getSettingsFolder(), "movie_nfo_out"));
     }
     catch (Exception e) {
       Assertions.fail(e.getMessage());
     }
+  }
+
+  @Test
+  public void testMovieToXbmcConnectorKodi() {
     try {
       // load data from a given NFO (with unsupported tags)
       MovieNfoParser parser = MovieNfoParser.parseNfo(Paths.get("target/test-classes/movie_nfo/kodi.nfo"));

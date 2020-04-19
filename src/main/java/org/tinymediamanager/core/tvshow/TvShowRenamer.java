@@ -525,7 +525,7 @@ public class TvShowRenamer {
           // when having a .sub, also rename .idx (don't care if error)
           try {
             Path oldidx = subtitle.getFileAsPath().resolveSibling(subtitle.getFilename().replaceFirst("sub$", "idx"));
-            Path newidx = sub.getFileAsPath().resolveSibling(sub.getFilename().toString().replaceFirst("sub$", "idx"));
+            Path newidx = sub.getFileAsPath().resolveSibling(sub.getFilename().replaceFirst("sub$", "idx"));
             Utils.moveFileSafe(oldidx, newidx);
           }
           catch (Exception e) {
@@ -595,7 +595,7 @@ public class TvShowRenamer {
           }
         }
         catch (IOException e) {
-          LOGGER.error("cleanup of {} - {}", cl.getFileAsPath().toString(), e.getMessage());
+          LOGGER.error("cleanup of {} - {}", cl.getFileAsPath(), e.getMessage());
         }
       }
     }
@@ -1060,7 +1060,7 @@ public class TvShowRenamer {
 
     // only allow empty season dir if the season is in the filename (aka recommended)
     if (StringUtils.isBlank(seasonFolderName) && !TvShowRenamer.isRecommended(template, TvShowModuleManager.SETTINGS.getRenamerFilename())) {
-      seasonFolderName = "Season " + String.valueOf(tvShowSeason.getSeason());
+      seasonFolderName = "Season " + tvShowSeason.getSeason();
     }
 
     return seasonFolderName;
@@ -1325,6 +1325,8 @@ public class TvShowRenamer {
       // trim whitespace around directory sep
       destination = destination.replaceAll("\\s+\\\\", "\\\\");
       destination = destination.replaceAll("\\\\\\s+", "\\\\");
+      // remove separators in front of path separators
+      destination = destination.replaceAll("[ \\.\\-_]+\\\\", "\\\\");
     }
     else {
       destination = destination.replaceAll(File.separator + "{2,}", File.separator);
@@ -1332,6 +1334,8 @@ public class TvShowRenamer {
       // trim whitespace around directory sep
       destination = destination.replaceAll("\\s+/", "/");
       destination = destination.replaceAll("/\\s+", "/");
+      // remove separators in front of path separators
+      destination = destination.replaceAll("[ \\.\\-_]+/", "/");
     }
 
     // replace spaces with underscores if needed (filename only)
@@ -1340,7 +1344,7 @@ public class TvShowRenamer {
 
       // also replace now multiple replacements with one to avoid strange looking results
       // example:
-      // Abraham Lincoln - Vapire Hunter -> Abraham-Lincoln---Vampire-Hunter
+      // Abraham Lincoln - Vampire Hunter -> Abraham-Lincoln---Vampire-Hunter
       destination = destination.replaceAll(Pattern.quote(spaceReplacement) + "+", spaceReplacement);
     }
 
@@ -1358,8 +1362,8 @@ public class TvShowRenamer {
     destination = destination.replaceAll("[ \\.\\-_]+$", "");
 
     // the colon is handled by JMTE but it looks like some users are stupid enough to add this to the pattern itself
-    destination = destination.replaceAll(": ", " - "); // nicer
-    destination = destination.replaceAll(":", "-"); // nicer
+    destination = destination.replace(": ", " - "); // nicer
+    destination = destination.replace(":", "-"); // nicer
 
     return destination.trim();
   }

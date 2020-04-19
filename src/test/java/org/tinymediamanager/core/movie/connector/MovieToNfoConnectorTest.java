@@ -54,7 +54,7 @@ public class MovieToNfoConnectorTest extends BasicTest {
 
   @BeforeClass
   public static void setup() {
-    // create a default config file for config access
+    deleteSettingsFolder();
     Settings.getInstance(getSettingsFolder());
   }
 

@@ -39,6 +39,7 @@ public class TvShowTest extends BasicTest {
 
   @BeforeClass
   public static void setUpBeforeClass() throws Exception {
+    deleteSettingsFolder();
     Settings.getInstance(getSettingsFolder());
     setTraceLogging();
   }

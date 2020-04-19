@@ -83,8 +83,7 @@ public class KodiRPC {
 
       @Override
       public void notificationReceived(AbstractEvent event) {
-        // System.out.println("Event received: " + event.getClass().getCanonicalName());
-        LOGGER.info("Event received: " + event);
+        LOGGER.info("Event received: {}", event);
         MessageManager.instance.pushMessage(new Message(Message.MessageLevel.INFO, event, "Event received"));
       }
 
@@ -102,7 +101,7 @@ public class KodiRPC {
     });
   }
 
-  public synchronized static KodiRPC getInstance() {
+  public static synchronized KodiRPC getInstance() {
     if (KodiRPC.instance == null) {
       KodiRPC.instance = new KodiRPC();
     }
@@ -138,14 +137,19 @@ public class KodiRPC {
 
   // -----------------------------------------------------------------------------------
 
+  public void LibraryVideoClean() {
+    final VideoLibrary.Clean call = new VideoLibrary.Clean(true);
+    sendWoResponse(call);
+  }
+
   public void LibraryVideoScan() {
     final VideoLibrary.Scan call = new VideoLibrary.Scan(null, true);
-    send(call);
+    sendWoResponse(call);
   }
 
   public void LibraryVideoScan(String dir) {
     final VideoLibrary.Scan call = new VideoLibrary.Scan(dir, true);
-    send(call);
+    sendWoResponse(call);
   }
 
   public List<SplitUri> getVideoDataSources() {
@@ -171,11 +175,7 @@ public class KodiRPC {
       }
 
       // sort by length (longest first)
-      Comparator<String> c = new Comparator<String>() {
-        public int compare(String s1, String s2) {
-          return Integer.compare(s1.length(), s2.length());
-        }
-      };
+      Comparator<String> c = Comparator.comparingInt(String::length);
       Collections.sort(this.videodatasourcesAsString, c);
       Collections.reverse(this.videodatasourcesAsString);
     }
@@ -199,7 +199,7 @@ public class KodiRPC {
     if (call.getResults() != null && !call.getResults().isEmpty()) {
 
       // cache our video files/paths as SplitUris
-      Map<SplitUri, UUID> tmmFiles = new HashMap<SplitUri, UUID>();
+      Map<SplitUri, UUID> tmmFiles = new HashMap<>();
       for (Movie movie : MovieList.getInstance().getMovies()) {
         MediaFile main = movie.getMainVideoFile();
         if (movie.isDisc()) {
@@ -270,7 +270,7 @@ public class KodiRPC {
     if (call.getResults() != null && !call.getResults().isEmpty()) {
 
       // cache our video files/paths as SplitUris
-      Map<SplitUri, UUID> tmmFiles = new HashMap<SplitUri, UUID>();
+      Map<SplitUri, UUID> tmmFiles = new HashMap<>();
       for (TvShow show : TvShowList.getInstance().getTvShows()) {
         tmmFiles.put(new SplitUri(show.getDataSource(), show.getPathNIO().toString()), show.getDbId()); // folder
 
@@ -360,15 +360,15 @@ public class KodiRPC {
 
       if (entity instanceof Movie) {
         final VideoLibrary.RefreshMovie call = new VideoLibrary.RefreshMovie(kodiID, false); // always refresh from NFO
-        send(call);
+        sendWoResponse(call);
       }
       else if (entity instanceof TvShow) {
         final VideoLibrary.RefreshTVShow call = new VideoLibrary.RefreshTVShow(kodiID, false, true); // always refresh from NFO, recursive
-        send(call);
+        sendWoResponse(call);
       }
       else if (entity instanceof TvShowEpisode) {
         final VideoLibrary.RefreshEpisode call = new VideoLibrary.RefreshEpisode(kodiID, false); // always refresh from NFO
-        send(call);
+        sendWoResponse(call);
       }
 
     }
@@ -379,14 +379,19 @@ public class KodiRPC {
 
   // -----------------------------------------------------------------------------------
 
+  public void LibraryAudioClean() {
+    final AudioLibrary.Clean call = new AudioLibrary.Clean(true);
+    sendWoResponse(call);
+  }
+
   public void LibraryAudioScan() {
     final AudioLibrary.Scan call = new AudioLibrary.Scan(null);
-    send(call);
+    sendWoResponse(call);
   }
 
   public void LibraryAudioScan(String dir) {
     final AudioLibrary.Scan call = new AudioLibrary.Scan(dir);
-    send(call);
+    sendWoResponse(call);
   }
 
   public ArrayList<SplitUri> getAudioDataSources() {
@@ -411,7 +416,7 @@ public class KodiRPC {
    */
   public void ApplicationQuit() {
     final Application.Quit call = new Application.Quit();
-    send(call);
+    sendWoResponse(call);
   }
 
   /**
@@ -422,7 +427,7 @@ public class KodiRPC {
     send(props); // get current
     if (props.getResults() != null && !props.getResults().isEmpty()) {
       final Application.SetMute call = new Application.SetMute(new GlobalModel.Toggle(!props.getResult().muted));
-      send(call); // toggle true/false
+      sendWoResponse(call); // toggle true/false
     }
   }
 
@@ -433,44 +438,44 @@ public class KodiRPC {
    */
   public void ApplicationVolume(int vol) {
     final Application.SetVolume call = new Application.SetVolume(vol);
-    send(call);
+    sendWoResponse(call);
   }
 
   // -----------------------------------------------------------------------------------
 
   public void SystemEjectOpticalDrive() {
     final System.EjectOpticalDrive call = new System.EjectOpticalDrive();
-    send(call);
+    sendWoResponse(call);
   }
 
   public void SystemHibernate() {
     final System.EjectOpticalDrive call = new System.EjectOpticalDrive();
-    send(call);
+    sendWoResponse(call);
   }
 
   public void SystemShutdown() {
     final System.Shutdown call = new System.Shutdown();
-    send(call);
+    sendWoResponse(call);
   }
 
   public void SystemReboot() {
     final System.Reboot call = new System.Reboot();
-    send(call);
+    sendWoResponse(call);
   }
 
   public void SystemSuspend() {
     final System.Suspend call = new System.Suspend();
-    send(call);
+    sendWoResponse(call);
   }
 
   // -----------------------------------------------------------------------------------
 
   /**
+   * Sends a call to Kodi and waits for the response.<br />
    * Call getResult() / getResults() afterwards
    * 
    * @param call
-   * @return call result
-   * @throws ApiException
+   *          the call to send
    */
   @SuppressWarnings("rawtypes")
   public void send(AbstractCall call) {
@@ -484,6 +489,28 @@ public class KodiRPC {
     catch (ApiException e) {
       LOGGER.error("Error calling Kodi: {}", e.getMessage());
     }
+  }
+
+  /**
+   * Sends the call to Kodi without waiting for a response (fire and forget)
+   * 
+   * @param call
+   *          the call to send
+   */
+  public void sendWoResponse(AbstractCall call) {
+    if (!isConnected()) {
+      LOGGER.warn("Cannot send RPC call - not connected");
+      return;
+    }
+
+    new Thread(() -> {
+      try {
+        JsonApiRequest.execute(cm.getHostConfig(), call.getRequest());
+      }
+      catch (ApiException e) {
+        LOGGER.error("Error calling Kodi: {}", e.getMessage());
+      }
+    }).start();
   }
 
   /**
