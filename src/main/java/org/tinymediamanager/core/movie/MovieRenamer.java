@@ -1232,6 +1232,8 @@ public class MovieRenamer {
         // trim whitespace around directory sep
         newDestination = newDestination.replaceAll("\\s+\\\\", "\\\\");
         newDestination = newDestination.replaceAll("\\\\\\s+", "\\\\");
+        // remove separators in front of path separators
+        newDestination = newDestination.replaceAll("[ \\.\\-_]+\\\\", "\\\\");
       }
       // we need to mask it in windows
       newDestination = newDestination.replaceAll("\\\\{2,}", "\\\\");
@@ -1242,6 +1244,8 @@ public class MovieRenamer {
         // trim whitespace around directory sep
         newDestination = newDestination.replaceAll("\\s+/", "/");
         newDestination = newDestination.replaceAll("/\\s+", "/");
+        // remove separators in front of path separators
+        newDestination = newDestination.replaceAll("[ \\.\\-_]+/", "/");
       }
       newDestination = newDestination.replaceAll("/{2,}", "/");
       newDestination = newDestination.replaceAll("^/", "");
