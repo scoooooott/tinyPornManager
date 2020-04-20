@@ -1,3 +1,8 @@
+Version 3.1.6
+=======================
+
+
+
 Version 3.1.5
 =======================
 + splitted space substitution in the TV show renamer into setting for TV show/season folder and episode filename (thx @dimitricappelle)
