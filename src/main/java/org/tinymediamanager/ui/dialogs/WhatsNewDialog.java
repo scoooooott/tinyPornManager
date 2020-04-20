@@ -92,7 +92,7 @@ public class WhatsNewDialog extends TmmDialog {
         catch (Exception ignored) {
         }
       });
-      panelContent.add(lblLink, "cell 0 1");
+      panelContent.add(lblLink, "cell 0 1, growx");
     }
     {
       JButton btnClose = new JButton(BUNDLE.getString("Button.close"));
