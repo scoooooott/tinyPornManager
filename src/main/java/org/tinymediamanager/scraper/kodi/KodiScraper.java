@@ -167,16 +167,12 @@ public class KodiScraper implements IMediaProvider {
         langFolder = new File(scraperFolder, "resources/language/resource.language." + lang);
       }
 
-      File fallbackLangFolder = new File(scraperFolder, "resources/language/English");
-      if (!fallbackLangFolder.exists()) {
-        fallbackLangFolder = new File(scraperFolder, "resources/language/resource.language.en_us");
-        if (!fallbackLangFolder.exists()) {
-          fallbackLangFolder = new File(scraperFolder, "resources/language/resource.language.en_gb");
-        }
-      }
-
       // put default names
-      labelmap.putAll(getLocalizationFromFile(fallbackLangFolder));
+      labelmap.putAll(getLocalizationFromFile(new File(scraperFolder, "resources/language/English")));
+      labelmap.putAll(getLocalizationFromFile(new File(scraperFolder, "resources/language/English (GB)")));
+      labelmap.putAll(getLocalizationFromFile(new File(scraperFolder, "resources/language/English (US)")));
+      labelmap.putAll(getLocalizationFromFile(new File(scraperFolder, "resources/language/resource.language.en_gb")));
+      labelmap.putAll(getLocalizationFromFile(new File(scraperFolder, "resources/language/resource.language.en_us")));
       // overwrite with localized ones
       labelmap.putAll(getLocalizationFromFile(langFolder));
 
