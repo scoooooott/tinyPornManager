@@ -126,6 +126,7 @@ public class TvShowTest extends BasicTest {
 
     // ************************************************************************
     // various real world examples
+    assertEqual("S:8 E:4", detectEpisode("Homeland - Temporada 8 [HDTV][Cap.804][Castellano][www.descargas2020.org].avi"));
     assertEqual("S:-1 E:105", detectEpisode("EP105 The Bed of Nails.avi"));
     assertEqual("S:3 E:5", detectEpisode("S03 EP05 The Bed of Nails.avi"));
     assertEqual("S:3 E:105", detectEpisode("S03 EP105 The Bed of Nails.avi"));
@@ -188,8 +189,14 @@ public class TvShowTest extends BasicTest {
 
     assertEqual("S:1 E:2", detectEpisode("season 1\\nam.e.2.mkv"));
     assertEqual("S:1 E:2", detectEpisode("season 1/nam.e.2.mkv"));
-    assertEqual("S:-1", detectEpisode("2 3 6.mkv")); // ohm... NO we shouldn't not detect this as 3 EPs
-    assertEqual("S:-1", detectEpisode("02 03 04 name.mkv")); // same here
+
+    // TODO: currently we take the FIRST number and treat it as episode
+    // NO multi matching for just numbers!!
+    assertEqual("S:-1 E:2", detectEpisode("2 3 6.mkv"));
+    assertEqual("S:-1 E:2", detectEpisode("02 03 04 name.mkv"));
+    // except for 3 char ones ;)
+    assertEqual("S:1 E:1 E:2 E:3", detectEpisode("101 102 103.mkv"));
+    assertEqual("S:1 E:3", detectEpisode("1 12 103 25 7.mkv")); // start with highest number
 
     // ************************************************************************
     // http://wiki.xbmc.org/index.php?title=Video_library/Naming_files/TV_shows
