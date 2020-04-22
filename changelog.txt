@@ -1,6 +1,7 @@
 Version 3.1.6
 =======================
 + Further improve episode detection #824
+x changed video codec HEVC/x265 to the more common name h265
 
 
 Version 3.1.5

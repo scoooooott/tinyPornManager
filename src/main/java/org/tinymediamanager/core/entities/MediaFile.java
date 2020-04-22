@@ -649,6 +649,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     if ("avc".equalsIgnoreCase(newValue) || "x264".equalsIgnoreCase(newValue)) {
       newValue = "h264";
     }
+    // HEVC = h265 = x265; display as h265
+    if ("hevc".equalsIgnoreCase(newValue) || "x265".equalsIgnoreCase(newValue)) {
+      newValue = "h265";
+    }
 
     String oldValue = this.videoCodec;
     this.videoCodec = newValue;
