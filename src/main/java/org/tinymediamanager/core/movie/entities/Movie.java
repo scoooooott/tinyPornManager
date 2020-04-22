@@ -2306,6 +2306,11 @@ public class Movie extends MediaEntity implements IMediaInformation {
   }
 
   @Override
+  public List<String> getMediaInfoSubtitleLanguageList() {
+    return getMainVideoFile().getSubtitleLanguagesList();
+  }
+
+  @Override
   public String getMediaInfoContainerFormat() {
     return getMainVideoFile().getContainerFormat();
   }

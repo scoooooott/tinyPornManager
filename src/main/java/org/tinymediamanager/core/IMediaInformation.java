@@ -141,9 +141,16 @@ public interface IMediaInformation {
   /**
    * gets the audio language (e.g, de) from the all audio streams as List
    *
-   * @return the audio language from all streams with a trailing ch as List
+   * @return the audio language from all streams
    */
   List<String> getMediaInfoAudioLanguageList();
+
+  /**
+   * gets all subtitle languages (e.g, de) from the subtitle streams as List
+   *
+   * @return the subtitle languages from all streams
+   */
+  List<String> getMediaInfoSubtitleLanguageList();
 
   /**
    * gets the container format

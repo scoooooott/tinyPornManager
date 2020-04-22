@@ -1,6 +1,7 @@
 Version 3.1.6
 =======================
 + Further improve episode detection #824
++ added (internal) subtitle language information to the renamer tokens #855
 x fixed writing of multiple tags (date_added and user_note) in the NFO file
 x changed video codec HEVC/x265 to the more common name h265
 

@@ -546,6 +546,23 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
     return subtitles;
   }
 
+  /**
+   * gets the subtitle language from all streams as List
+   *
+   * @return the subtitle languages as List
+   */
+  public List<String> getSubtitleLanguagesList() {
+    List<String> subtitleLanguages = new ArrayList<>();
+    for (MediaFileSubtitle stream : ListUtils.nullSafe(subtitles)) {
+      // just in case we couldn't detect the language name
+      if (StringUtils.isBlank(stream.getLanguage())) {
+        continue;
+      }
+      subtitleLanguages.add(stream.getLanguage());
+    }
+    return subtitleLanguages;
+  }
+
   public String getSubtitlesAsString() {
     if (this.subtitles == null) {
       return "";
@@ -734,6 +751,10 @@ public class MediaFile extends AbstractModelObject implements Comparable<MediaFi
   public List<String> getAudioLanguagesList() {
     List<String> audioLanguages = new ArrayList<>();
     for (MediaFileAudioStream stream : ListUtils.nullSafe(audioStreams)) {
+      // just in case we couldn't detect the language name
+      if (StringUtils.isBlank(stream.getLanguage())) {
+        continue;
+      }
       audioLanguages.add(stream.getLanguage());
     }
     return audioLanguages;
