@@ -123,7 +123,7 @@ abstract public class MediaInformationPanel extends JPanel {
       add(lblOriginalFilenameT, "cell 0 2");
 
       lblOriginalFilename = new JLabel("");
-      add(lblOriginalFilename, "cell 1 2");
+      add(lblOriginalFilename, "cell 1 2 5 1,growx,wmin 0");
     }
     {
       add(new JSeparator(), "cell 0 3 6 1,growx");
