@@ -58,6 +58,10 @@ public class MovieUpdateDatasourceTaskTest extends BasicTest {
   public void udsNew() throws Exception {
     MovieUpdateDatasourceTask task = new MovieUpdateDatasourceTask();
     task.run();
+
+    // let the propertychangeevents finish
+    Thread.sleep(1000);
+
     showEntries();
   }
 
