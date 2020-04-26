@@ -24,6 +24,8 @@ import javax.swing.event.ListSelectionListener;
 
 import org.tinymediamanager.core.AbstractModelObject;
 import org.tinymediamanager.core.AbstractSettings;
+import org.tinymediamanager.core.MediaFileType;
+import org.tinymediamanager.core.entities.MediaFile;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.movies.filters.IMovieUIFilter;
 
@@ -59,6 +61,8 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
    *          the matcher
    */
   public MovieSelectionModel(SortedList<Movie> sortedList, EventList<Movie> source, MovieMatcherEditor matcher) {
+    constructInitialMovie();
+
     this.sortedList = sortedList;
     this.selectionModel = new DefaultEventSelectionModel<>(source);
     this.selectionModel.addListSelectionListener(this);
@@ -80,7 +84,16 @@ public class MovieSelectionModel extends AbstractModelObject implements ListSele
    * Instantiates a new movie selection model. Usage in MovieSetPanel
    */
   public MovieSelectionModel() {
+    constructInitialMovie();
+  }
 
+  /**
+   * the initial movie needs some things set
+   */
+  private void constructInitialMovie() {
+    MediaFile fakeVideo = new MediaFile();
+    fakeVideo.setType(MediaFileType.VIDEO);
+    initialMovie.addToMediaFiles(fakeVideo);
   }
 
   /**
