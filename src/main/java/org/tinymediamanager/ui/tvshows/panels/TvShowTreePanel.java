@@ -205,6 +205,9 @@ public class TvShowTreePanel extends TmmListPanel implements ITmmTabItem {
       if (selectionModel1.isSelectionEmpty() && tree.getModel().getRowCount() > 0) {
         selectionModel1.setSelectionInterval(0, 0);
       }
+      else if (tree.getModel().getRowCount() == 0) {
+        TvShowUIModule.getInstance().setSelectedTvShow(null);
+      }
     });
 
     tree.getSelectionModel().addListSelectionListener(arg0 -> {
@@ -238,6 +241,9 @@ public class TvShowTreePanel extends TmmListPanel implements ITmmTabItem {
           TvShowEpisode tvShowEpisode = (TvShowEpisode) node.getUserObject();
           TvShowUIModule.getInstance().setSelectedTvShowEpisode(tvShowEpisode);
         }
+      }
+      else {
+        TvShowUIModule.getInstance().setSelectedTvShow(null);
       }
     });
 

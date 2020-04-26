@@ -33,12 +33,13 @@ import org.tinymediamanager.ui.components.treetable.TmmTreeTable;
  * @author Manuel Laggner
  */
 public class TvShowSelectionModel extends AbstractModelObject {
-  private static final String    SELECTED_TV_SHOW = "selectedTvShow";
+  private static final String          SELECTED_TV_SHOW = "selectedTvShow";
 
-  private TvShow                 selectedTvShow;
-  private TvShow                 initalTvShow     = new TvShow();
-  private PropertyChangeListener propertyChangeListener;
-  private TmmTreeTable           treeTable;
+  private final TvShow                 initalTvShow     = new TvShow();
+  private final PropertyChangeListener propertyChangeListener;
+
+  private TvShow                       selectedTvShow;
+  private TmmTreeTable                 treeTable;
 
   /**
    * Instantiates a new tv show selection model. Usage in TvShowPanel
@@ -70,9 +71,13 @@ public class TvShowSelectionModel extends AbstractModelObject {
     }
 
     TvShow oldValue = this.selectedTvShow;
+    if (oldValue != null && oldValue != initalTvShow) {
+      oldValue.removePropertyChangeListener(propertyChangeListener);
+    }
 
     if (tvShow != null) {
       this.selectedTvShow = tvShow;
+      selectedTvShow.addPropertyChangeListener(propertyChangeListener);
     }
     else {
       this.selectedTvShow = initalTvShow;
