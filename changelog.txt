@@ -8,6 +8,7 @@ x fixed writing of multiple tags (date_added and user_note) in the NFO file
 x changed video codec HEVC/x265 to the more common name h265
 x fixed occasional UI glitches where artwork did not change
 x fixed occasional error messages when removing movies #857
+x fixed TMDB fallbackLanguages parsing #861
 
 
 Version 3.1.5
