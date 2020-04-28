@@ -45,6 +45,7 @@ import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.core.movie.entities.MovieSet;
 import org.tinymediamanager.core.threading.TmmTask;
 import org.tinymediamanager.core.threading.TmmTaskManager;
+import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.thirdparty.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.components.TmmLabel;
@@ -167,7 +168,7 @@ public class MovieBulkEditorDialog extends TmmDialog {
         JLabel lblTagsT = new TmmLabel(BUNDLE.getString("metatag.tags"));
         panelContent.add(lblTagsT, "cell 0 1,alignx right");
 
-        JComboBox cbTags = new AutocompleteComboBox(movieList.getTagsInMovies().toArray());
+        JComboBox cbTags = new AutocompleteComboBox(ListUtils.asSortedList(movieList.getTagsInMovies()));
         cbTags.setEditable(true);
         panelContent.add(cbTags, "cell 1 1, growx, wmin 0");
 

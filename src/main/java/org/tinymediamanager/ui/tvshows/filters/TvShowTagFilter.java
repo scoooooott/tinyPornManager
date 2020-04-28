@@ -16,7 +16,6 @@
 package org.tinymediamanager.ui.tvshows.filters;
 
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +26,7 @@ import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.ui.components.TmmLabel;
 import org.tinymediamanager.ui.components.table.TmmTableFormat;
 
@@ -115,9 +115,7 @@ public class TvShowTagFilter extends AbstractCheckComboBoxTvShowUIFilter<String>
       oldTags.clear();
       oldTags.addAll(tags);
 
-      List<String> newTags = new ArrayList<>(tags);
-      newTags.sort(comparator);
-      setValues(newTags);
+      setValues(ListUtils.asSortedList(tags));
     }
   }
 
