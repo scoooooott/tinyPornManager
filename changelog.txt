@@ -9,6 +9,7 @@ x changed video codec HEVC/x265 to the more common name h265
 x fixed occasional UI glitches where artwork did not change
 x fixed occasional error messages when removing movies #857
 x fixed TMDB fallbackLanguages parsing #861
+x (movie) only provide ascending and descending sort order of table columns
 
 
 Version 3.1.5

@@ -55,6 +55,7 @@ import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TablePopupListener;
 import org.tinymediamanager.ui.components.EnhancedTextField;
 import org.tinymediamanager.ui.components.TmmListPanel;
+import org.tinymediamanager.ui.components.table.MouseKeyboardSortingStrategy;
 import org.tinymediamanager.ui.components.table.TmmTable;
 import org.tinymediamanager.ui.components.table.TmmTableModel;
 import org.tinymediamanager.ui.movies.MovieFilterator;
@@ -121,7 +122,7 @@ public class MovieListPanel extends TmmListPanel implements ITmmTabItem {
     movieTable = new TmmTable(movieTableModel);
 
     // install on the Table
-    TableComparatorChooser.install(movieTable, sortedMovies, TableComparatorChooser.MULTIPLE_COLUMN_KEYBOARD).appendComparator(0, 0, false);
+    TableComparatorChooser.install(movieTable, sortedMovies, new MouseKeyboardSortingStrategy()).appendComparator(0, 0, false);
 
     // restore hidden columns
     movieTable.readHiddenColumns(MovieModuleManager.SETTINGS.getMovieTableHiddenColumns());
