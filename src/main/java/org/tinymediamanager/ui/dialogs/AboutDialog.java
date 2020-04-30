@@ -82,6 +82,7 @@ public class AboutDialog extends TmmDialog {
     }
     {
       final LinkLabel lblHomepage = new LinkLabel("https://www.tinymediamanager.org/");
+      lblHomepage.setLineWrap(false);
       lblHomepage.addActionListener(arg0 -> {
         try {
           TmmUIHelper.browseUrl(lblHomepage.getText());
