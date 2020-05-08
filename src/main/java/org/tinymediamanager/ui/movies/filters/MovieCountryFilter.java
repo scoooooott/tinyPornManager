@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.ui.movies.filters;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JComponent;
@@ -23,6 +24,7 @@ import javax.swing.JTextField;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.ui.components.TmmLabel;
 
 /**
@@ -52,21 +54,23 @@ public class MovieCountryFilter extends AbstractMovieUIFilter {
 
   @Override
   public boolean accept(Movie movie) {
-    String name = textField.getText();
+    String name = StrgUtils.normalizeString(textField.getText());
 
     if (StringUtils.isBlank(name)) {
       return true;
     }
 
-    Pattern pattern = Pattern.compile("(?i)" + Pattern.quote(name));
-    java.util.regex.Matcher matcher = null;
-
-    // country
-    if (StringUtils.isNotEmpty(movie.getCountry())) {
-      matcher = pattern.matcher(movie.getCountry());
-      if (matcher.find()) {
-        return true;
+    try {
+      // country
+      if (StringUtils.isNotEmpty(movie.getCountry())) {
+        Pattern pattern = Pattern.compile(name, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(StrgUtils.normalizeString(movie.getCountry()));
+        return matcher.find();
       }
+    }
+    catch (Exception e) {
+      // if any exceptions are thrown, just return true
+      return true;
     }
 
     return false;

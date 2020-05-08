@@ -16,12 +16,12 @@
 package org.tinymediamanager.core.movie;
 
 import java.text.Collator;
-import java.text.Normalizer;
 import java.text.RuleBasedCollator;
 import java.util.Comparator;
 import java.util.Locale;
 
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
  * The Class {@link MovieComparator} is used to (initial) sort the movies.
@@ -46,8 +46,8 @@ public class MovieComparator implements Comparator<Movie> {
   @Override
   public int compare(Movie movie1, Movie movie2) {
     if (stringCollator != null) {
-      String titleMovie1 = Normalizer.normalize(movie1.getTitleSortable().toLowerCase(Locale.ROOT), Normalizer.Form.NFD);
-      String titleMovie2 = Normalizer.normalize(movie2.getTitleSortable().toLowerCase(Locale.ROOT), Normalizer.Form.NFD);
+      String titleMovie1 = StrgUtils.normalizeString(movie1.getTitleSortable().toLowerCase(Locale.ROOT));
+      String titleMovie2 = StrgUtils.normalizeString(movie2.getTitleSortable().toLowerCase(Locale.ROOT));
       return stringCollator.compare(titleMovie1, titleMovie2);
     }
     return movie1.getTitleSortable().toLowerCase(Locale.ROOT).compareTo(movie2.getTitleSortable().toLowerCase(Locale.ROOT));

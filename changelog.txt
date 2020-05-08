@@ -4,6 +4,7 @@ Version 3.1.6
 + added (internal) subtitle language information to the renamer tokens #855
 + added support for xyplorer
 + added support for double digit stacking patterns (cd12, part12, ..)
++ (movie/TV show) better support for filtering movies by text (regular search, normalized search)
 x fixed writing of multiple tags (date_added and user_note) in the NFO file
 x changed video codec HEVC/x265 to the more common name h265
 x fixed occasional UI glitches where artwork did not change

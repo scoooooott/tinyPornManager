@@ -21,7 +21,6 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.nio.file.Path;
 import java.text.Collator;
-import java.text.Normalizer;
 import java.text.RuleBasedCollator;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -40,6 +39,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.Globals;
 import org.tinymediamanager.core.MediaCertification;
 import org.tinymediamanager.core.MediaFileHelper;
+import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.ui.IconManager;
 
 import ca.odell.glazedlists.gui.AdvancedTableFormat;
@@ -207,8 +207,8 @@ public abstract class TmmTableFormat<E> implements AdvancedTableFormat<E> {
       }
 
       if (stringCollator != null) {
-        String first = Normalizer.normalize(arg0.toLowerCase(Locale.ROOT), Normalizer.Form.NFD);
-        String second = Normalizer.normalize(arg1.toLowerCase(Locale.ROOT), Normalizer.Form.NFD);
+        String first = StrgUtils.normalizeString(arg0.toLowerCase(Locale.ROOT));
+        String second = StrgUtils.normalizeString(arg1.toLowerCase(Locale.ROOT));
         return stringCollator.compare(first, second);
       }
 

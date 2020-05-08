@@ -25,6 +25,7 @@ import javax.swing.JTextField;
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.ui.components.TmmLabel;
 
 /**
@@ -54,52 +55,55 @@ public class MovieCastFilter extends AbstractMovieUIFilter {
 
   @Override
   public boolean accept(Movie movie) {
-    String name = textField.getText();
+    String name = StrgUtils.normalizeString(textField.getText());
 
     if (StringUtils.isBlank(name)) {
       return true;
     }
+    try {
+      Pattern pattern = Pattern.compile(name, Pattern.CASE_INSENSITIVE);
 
-    Pattern pattern = Pattern.compile("(?i)" + Pattern.quote(name));
+      // director
+      for (Person director : movie.getDirectors()) {
+        if (StringUtils.isNotEmpty(director.getName())) {
+          Matcher matcher = pattern.matcher(StrgUtils.normalizeString(director.getName()));
+          if (matcher.find()) {
+            return true;
+          }
+        }
+      }
 
-    // director
-    for (Person director : movie.getDirectors()) {
-      if (StringUtils.isNotEmpty(director.getName())) {
-        Matcher matcher = pattern.matcher(director.getName());
-        if (matcher.find()) {
-          return true;
+      // writer
+      for (Person writer : movie.getWriters()) {
+        if (StringUtils.isNotEmpty(writer.getName())) {
+          Matcher matcher = pattern.matcher(StrgUtils.normalizeString(writer.getName()));
+          if (matcher.find()) {
+            return true;
+          }
+        }
+      }
+
+      // actors
+      for (Person cast : movie.getActors()) {
+        if (StringUtils.isNotEmpty(cast.getName())) {
+          Matcher matcher = pattern.matcher(StrgUtils.normalizeString(cast.getName()));
+          if (matcher.find()) {
+            return true;
+          }
+        }
+      }
+
+      // producers
+      for (Person producer : movie.getProducers()) {
+        if (StringUtils.isNotEmpty(producer.getName())) {
+          Matcher matcher = pattern.matcher(StrgUtils.normalizeString(producer.getName()));
+          return matcher.find();
         }
       }
     }
-
-    // writer
-    for (Person writer : movie.getWriters()) {
-      if (StringUtils.isNotEmpty(writer.getName())) {
-        Matcher matcher = pattern.matcher(writer.getName());
-        if (matcher.find()) {
-          return true;
-        }
-      }
-    }
-
-    // actors
-    for (Person cast : movie.getActors()) {
-      if (StringUtils.isNotEmpty(cast.getName())) {
-        Matcher matcher = pattern.matcher(cast.getName());
-        if (matcher.find()) {
-          return true;
-        }
-      }
-    }
-
-    // producers
-    for (Person producer : movie.getProducers()) {
-      if (StringUtils.isNotEmpty(producer.getName())) {
-        Matcher matcher = pattern.matcher(producer.getName());
-        if (matcher.find()) {
-          return true;
-        }
-      }
+    catch (Exception e) {
+      // if any exceptions are thrown, just return true
+      return true;
     }
 
     return false;

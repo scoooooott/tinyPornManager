@@ -16,12 +16,12 @@
 package org.tinymediamanager.core.tvshow;
 
 import java.text.Collator;
-import java.text.Normalizer;
 import java.text.RuleBasedCollator;
 import java.util.Comparator;
 import java.util.Locale;
 
 import org.tinymediamanager.core.tvshow.entities.TvShow;
+import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
  * The Class {@link TvShowComparator} is used to (initial) sort the TV shows.
@@ -46,8 +46,8 @@ public class TvShowComparator implements Comparator<TvShow> {
   @Override
   public int compare(TvShow tvShow1, TvShow tvShow2) {
     if (stringCollator != null) {
-      String titleTvShow1 = Normalizer.normalize(tvShow1.getTitleSortable().toLowerCase(Locale.ROOT), Normalizer.Form.NFD);
-      String titleTvShow2 = Normalizer.normalize(tvShow2.getTitleSortable().toLowerCase(Locale.ROOT), Normalizer.Form.NFD);
+      String titleTvShow1 = StrgUtils.normalizeString(tvShow1.getTitleSortable().toLowerCase(Locale.ROOT));
+      String titleTvShow2 = StrgUtils.normalizeString(tvShow2.getTitleSortable().toLowerCase(Locale.ROOT));
       return stringCollator.compare(titleTvShow1, titleTvShow2);
     }
     return tvShow1.getTitleSortable().toLowerCase(Locale.ROOT).compareTo(tvShow2.getTitleSortable().toLowerCase(Locale.ROOT));
