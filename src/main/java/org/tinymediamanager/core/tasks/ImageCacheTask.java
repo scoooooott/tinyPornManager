@@ -15,6 +15,7 @@
  */
 package org.tinymediamanager.core.tasks;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -85,8 +86,11 @@ public class ImageCacheTask extends TmmThreadPool {
       catch (EmptyFileException e) {
         LOGGER.warn("failed to cache file (file is empty): {}", fileToCache);
       }
+      catch (FileNotFoundException e) {
+        LOGGER.warn("file '{}' has not been found", fileToCache.getFilename());
+      }
       catch (Exception e) {
-        LOGGER.warn("failed to cache file: {} - {}", fileToCache, e);
+        LOGGER.warn("failed to cache file: {} - {}", fileToCache.getFile(), e.getMessage());
       }
       return null;
     }
