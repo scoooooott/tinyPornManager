@@ -775,11 +775,6 @@ public class MovieRenamer {
       return newFiles;
     }
 
-    // extra clone, just for easy adding the "default" ones ;)
-    MediaFile defaultMF = null;
-    defaultMF = new MediaFile(mf);
-    defaultMF.replacePathForRenamedFolder(movie.getPathNIO(), newMovieDir);
-
     switch (mf.getType()) {
       case VIDEO:
         MediaFile vid = new MediaFile(mf);
@@ -1032,14 +1027,10 @@ public class MovieRenamer {
       // OK, from here we check only the settings
       // *************
       case EXTRAFANART:
-        if (MovieModuleManager.SETTINGS.isImageExtraFanart() && !newDestIsMultiMovieDir) {
-          newFiles.add(defaultMF);
-        }
-        break;
-
       case EXTRATHUMB:
-        if (MovieModuleManager.SETTINGS.isImageExtraThumbs() && !newDestIsMultiMovieDir) {
-          newFiles.add(defaultMF);
+        // pass the file regardless of the settings (they're her so we just rename them)
+        if (!newDestIsMultiMovieDir) {
+          newFiles.add(mf);
         }
         break;
 
@@ -1053,7 +1044,7 @@ public class MovieRenamer {
       case UNKNOWN:
       case EXTRA:
       default:
-        newFiles.add(defaultMF);
+        newFiles.add(mf);
         break;
     }
 
