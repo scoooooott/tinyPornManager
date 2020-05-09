@@ -771,9 +771,7 @@ public class MovieRenamer {
 
     if (!isFilePatternValid() && !movie.isDisc()) {
       // not renaming files, but IF we have a folder pattern, we need to move around! (but NOT disc movies!)
-      MediaFile newMF = new MediaFile(mf);
-      newMF.setPath(newMovieDir.toString());
-      newFiles.add(newMF);
+      newFiles.add(mf);
       return newFiles;
     }
 
