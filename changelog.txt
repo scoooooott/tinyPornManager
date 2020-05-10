@@ -13,6 +13,7 @@ x fixed TMDB fallbackLanguages parsing #861
 x (movie) only provide ascending and descending sort order of table columns
 x (movie/TV show) provide tags (in dropdown lists) in a sorted order
 + (movie) do not move movie extras out of the "Extra(s)" folder upon renaming
++ force closing of files after subtitle hash calculation
 
 
 Version 3.1.5

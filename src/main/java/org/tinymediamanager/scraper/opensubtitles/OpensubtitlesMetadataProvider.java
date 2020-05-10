@@ -373,6 +373,10 @@ public class OpensubtitlesMetadataProvider implements ISubtitleProvider {
       hash += longBuffer.get();
     }
 
+    // fix for not releasing resources https://stackoverflow.com/questions/13065358/java-7-filechannel-not-closing-properly-after-calling-a-map-method
+    // > The issue here is that closing a mapped file doesn't release the mapping
+    buffer.rewind();
+
     return hash;
   }
 }
