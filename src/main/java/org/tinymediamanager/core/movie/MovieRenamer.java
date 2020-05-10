@@ -769,9 +769,13 @@ public class MovieRenamer {
       newFilename = MovieRenamer.createDestinationForFilename(MovieModuleManager.SETTINGS.getRenamerFilename(), movie);
     }
 
+    // extra clone, just for easy adding the "default" ones ;)
+    MediaFile defaultMF = new MediaFile(mf);
+    defaultMF.replacePathForRenamedFolder(movie.getPathNIO(), newMovieDir);
+
     if (!isFilePatternValid() && !movie.isDisc()) {
       // not renaming files, but IF we have a folder pattern, we need to move around! (but NOT disc movies!)
-      newFiles.add(mf);
+      newFiles.add(defaultMF);
       return newFiles;
     }
 
@@ -1030,7 +1034,7 @@ public class MovieRenamer {
       case EXTRATHUMB:
         // pass the file regardless of the settings (they're her so we just rename them)
         if (!newDestIsMultiMovieDir) {
-          newFiles.add(mf);
+          newFiles.add(defaultMF);
         }
         break;
 
@@ -1044,7 +1048,7 @@ public class MovieRenamer {
       case UNKNOWN:
       case EXTRA:
       default:
-        newFiles.add(mf);
+        newFiles.add(defaultMF);
         break;
     }
 
