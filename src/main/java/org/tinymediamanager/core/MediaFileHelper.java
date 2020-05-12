@@ -224,7 +224,10 @@ public class MediaFileHelper {
         || (!ppparent.isEmpty() && ppparent.matches("extra[s]?")) // extras folder a level deeper
         || (!pppparent.isEmpty() && pppparent.matches("extra[s]?")) // extras folder a level deeper
         || basename.matches("(?i).*[-](behindthescenes|deleted|featurette|interview|scene|short|other)$") // Plex (w/o trailer)
-        || MediaFileHelper.PLEX_EXTRA_FOLDERS.contains(foldername)) // Plex Extra folders
+        || MediaFileHelper.PLEX_EXTRA_FOLDERS.contains(foldername) // Plex Extra folders
+        || MediaFileHelper.PLEX_EXTRA_FOLDERS.contains(pparent) // Plex Extra folders
+        || MediaFileHelper.PLEX_EXTRA_FOLDERS.contains(ppparent) // Plex Extra folders
+        || MediaFileHelper.PLEX_EXTRA_FOLDERS.contains(pppparent)) // Plex Extra folders
     {
       return MediaFileType.EXTRA;
     }
