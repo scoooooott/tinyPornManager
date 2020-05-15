@@ -312,23 +312,15 @@ public class TmmUIHelper {
       }
     }
     else if (SystemUtils.IS_OS_WINDOWS) {
-      boolean started = false;
-      // try xyplorer first
-      try {
-        exec(new String[]{"xyplorer", abs});
-        started = true;
-      } catch (Exception ignored) {
-        // nothing to do here
-      }
       // try to open directly
-      if (!started) {
-        try {
-          Desktop.getDesktop().open(file.toFile());
-        } catch (Exception e) {
-          // use explorer directly - ship around access exceptions and the unresolved network bug
-          // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6780505
-          exec(new String[]{"explorer", abs});
-        }
+
+      try {
+        Desktop.getDesktop().open(file.toFile());
+      }
+      catch (Exception e) {
+        // use explorer directly - ship around access exceptions and the unresolved network bug
+        // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6780505
+        exec(new String[] { "explorer", abs });
       }
     }
     else if (SystemUtils.IS_OS_LINUX) {
