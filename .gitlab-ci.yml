@@ -79,9 +79,9 @@ include:
 dependency_scanning:
   variables:
     MAVEN_CLI_OPTS: "-DskipTests --batch-mode"
-  only:
-    variables:
-      - $QA_BUILD == "true"
+  rules:
+    - if: '$QA_BUILD == "true"'
+      when: always
 
 # sonarqube analysis
 sonarqube-qa:
