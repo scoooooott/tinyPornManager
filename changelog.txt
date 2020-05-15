@@ -14,6 +14,7 @@ x (movie/TV show) provide tags (in dropdown lists) in a sorted order
 x (movie) do not move movie extras out of the "Extra(s)" folder upon renaming
 x force closing of files after subtitle hash calculation
 x (windows) call the default file manager rather than explorer.exe for opening folders
+x do not automatically scroll down in the image chooser
 
 
 Version 3.1.5
