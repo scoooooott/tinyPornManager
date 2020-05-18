@@ -461,4 +461,17 @@ public class StrgUtils {
     }
     return originalString;
   }
+
+  /**
+   * normalizes the given {@link String}
+   * 
+   * @param original
+   *          the {@link String} to normalize
+   * @return the normalized {@link String}
+   */
+  public static String normalizeString(String original) {
+    String nfdNormalizedString = Normalizer.normalize(original, Normalizer.Form.NFD);
+    Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+    return pattern.matcher(nfdNormalizedString).replaceAll("");
+  }
 }

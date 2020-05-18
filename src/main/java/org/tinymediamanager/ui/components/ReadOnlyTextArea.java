@@ -16,8 +16,14 @@
 
 package org.tinymediamanager.ui.components;
 
+import java.awt.Graphics;
+import java.awt.Point;
+
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
+import javax.swing.event.ChangeListener;
+import javax.swing.text.Caret;
+import javax.swing.text.JTextComponent;
 
 /**
  * A readonly variant of the JTextArea
@@ -40,5 +46,96 @@ public class ReadOnlyTextArea extends JTextArea {
     setEditable(false);
     setFocusable(false);
     setForeground(UIManager.getColor("Label.foreground"));
+    setCaret(new NullCaret());
+  }
+
+  /**
+   * an empty caret
+   */
+  private final class NullCaret implements Caret {
+    @Override
+    public void setVisible(boolean v) {
+      // just do nothing
+    }
+
+    @Override
+    public void setSelectionVisible(boolean v) {
+      // just do nothing
+    }
+
+    @Override
+    public void setMagicCaretPosition(Point p) {
+      // just do nothing
+    }
+
+    @Override
+    public void setDot(int dot) {
+      // just do nothing
+    }
+
+    @Override
+    public void setBlinkRate(int rate) {
+      // just do nothing
+    }
+
+    @Override
+    public void paint(Graphics g) {
+      // just do nothing
+    }
+
+    @Override
+    public void moveDot(int dot) {
+      // just do nothing
+    }
+
+    @Override
+    public boolean isVisible() {
+      return false;
+    }
+
+    @Override
+    public boolean isSelectionVisible() {
+      return false;
+    }
+
+    @Override
+    public void install(JTextComponent c) {
+      // just do nothing
+    }
+
+    @Override
+    public int getMark() {
+      return 0;
+    }
+
+    @Override
+    public Point getMagicCaretPosition() {
+      return new Point(0, 0);
+    }
+
+    @Override
+    public int getDot() {
+      return 0;
+    }
+
+    @Override
+    public int getBlinkRate() {
+      return 0;
+    }
+
+    @Override
+    public void deinstall(JTextComponent c) {
+      // just do nothing
+    }
+
+    @Override
+    public void addChangeListener(ChangeListener l) {
+      // just do nothing
+    }
+
+    @Override
+    public void removeChangeListener(ChangeListener l) {
+      // just do nothing
+    }
   }
 }

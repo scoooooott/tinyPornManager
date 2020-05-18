@@ -24,6 +24,7 @@ import javax.swing.JTextField;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.movie.entities.Movie;
+import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.ui.components.TmmLabel;
 
 /**
@@ -53,18 +54,22 @@ public class MovieLanguageFilter extends AbstractMovieUIFilter {
 
   @Override
   public boolean accept(Movie movie) {
-    String langauge = textField.getText();
+    String language = StrgUtils.normalizeString(textField.getText());
 
-    if (StringUtils.isBlank(langauge)) {
+    if (StringUtils.isBlank(language)) {
       return true;
     }
 
-    if (StringUtils.isNotBlank(movie.getSpokenLanguages())) {
-      Pattern pattern = Pattern.compile("(?i)" + Pattern.quote(langauge));
-      Matcher matcher = pattern.matcher(movie.getSpokenLanguages());
-      if (matcher.find()) {
-        return true;
+    try {
+      if (StringUtils.isNotBlank(movie.getSpokenLanguages())) {
+        Pattern pattern = Pattern.compile(language, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(StrgUtils.normalizeString(movie.getSpokenLanguages()));
+        return matcher.find();
       }
+    }
+    catch (Exception e) {
+      // if any exceptions are thrown, just return true
+      return true;
     }
 
     return false;

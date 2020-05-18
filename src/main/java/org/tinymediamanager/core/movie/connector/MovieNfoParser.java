@@ -170,9 +170,11 @@ public class MovieNfoParser {
     parseTag(MovieNfoParser::parseStatus);
     parseTag(MovieNfoParser::parseCode);
     parseTag(MovieNfoParser::parseDateadded);
-    parseTag(MovieNfoParser::findUnsupportedElements);
     parseTag(MovieNfoParser::parseOriginalFilename);
     parseTag(MovieNfoParser::parseUserNote);
+
+    // MUST BE THE LAST ONE!
+    parseTag(MovieNfoParser::findUnsupportedElements);
   }
 
   /**

@@ -180,6 +180,9 @@ public class ImageLabel extends JComponent {
   public void clearImage() {
     imagePath = "";
     imageUrl = "";
+    if (worker != null && !worker.isDone()) {
+      worker.cancel(true);
+    }
     clearImageData();
     this.repaint();
   }
@@ -517,13 +520,15 @@ public class ImageLabel extends JComponent {
 
     @Override
     protected void done() {
-      if (isCancelled()) {
-        return;
+      if (isCancelled() || !ImageLabel.this.imageUrl.equals(imageUrl)) {
+        ImageLabel.this.imageUrl = "";
+        clearImageData();
       }
-
-      // fire events
-      ImageLabel.this.firePropertyChange("originalImageBytes", null, originalImageBytes);
-      ImageLabel.this.firePropertyChange("originalImageSize", null, originalImageSize);
+      else {
+        // fire events
+        ImageLabel.this.firePropertyChange("originalImageBytes", null, originalImageBytes);
+        ImageLabel.this.firePropertyChange("originalImageSize", null, originalImageSize);
+      }
 
       revalidate();
       repaint();
@@ -581,13 +586,15 @@ public class ImageLabel extends JComponent {
 
     @Override
     protected void done() {
-      if (isCancelled()) {
-        return;
+      if (isCancelled() || !ImageLabel.this.imagePath.equals(imagePath)) {
+        ImageLabel.this.imagePath = "";
+        clearImageData();
       }
-
-      // fire events
-      ImageLabel.this.firePropertyChange("originalImageBytes", null, originalImageBytes);
-      ImageLabel.this.firePropertyChange("originalImageSize", null, originalImageSize);
+      else {
+        // fire events
+        ImageLabel.this.firePropertyChange("originalImageBytes", null, originalImageBytes);
+        ImageLabel.this.firePropertyChange("originalImageSize", null, originalImageSize);
+      }
 
       revalidate();
       repaint();

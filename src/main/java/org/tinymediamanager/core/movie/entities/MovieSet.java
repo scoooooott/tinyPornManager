@@ -299,8 +299,8 @@ public class MovieSet extends MediaEntity {
       saveToDb();
     }
 
-    firePropertyChange("movies", null, movies);
     firePropertyChange(Constants.REMOVED_MOVIE, null, movie);
+    firePropertyChange("movies", null, movies);
     firePropertyChange(Constants.WATCHED, null, movies);
   }
 
@@ -350,8 +350,8 @@ public class MovieSet extends MediaEntity {
       saveToDb();
     }
 
-    firePropertyChange("movies", null, movies);
     firePropertyChange("removedAllMovies", oldValue, movies);
+    firePropertyChange("movies", null, movies);
   }
 
   /**

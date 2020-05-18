@@ -55,8 +55,8 @@ public class TvShowEpisodeAndSeasonParser {
   private static Pattern      romanPattern        = Pattern.compile("(part|pt)[\\._\\s]+([MDCLXVI]+)", Pattern.CASE_INSENSITIVE);
   private static Pattern      seasonMultiEP       = Pattern.compile("s(\\d{1,4})[ ]?((?:([epx_.-]+\\d{1,3})+))", Pattern.CASE_INSENSITIVE);
   private static Pattern      seasonMultiEP2      = Pattern.compile("(\\d{1,4})(?=x)((?:([epx]+\\d{1,3})+))", Pattern.CASE_INSENSITIVE);
-  private static Pattern      numbers2Pattern     = Pattern.compile(".*?([0-9]{2}).*", Pattern.CASE_INSENSITIVE);
-  private static Pattern      numbers3Pattern     = Pattern.compile(".*?([0-9])([0-9]{2}).*", Pattern.CASE_INSENSITIVE);
+  private static Pattern      numbers2Pattern     = Pattern.compile("([0-9]{2})", Pattern.CASE_INSENSITIVE);
+  private static Pattern      numbers3Pattern     = Pattern.compile("([0-9])([0-9]{2})", Pattern.CASE_INSENSITIVE);
   private static Pattern      tvMultipartMatching = Pattern.compile("^[-_ex]+([0-9]+(?:(?:[a-i]|\\.[1-9])(?![0-9]))?)", Pattern.CASE_INSENSITIVE);
 
   public static String cleanEpisodeTitle(String titleToClean, String tvShowName) {
@@ -310,63 +310,15 @@ public class TvShowEpisodeAndSeasonParser {
           LOGGER.trace("add found EP " + ep);
         }
       }
-      if (!result.episodes.isEmpty()) {
-        return result;
-      }
     }
 
-    String numbers = basename.replaceAll("[^0-9]", "");
-    // try to parse YXX numbers first, and exit (need to do that per length)
-    if (numbers.length() == 3) { // eg 102
-      regex = numbers3Pattern;
-      m = regex.matcher(basename);
-      if (m.find()) {
-        // Filename contains only 3 subsequent numbers; parse this as SEE
-        int s = Integer.parseInt(m.group(1));
-        int ep = Integer.parseInt(m.group(2));
-        if (ep > 0 && !result.episodes.contains(ep)) {
-          result.episodes.add(ep);
-          LOGGER.trace("add found EP " + ep);
-        }
-        LOGGER.trace("add found season " + s);
-        result.season = s;
-        return result;
-      }
-      else {
-        // check if we have at least 2 subsequent numbers - parse this as episode
-        regex = numbers2Pattern;
-        m = regex.matcher(basename);
-        if (m.find()) {
-          // Filename contains only 2 subsequent numbers; parse this as EE
-          int ep = Integer.parseInt(m.group(1));
-          if (ep > 0 && !result.episodes.contains(ep)) {
-            result.episodes.add(ep);
-            LOGGER.trace("add found EP " + ep);
-          }
-          // return result; // do NOT return here, although we have 3 numbers (2 subsequent) we might parse the correct season later
-        }
-      }
-    } // FIXME: what if we have
-    else if (numbers.length() == 2) { // eg 01
-      regex = numbers2Pattern;
-      m = regex.matcher(basename);
-      if (m.find()) {
-        // Filename contains only 2 subsequent numbers; parse this as EE
-        int ep = Integer.parseInt(m.group(1));
-        if (ep > 0 && !result.episodes.contains(ep)) {
-          result.episodes.add(ep);
-          LOGGER.trace("add found EP " + ep);
-        }
-        return result;
-      }
-    }
-    else if (numbers.length() == 1) { // eg 1
-      int ep = Integer.parseInt(numbers); // just one :P
-      if (ep > 0 && !result.episodes.contains(ep)) {
-        result.episodes.add(ep);
-        LOGGER.trace("add found EP " + ep);
-      }
-      return result;
+    // ======================================================================
+    // After here are some generic detections
+    // run them only, when we have NO result!!!
+    // so we step out here...
+    // ======================================================================
+    if (!result.episodes.isEmpty()) {
+      return postClean(result);
     }
 
     // parse Roman only when not found anything else!!
@@ -397,7 +349,7 @@ public class TvShowEpisodeAndSeasonParser {
         }
         result.season = s;
         LOGGER.trace("add found year as season " + s + " date: " + result.date);
-        return result; // since we have a matching year, we wont find episodes solely by number
+        return postClean(result); // since we have a matching year, we wont find episodes solely by number
       }
     }
 
@@ -415,39 +367,71 @@ public class TvShowEpisodeAndSeasonParser {
         }
         result.season = s;
         LOGGER.trace("add found year as season " + s + " date: " + result.date);
-        return result; // since we have a matching year, we wont find episodes solely by number
+        return postClean(result); // since we have a matching year, we wont find episodes solely by number
       }
     }
 
-    // Episode-only parsing, when previous styles didn't find anything!
-    // this is a VERY generic pattern AND SHOULD BE EXECUTED AS LAST CHANCE!!!
-    // might produce many fals positives, so be careful!
-    basename = basename.replaceAll("\\[.*?\\]", "");// remove all optional [xyz] tags
-    if (result.episodes.isEmpty()) {
-      regex = episodePattern;
-      m = regex.matcher(basename);
-      while (m.find()) {
-        int ep = 0;
-        try {
-          ep = Integer.parseInt(m.group(1));
-        }
-        catch (NumberFormatException nfe) {
-          // can not happen from regex since we only come here with max 2 numeric chars
-        }
+    // multiple numbers: get consecutive ones
+    String delimitedNumbers = basename.replaceAll("\\|", "_"); // replace our delimiter
+    delimitedNumbers = delimitedNumbers.replaceAll("(\\d+)", "$1|"); // add delimiter after numbers
+    delimitedNumbers = delimitedNumbers.replaceAll("[^0-9\\|]", ""); // replace everything but numbers
+    String[] numbersOnly = delimitedNumbers.split("\\|"); // split on our delimiters
+    // now we have something like "8|804|2020"
+
+    for (String num : numbersOnly) {
+      if (num.length() == 3) {
+        // Filename contains only 3 subsequent numbers; parse this as SEE
+        int s = Integer.parseInt(num.substring(0, 1));
+        int ep = Integer.parseInt(num.substring(1));
         if (ep > 0 && !result.episodes.contains(ep)) {
           result.episodes.add(ep);
           LOGGER.trace("add found EP " + ep);
         }
+        LOGGER.trace("add found season " + s);
+        result.season = s;
+        // for 3 character numbers, we iterate multiple times!
+        // do not stop on first one"
+        // return result;
+      }
+    }
+    // did we find 3 consecutive numbers? step out...
+    if (!result.episodes.isEmpty()) {
+      return postClean(result);
+    }
+
+    for (String num : numbersOnly) {
+      if (num.length() == 2) {
+        // Filename contains only 2 subsequent numbers; parse this as EE
+        int ep = Integer.parseInt(num);
+        if (ep > 0 && !result.episodes.contains(ep)) {
+          result.episodes.add(ep);
+          LOGGER.trace("add found EP " + ep);
+        }
+        return postClean(result);
       }
     }
 
-    // try to clean the filename
-    result.cleanedName = cleanFilename(result.name, new Pattern[] { SEASON_PATTERN, seasonMultiEP, seasonMultiEP2, episodePattern, episodePattern2,
-        numbers3Pattern, numbers2Pattern, romanPattern, date1, date2 });
+    for (String num : numbersOnly) {
+      if (num.length() == 1) {
+        int ep = Integer.parseInt(num); // just one :P
+        if (ep > 0 && !result.episodes.contains(ep)) {
+          result.episodes.add(ep);
+          LOGGER.trace("add found EP " + ep);
+        }
+        return postClean(result);
+      }
+    }
 
-    Collections.sort(result.episodes);
-    LOGGER.debug("returning result " + result);
-    return result;
+    return postClean(result);
+  }
+
+  private static EpisodeMatchingResult postClean(EpisodeMatchingResult emr) {
+    // try to clean the filename
+    emr.cleanedName = cleanFilename(emr.name, new Pattern[] { SEASON_PATTERN, seasonMultiEP, seasonMultiEP2, episodePattern, episodePattern2,
+        numbers3Pattern, numbers2Pattern, romanPattern, date1, date2 });
+    Collections.sort(emr.episodes);
+    LOGGER.debug("returning result " + emr);
+    return emr;
   }
 
   private static String cleanFilename(String name, Pattern[] patterns) {

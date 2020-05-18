@@ -1,3 +1,23 @@
+Version 3.1.6
+=======================
++ Further improve episode detection #824
++ added (internal) subtitle language information to the renamer tokens #855
++ added support for double digit stacking patterns (cd12, part12, ..)
++ (movie/TV show) better support for filtering movies by text (regular search, normalized search)
+x fixed writing of multiple tags (date_added and user_note) in the NFO file
+x changed video codec HEVC/x265 to the more common name h265
+x fixed occasional UI glitches where artwork did not change
+x fixed occasional error messages when removing movies #857
+x fixed TMDB fallbackLanguages parsing #861
+x (movie) only provide ascending and descending sort order of table columns
+x (movie/TV show) provide tags (in dropdown lists) in a sorted order
+x (movie) do not move movie extras out of the "Extra(s)" folder upon renaming
+x force closing of files after subtitle hash calculation
+x (windows) call the default file manager rather than explorer.exe for opening folders
+x do not automatically scroll down in the image chooser
+x catch occasional hiccups in the trailer panel #864
+
+
 Version 3.1.5
 =======================
 + splitted space substitution in the TV show renamer into setting for TV show/season folder and episode filename (thx @dimitricappelle)

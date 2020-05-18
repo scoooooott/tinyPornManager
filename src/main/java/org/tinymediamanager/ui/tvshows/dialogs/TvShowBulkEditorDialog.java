@@ -44,6 +44,7 @@ import org.tinymediamanager.core.tvshow.TvShowList;
 import org.tinymediamanager.core.tvshow.TvShowModuleManager;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.thirdparty.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.components.ReadOnlyTextArea;
@@ -147,7 +148,7 @@ public class TvShowBulkEditorDialog extends TmmDialog {
       JLabel lblTags = new TmmLabel(BUNDLE.getString("metatag.tags"));
       panelContent.add(lblTags, "cell 1 2,alignx right");
 
-      JComboBox<String> cbTags = new AutocompleteComboBox<>(tvShowList.getTagsInTvShows());
+      JComboBox<String> cbTags = new AutocompleteComboBox<>(ListUtils.asSortedList(tvShowList.getTagsInTvShows()));
       panelContent.add(cbTags, "cell 2 2, growx, wmin 0");
       cbTags.setEditable(true);
 

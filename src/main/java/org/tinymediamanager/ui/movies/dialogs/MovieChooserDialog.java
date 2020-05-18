@@ -26,7 +26,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
 import java.text.Collator;
-import java.text.Normalizer;
 import java.text.RuleBasedCollator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -72,6 +71,7 @@ import org.tinymediamanager.scraper.MediaScraper;
 import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
+import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.thirdparty.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -849,8 +849,8 @@ public class MovieChooserDialog extends TmmDialog implements ActionListener {
     @Override
     public int compare(MovieChooserModel o1, MovieChooserModel o2) {
       if (stringCollator != null) {
-        String titleMovie1 = Normalizer.normalize(o1.getTitle().toLowerCase(Locale.ROOT), Normalizer.Form.NFD);
-        String titleMovie2 = Normalizer.normalize(o2.getTitle().toLowerCase(Locale.ROOT), Normalizer.Form.NFD);
+        String titleMovie1 = StrgUtils.normalizeString(o1.getTitle().toLowerCase(Locale.ROOT));
+        String titleMovie2 = StrgUtils.normalizeString(o2.getTitle().toLowerCase(Locale.ROOT));
         return stringCollator.compare(titleMovie1, titleMovie2);
       }
       return o1.getTitle().toLowerCase(Locale.ROOT).compareTo(o2.getTitle().toLowerCase(Locale.ROOT));

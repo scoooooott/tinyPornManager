@@ -229,10 +229,11 @@ public class TvShowEpisodeNfoParser {
       parseTag(Episode::parseLastplayed);
       parseTag(Episode::parseCode);
       parseTag(Episode::parseDateadded);
-      parseTag(Episode::findUnsupportedElements);
       parseTag(Episode::parseOriginalFilename);
-
       parseTag(Episode::parseUserNote);
+
+      // MUST BE THE LAST ONE!
+      parseTag(Episode::findUnsupportedElements);
     }
 
     /**
@@ -246,7 +247,7 @@ public class TvShowEpisodeNfoParser {
         function.apply(this);
       }
       catch (Exception e) {
-        LOGGER.warn("problem parsing tag (line " + e.getStackTrace()[0].getLineNumber() + "):" + e.getMessage());
+        LOGGER.warn("problem parsing tag (line {}) - {}", e.getStackTrace()[0].getLineNumber(), e.getMessage());
       }
 
       return null;

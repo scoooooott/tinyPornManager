@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.entities.Person;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.ui.components.TmmLabel;
 
 /**
@@ -56,71 +57,77 @@ public class TvShowCastFilter extends AbstractTvShowUIFilter {
 
   @Override
   protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes, boolean invert) {
-    String filterText = textField.getText();
+    String filterText = StrgUtils.normalizeString(textField.getText());
     if (StringUtils.isBlank(filterText)) {
       return true;
     }
 
-    Pattern pattern = Pattern.compile("(?i)" + Pattern.quote(filterText));
+    try {
+      Pattern pattern = Pattern.compile(filterText, Pattern.CASE_INSENSITIVE);
 
-    // first: filter on the base cast of the TV show
-    boolean foundShow = false;
-    for (Person actor : tvShow.getActors()) {
-      Matcher matcher = pattern.matcher(actor.getName());
-      if (matcher.find()) {
-        foundShow = true;
+      // first: filter on the base cast of the TV show
+      boolean foundShow = false;
+      for (Person actor : tvShow.getActors()) {
+        Matcher matcher = pattern.matcher(StrgUtils.normalizeString(actor.getName()));
+        if (matcher.find()) {
+          foundShow = true;
+        }
+      }
+
+      // if we found anything in the show we can quit here
+      if (!invert && foundShow) {
+        return true;
+      }
+      else if (invert && foundShow) {
+        return false;
+      }
+
+      // second: filter director/writer and guests from episodes
+      for (TvShowEpisode episode : episodes) {
+        boolean foundGuest = false;
+        boolean foundWriter = false;
+        boolean foundDirector = false;
+
+        for (Person director : episode.getDirectors()) {
+          if (StringUtils.isNotBlank(director.getName())) {
+            Matcher matcher = pattern.matcher(StrgUtils.normalizeString(director.getName()));
+            if (matcher.find()) {
+              foundDirector = true;
+              break;
+            }
+          }
+        }
+        for (Person writer : episode.getWriters()) {
+          if (StringUtils.isNotBlank(writer.getName())) {
+            Matcher matcher = pattern.matcher(StrgUtils.normalizeString(writer.getName()));
+            if (matcher.find()) {
+              foundWriter = true;
+              break;
+            }
+          }
+        }
+        for (Person actor : episode.getGuests()) {
+          if (StringUtils.isNotBlank(actor.getName())) {
+            Matcher matcher = pattern.matcher(StrgUtils.normalizeString(actor.getName()));
+            if (matcher.find()) {
+              foundGuest = true;
+              break;
+            }
+          }
+        }
+
+        // if there is a match in this episode, we can stop
+        if (invert && !foundDirector && !foundWriter && !foundGuest) {
+          return true;
+        }
+        else if (!invert && (foundDirector || foundWriter || foundGuest)) {
+          return true;
+        }
       }
     }
-
-    // if we found anything in the show we can quit here
-    if (!invert && foundShow) {
+    catch (Exception e) {
+      // if any exceptions are thrown, just return true
       return true;
-    }
-    else if (invert && foundShow) {
-      return false;
-    }
-
-    // second: filter director/writer and guests from episodes
-    for (TvShowEpisode episode : episodes) {
-      boolean foundGuest = false;
-      boolean foundWriter = false;
-      boolean foundDirector = false;
-
-      for (Person director : episode.getDirectors()) {
-        if (StringUtils.isNotBlank(director.getName())) {
-          Matcher matcher = pattern.matcher(director.getName());
-          if (matcher.find()) {
-            foundDirector = true;
-            break;
-          }
-        }
-      }
-      for (Person writer : episode.getWriters()) {
-        if (StringUtils.isNotBlank(writer.getName())) {
-          Matcher matcher = pattern.matcher(writer.getName());
-          if (matcher.find()) {
-            foundWriter = true;
-            break;
-          }
-        }
-      }
-      for (Person actor : episode.getGuests()) {
-        if (StringUtils.isNotBlank(actor.getName())) {
-          Matcher matcher = pattern.matcher(actor.getName());
-          if (matcher.find()) {
-            foundGuest = true;
-            break;
-          }
-        }
-      }
-
-      // if there is a match in this episode, we can stop
-      if (invert && !foundDirector && !foundWriter && !foundGuest) {
-        return true;
-      }
-      else if (!invert && (foundDirector || foundWriter || foundGuest)) {
-        return true;
-      }
     }
 
     return false;

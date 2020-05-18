@@ -158,9 +158,10 @@ public class TvShowNfoParser {
     parseTag(TvShowNfoParser::parseCode);
     parseTag(TvShowNfoParser::parseDateadded);
     parseTag(TvShowNfoParser::parseEpisodeguide);
-    parseTag(TvShowNfoParser::findUnsupportedElements);
-
     parseTag(TvShowNfoParser::parseUserNote);
+
+    // MUST BE THE LAST ONE!
+    parseTag(TvShowNfoParser::findUnsupportedElements);
   }
 
   /**

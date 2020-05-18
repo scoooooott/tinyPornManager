@@ -313,6 +313,7 @@ public class TmmUIHelper {
     }
     else if (SystemUtils.IS_OS_WINDOWS) {
       // try to open directly
+
       try {
         Desktop.getDesktop().open(file.toFile());
       }

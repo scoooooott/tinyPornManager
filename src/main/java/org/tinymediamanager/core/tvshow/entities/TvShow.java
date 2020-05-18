@@ -50,6 +50,7 @@ import java.nio.file.Path;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -2206,7 +2207,7 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   @Override
   public List<String> getMediaInfoAudioChannelList() {
-    return new ArrayList<>();
+    return Collections.emptyList();
   }
 
   @Override
@@ -2216,7 +2217,12 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
   @Override
   public List<String> getMediaInfoAudioLanguageList() {
-    return new ArrayList<>();
+    return Collections.emptyList();
+  }
+
+  @Override
+  public List<String> getMediaInfoSubtitleLanguageList() {
+    return Collections.emptyList();
   }
 
   @Override

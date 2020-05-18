@@ -138,6 +138,8 @@ public class MovieRenamer {
     tokenMap.put("audioLanguage", "movie.mediaInfoAudioLanguage");
     tokenMap.put("audioLanguageList", "movie.mediaInfoAudioLanguageList");
     tokenMap.put("audioLanguagesAsString", "movie.mediaInfoAudioLanguageList;array");
+    tokenMap.put("subtitleLanguageList", "movie.mediaInfoSubtitleLanguageList");
+    tokenMap.put("subtitleLanguagesAsString", "movie.mediaInfoSubtitleLanguageList;array");
     tokenMap.put("3Dformat", "movie.video3DFormat");
     tokenMap.put("hdr", "movie.videoHDRFormat");
     tokenMap.put("filesize", "movie.videoFilesize;filesize");
@@ -767,18 +769,15 @@ public class MovieRenamer {
       newFilename = MovieRenamer.createDestinationForFilename(MovieModuleManager.SETTINGS.getRenamerFilename(), movie);
     }
 
+    // extra clone, just for easy adding the "default" ones ;)
+    MediaFile defaultMF = new MediaFile(mf);
+    defaultMF.replacePathForRenamedFolder(movie.getPathNIO(), newMovieDir);
+
     if (!isFilePatternValid() && !movie.isDisc()) {
       // not renaming files, but IF we have a folder pattern, we need to move around! (but NOT disc movies!)
-      MediaFile newMF = new MediaFile(mf);
-      newMF.setPath(newMovieDir.toString());
-      newFiles.add(newMF);
+      newFiles.add(defaultMF);
       return newFiles;
     }
-
-    // extra clone, just for easy adding the "default" ones ;)
-    MediaFile defaultMF = null;
-    defaultMF = new MediaFile(mf);
-    defaultMF.replacePathForRenamedFolder(movie.getPathNIO(), newMovieDir);
 
     switch (mf.getType()) {
       case VIDEO:
@@ -1032,13 +1031,9 @@ public class MovieRenamer {
       // OK, from here we check only the settings
       // *************
       case EXTRAFANART:
-        if (MovieModuleManager.SETTINGS.isImageExtraFanart() && !newDestIsMultiMovieDir) {
-          newFiles.add(defaultMF);
-        }
-        break;
-
       case EXTRATHUMB:
-        if (MovieModuleManager.SETTINGS.isImageExtraThumbs() && !newDestIsMultiMovieDir) {
+        // pass the file regardless of the settings (they're her so we just rename them)
+        if (!newDestIsMultiMovieDir) {
           newFiles.add(defaultMF);
         }
         break;

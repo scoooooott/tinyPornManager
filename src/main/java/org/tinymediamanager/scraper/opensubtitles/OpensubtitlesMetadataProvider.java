@@ -352,9 +352,13 @@ public class OpensubtitlesMetadataProvider implements ISubtitleProvider {
     long chunkSizeForFile = Math.min(HASH_CHUNK_SIZE, size);
 
     try (FileInputStream is = new FileInputStream(file); FileChannel fileChannel = is.getChannel()) {
-      long head = computeOpenSubtitlesHashForChunk(fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, chunkSizeForFile));
-      long tail = computeOpenSubtitlesHashForChunk(
-          fileChannel.map(FileChannel.MapMode.READ_ONLY, Math.max(size - HASH_CHUNK_SIZE, 0), chunkSizeForFile));
+      // do not use FileChannel.map() here because it is not releasing resources
+      ByteBuffer buf = ByteBuffer.allocate((int) chunkSizeForFile);
+      fileChannel.read(buf);
+      long head = computeOpenSubtitlesHashForChunk(buf);
+
+      fileChannel.read(buf, Math.max(size - HASH_CHUNK_SIZE, 0));
+      long tail = computeOpenSubtitlesHashForChunk(buf);
 
       return String.format("%016x", size + head + tail);
     }
@@ -366,6 +370,7 @@ public class OpensubtitlesMetadataProvider implements ISubtitleProvider {
 
   private static long computeOpenSubtitlesHashForChunk(ByteBuffer buffer) {
 
+    buffer.rewind();
     LongBuffer longBuffer = buffer.order(ByteOrder.LITTLE_ENDIAN).asLongBuffer();
     long hash = 0;
 

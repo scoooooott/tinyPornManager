@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager;
 
+import static org.tinymediamanager.core.MediaFileType.TRAILER;
+import static org.tinymediamanager.core.MediaFileType.VIDEO;
 import static org.tinymediamanager.core.Utils.deleteFileSafely;
 
 import java.io.File;
@@ -26,6 +28,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
@@ -387,6 +390,61 @@ public class UpgradeTasks {
           // remove the old one
           movieSet.setId(Constants.TMDB, null);
           movieSet.saveToDb();
+        }
+      }
+    }
+
+    if (StrgUtils.compareVersion(v, "3.1.6") < 0) {
+      LOGGER.info("Performing database upgrade tasks to version 3.1.6");
+
+      for (Movie movie : MovieList.getInstance().getMovies()) {
+        boolean dirty = false;
+        for (MediaFile mediaFile : movie.getMediaFiles(VIDEO, TRAILER)) {
+          switch (mediaFile.getVideoCodec().toLowerCase(Locale.ROOT)) {
+            case "hevc":
+            case "x265":
+              mediaFile.setVideoCodec("h265");
+              dirty = true;
+              break;
+
+          }
+        }
+        if (dirty) {
+          movie.saveToDb();
+        }
+      }
+
+      for (TvShow tvShow : TvShowList.getInstance().getTvShows()) {
+        boolean dirty = false;
+        for (MediaFile mediaFile : tvShow.getMediaFiles(VIDEO, TRAILER)) {
+          switch (mediaFile.getVideoCodec().toLowerCase(Locale.ROOT)) {
+            case "hevc":
+            case "x265":
+              mediaFile.setVideoCodec("h265");
+              dirty = true;
+              break;
+
+          }
+        }
+        if (dirty) {
+          tvShow.saveToDb();
+        }
+
+        for (TvShowEpisode episode : tvShow.getEpisodes()) {
+          dirty = false;
+          for (MediaFile mediaFile : episode.getMediaFiles(VIDEO, TRAILER)) {
+            switch (mediaFile.getVideoCodec().toLowerCase(Locale.ROOT)) {
+              case "hevc":
+              case "x265":
+                mediaFile.setVideoCodec("h265");
+                dirty = true;
+                break;
+
+            }
+          }
+          if (dirty) {
+            episode.saveToDb();
+          }
         }
       }
     }

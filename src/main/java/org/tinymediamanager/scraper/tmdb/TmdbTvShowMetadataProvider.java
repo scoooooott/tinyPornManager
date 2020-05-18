@@ -136,7 +136,7 @@ class TmdbTvShowMetadataProvider {
             throw new HttpException(httpResponse.code(), httpResponse.message());
           }
           TvShow show = httpResponse.body();
-          verifyTvShowLanguageTitle(options.getLanguage().toLocale(), show);
+          verifyTvShowLanguageTitle(Locale.forLanguageTag(language), show);
           results.add(morphTvShowToSearchResult(show, options));
           LOGGER.debug("found {} results with TMDB id", results.size());
         }
@@ -155,7 +155,7 @@ class TmdbTvShowMetadataProvider {
             throw new HttpException(httpResponse.code(), httpResponse.message());
           }
           for (BaseTvShow show : httpResponse.body().tv_results) { // should be only one
-            verifyTvShowLanguageTitle(options.getLanguage().toLocale(), show);
+            verifyTvShowLanguageTitle(Locale.forLanguageTag(language), show);
             results.add(morphTvShowToSearchResult(show, options));
           }
           LOGGER.debug("found {} results with IMDB id", results.size());
@@ -180,7 +180,7 @@ class TmdbTvShowMetadataProvider {
             }
 
             for (BaseTvShow show : ListUtils.nullSafe(httpResponse.body().results)) {
-              verifyTvShowLanguageTitle(options.getLanguage().toLocale(), show);
+              verifyTvShowLanguageTitle(Locale.forLanguageTag(language), show);
               results.add(morphTvShowToSearchResult(show, options));
             }
 
@@ -294,7 +294,7 @@ class TmdbTvShowMetadataProvider {
           throw new HttpException(httpResponse.code(), httpResponse.message());
         }
         complete = httpResponse.body();
-        verifyTvShowLanguageTitle(options.getLanguage().toLocale(), complete);
+        verifyTvShowLanguageTitle(Locale.forLanguageTag(language), complete);
       }
       catch (TmdbNotFoundException e) {
         LOGGER.info("nothing found");

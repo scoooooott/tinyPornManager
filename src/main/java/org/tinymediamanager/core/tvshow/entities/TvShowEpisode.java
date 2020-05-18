@@ -1510,6 +1510,11 @@ public class TvShowEpisode extends MediaEntity implements Comparable<TvShowEpiso
   }
 
   @Override
+  public List<String> getMediaInfoSubtitleLanguageList() {
+    return getMainVideoFile().getSubtitleLanguagesList();
+  }
+
+  @Override
   public String getMediaInfoContainerFormat() {
     List<MediaFile> videos = getMediaFiles(MediaFileType.VIDEO);
     if (!videos.isEmpty()) {

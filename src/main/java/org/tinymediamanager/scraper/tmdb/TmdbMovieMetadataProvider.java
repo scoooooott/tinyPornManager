@@ -134,7 +134,7 @@ class TmdbMovieMetadataProvider {
             throw new HttpException(httpResponse.code(), httpResponse.message());
           }
           Movie movie = httpResponse.body();
-          verifyMovieTitleLanguage(options.getLanguage().toLocale(), movie);
+          verifyMovieTitleLanguage(Locale.forLanguageTag(language), movie);
           MediaSearchResult result = morphMovieToSearchResult(movie, options);
           results.add(result);
           LOGGER.debug("found {} results with TMDB id", results.size());
@@ -154,7 +154,7 @@ class TmdbMovieMetadataProvider {
             throw new HttpException(httpResponse.code(), httpResponse.message());
           }
           for (BaseMovie movie : httpResponse.body().movie_results) { // should be only one
-            verifyMovieTitleLanguage(options.getLanguage().toLocale(), movie);
+            verifyMovieTitleLanguage(Locale.forLanguageTag(language), movie);
             results.add(morphMovieToSearchResult(movie, options));
           }
           LOGGER.debug("found {} results with IMDB id", results.size());
@@ -178,7 +178,7 @@ class TmdbMovieMetadataProvider {
               throw new HttpException(httpResponse.code(), httpResponse.message());
             }
             for (BaseMovie movie : ListUtils.nullSafe(httpResponse.body().results)) {
-              verifyMovieTitleLanguage(options.getLanguage().toLocale(), movie);
+              verifyMovieTitleLanguage(Locale.forLanguageTag(language), movie);
               results.add(morphMovieToSearchResult(movie, options));
             }
 
@@ -202,7 +202,7 @@ class TmdbMovieMetadataProvider {
           MovieResultsPage resultsPage = api.searchService().movie(searchString, 1, language, null, adult, null, null).execute().body();
           if (resultsPage != null && resultsPage.results != null) {
             for (BaseMovie movie : resultsPage.results) {
-              verifyMovieTitleLanguage(options.getLanguage().toLocale(), movie);
+              verifyMovieTitleLanguage(Locale.forLanguageTag(language), movie);
               results.add(morphMovieToSearchResult(movie, options));
             }
           }
@@ -391,7 +391,7 @@ class TmdbMovieMetadataProvider {
             throw new HttpException(httpResponse.code(), httpResponse.message());
           }
           movie = httpResponse.body();
-          verifyMovieTitleLanguage(options.getLanguage().toLocale(), movie);
+          verifyMovieTitleLanguage(Locale.forLanguageTag(language), movie);
         }
         catch (TmdbNotFoundException e) {
           LOGGER.info("nothing found");

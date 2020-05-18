@@ -50,6 +50,10 @@ public class TvShowUpdateDatasourceTaskTest extends BasicTest {
   public void udsNew() throws Exception {
     TvShowUpdateDatasourceTask task = new TvShowUpdateDatasourceTask();
     task.run();
+
+    // let the propertychangeevents finish
+    Thread.sleep(1000);
+
     check();
   }
 

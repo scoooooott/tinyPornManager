@@ -16,7 +16,6 @@
 package org.tinymediamanager.ui.movies;
 
 import java.awt.FontMetrics;
-import java.text.Normalizer;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -57,8 +56,8 @@ public class MovieTableFormat extends TmmTableFormat<Movie> {
       @Override
       public int compare(Movie movie1, Movie movie2) {
         if (stringCollator != null) {
-          String titleMovie1 = Normalizer.normalize(movie1.getOriginalTitleSortable().toLowerCase(Locale.ROOT), Normalizer.Form.NFD);
-          String titleMovie2 = Normalizer.normalize(movie2.getOriginalTitleSortable().toLowerCase(Locale.ROOT), Normalizer.Form.NFD);
+          String titleMovie1 = StrgUtils.normalizeString(movie1.getOriginalTitleSortable().toLowerCase(Locale.ROOT));
+          String titleMovie2 = StrgUtils.normalizeString(movie2.getOriginalTitleSortable().toLowerCase(Locale.ROOT));
           return stringCollator.compare(titleMovie1, titleMovie2);
         }
         return movie1.getOriginalTitleSortable().toLowerCase(Locale.ROOT).compareTo(movie2.getOriginalTitleSortable().toLowerCase(Locale.ROOT));

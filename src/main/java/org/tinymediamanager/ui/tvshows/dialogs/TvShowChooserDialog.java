@@ -26,7 +26,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
 import java.text.Collator;
-import java.text.Normalizer;
 import java.text.RuleBasedCollator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -75,6 +74,7 @@ import org.tinymediamanager.scraper.MediaSearchResult;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.util.ListUtils;
+import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.thirdparty.trakttv.SyncTraktTvTask;
 import org.tinymediamanager.ui.IconManager;
 import org.tinymediamanager.ui.TmmFontHelper;
@@ -116,9 +116,9 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
   private SortedList<TvShowChooserModel>                                         searchResultEventList = null;
   private TvShowChooserModel                                                     selectedResult        = null;
   private MediaScraper                                                           mediaScraper;
-  private List<MediaScraper> artworkScrapers;
-  private List<MediaScraper> trailerScrapers;
-  private boolean continueQueue = true;
+  private List<MediaScraper>                                                     artworkScrapers;
+  private List<MediaScraper>                                                     trailerScrapers;
+  private boolean                                                                continueQueue         = true;
   private boolean                                                                navigateBack          = false;
 
   private SearchTask                                                             activeSearchTask;
@@ -670,7 +670,7 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
     private MediaLanguages          language;
 
     private List<MediaSearchResult> searchResult = null;
-    boolean                         cancel = false;
+    boolean                         cancel       = false;
 
     private SearchTask(String searchTerm, TvShow show, boolean withIds) {
       this.searchTerm = searchTerm;
@@ -825,8 +825,8 @@ public class TvShowChooserDialog extends TmmDialog implements ActionListener {
     @Override
     public int compare(TvShowChooserModel o1, TvShowChooserModel o2) {
       if (stringCollator != null) {
-        String titleTvShow1 = Normalizer.normalize(o1.getTitle().toLowerCase(Locale.ROOT), Normalizer.Form.NFD);
-        String titleTvShow2 = Normalizer.normalize(o2.getTitle().toLowerCase(Locale.ROOT), Normalizer.Form.NFD);
+        String titleTvShow1 = StrgUtils.normalizeString(o1.getTitle().toLowerCase(Locale.ROOT));
+        String titleTvShow2 = StrgUtils.normalizeString(o2.getTitle().toLowerCase(Locale.ROOT));
         return stringCollator.compare(titleTvShow1, titleTvShow2);
       }
       return o1.getTitle().toLowerCase(Locale.ROOT).compareTo(o2.getTitle().toLowerCase(Locale.ROOT));

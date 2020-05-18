@@ -26,6 +26,7 @@ import javax.swing.JTextField;
 import org.apache.commons.lang3.StringUtils;
 import org.tinymediamanager.core.tvshow.entities.TvShow;
 import org.tinymediamanager.core.tvshow.entities.TvShowEpisode;
+import org.tinymediamanager.scraper.util.StrgUtils;
 import org.tinymediamanager.ui.components.TmmLabel;
 
 /**
@@ -55,44 +56,50 @@ public class TvShowStudioFilter extends AbstractTvShowUIFilter {
 
   @Override
   protected boolean accept(TvShow tvShow, List<TvShowEpisode> episodes, boolean invert) {
-    String filterText = textField.getText();
+    String filterText = StrgUtils.normalizeString(textField.getText());
     if (StringUtils.isBlank(filterText)) {
       return true;
     }
 
-    Pattern pattern = Pattern.compile("(?i)" + Pattern.quote(filterText));
+    try {
+      Pattern pattern = Pattern.compile(filterText, Pattern.CASE_INSENSITIVE);
 
-    // first: filter on the production companies of the Tv show
-    boolean foundShow = false;
-    Matcher matcher = pattern.matcher(tvShow.getProductionCompany());
-    if (matcher.find()) {
-      foundShow = true;
-    }
-
-    // if we found anything in the show we can quit here
-    if (!invert && foundShow) {
-      return true;
-    }
-    else if (invert && foundShow) {
-      return false;
-    }
-
-    // second: filter production company from the episodes
-    for (TvShowEpisode episode : episodes) {
-      boolean foundEpisode = false;
-
-      matcher = pattern.matcher(episode.getProductionCompany());
+      // first: filter on the production companies of the Tv show
+      boolean foundShow = false;
+      Matcher matcher = pattern.matcher(StrgUtils.normalizeString(tvShow.getProductionCompany()));
       if (matcher.find()) {
-        foundEpisode = true;
+        foundShow = true;
       }
 
-      // if there is a match in this episode, we can stop
-      if (invert && !foundEpisode) {
+      // if we found anything in the show we can quit here
+      if (!invert && foundShow) {
         return true;
       }
-      else if (!invert && foundEpisode) {
-        return true;
+      else if (invert && foundShow) {
+        return false;
       }
+
+      // second: filter production company from the episodes
+      for (TvShowEpisode episode : episodes) {
+        boolean foundEpisode = false;
+
+        matcher = pattern.matcher(StrgUtils.normalizeString(episode.getProductionCompany()));
+        if (matcher.find()) {
+          foundEpisode = true;
+        }
+
+        // if there is a match in this episode, we can stop
+        if (invert && !foundEpisode) {
+          return true;
+        }
+        else if (!invert && foundEpisode) {
+          return true;
+        }
+      }
+    }
+    catch (Exception e) {
+      // if any exceptions are thrown, just return true
+      return true;
     }
 
     return false;
