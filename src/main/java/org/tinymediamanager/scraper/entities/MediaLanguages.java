@@ -112,6 +112,8 @@ public enum MediaLanguages {
   wo("Wolof"),
   yo("Èdè Yorùbá"),
   zh("华语"),
+  zh_CN("大陆简体"),
+  zh_HK("香港繁體"),
   zh_TW("臺灣華語"),
   zu("isiZulu"),
   none("-");
