@@ -18,6 +18,7 @@ x (windows) call the default file manager rather than explorer.exe for opening f
 x do not automatically scroll down in the image chooser
 x catch occasional hiccups in the trailer panel #864
 x fixed layout of the movie settings panel
+x fixed rescaling of the tasklist #892
 
 
 Version 3.1.5
