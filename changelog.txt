@@ -4,6 +4,7 @@ Version 3.1.6
 + added (internal) subtitle language information to the renamer tokens #855
 + added support for double digit stacking patterns (cd12, part12, ..)
 + (movie/TV show) better support for filtering movies by text (regular search, normalized search)
++ added zh_CN and zh_HK to scraper languages #885
 x fixed writing of multiple tags (date_added and user_note) in the NFO file
 x changed video codec HEVC/x265 to the more common name h265
 x fixed occasional UI glitches where artwork did not change
@@ -16,6 +17,9 @@ x force closing of files after subtitle hash calculation
 x (windows) call the default file manager rather than explorer.exe for opening folders
 x do not automatically scroll down in the image chooser
 x catch occasional hiccups in the trailer panel #864
+x fixed layout of the movie settings panel
+x fixed rescaling of the tasklist #892
+x fixed special handling of discart with multi movie folders/disc images
 
 
 Version 3.1.5

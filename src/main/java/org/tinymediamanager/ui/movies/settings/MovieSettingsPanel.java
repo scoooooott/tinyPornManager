@@ -280,13 +280,13 @@ public class MovieSettingsPanel extends JPanel {
         chckbxIncludeExternalAudioStreams = new JCheckBox(BUNDLE.getString("Settings.includeexternalstreamsinnfo"));
         panelMisc.add(chckbxIncludeExternalAudioStreams, "cell 1 3 2 1");
       }
-      JLabel lblCheckImages = new JLabel(BUNDLE.getString("Settings.checkimages"));
-      panelMisc.add(lblCheckImages, "cell 1 3 2 1");
-
       {
+        JLabel lblCheckImages = new JLabel(BUNDLE.getString("Settings.checkimages"));
+        panelMisc.add(lblCheckImages, "cell 1 4 2 1");
+
         JPanel panelCheckImages = new JPanel();
         panelCheckImages.setLayout(new MigLayout("hidemode 1, insets 0", "", ""));
-        panelMisc.add(panelCheckImages, "cell 2 4");
+        panelMisc.add(panelCheckImages, "cell 2 5");
 
         chckbxCheckPoster = new JCheckBox(BUNDLE.getString("mediafiletype.poster"));
         panelCheckImages.add(chckbxCheckPoster, "cell 0 0");

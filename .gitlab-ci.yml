@@ -3,6 +3,7 @@ image: maven:3-jdk-8-alpine
 variables:
   MAVEN_CLI_OPTS: "-s .ci/settings.xml --batch-mode"
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+  DS_DEFAULT_ANALYZERS: "gemnasium-maven"
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
@@ -76,12 +77,12 @@ test:jdk14_openj9:
 include:
   template: Dependency-Scanning.gitlab-ci.yml
 
-dependency_scanning:
+gemnasium-maven-dependency_scanning:
   variables:
     MAVEN_CLI_OPTS: "-DskipTests --batch-mode"
   rules:
     - if: '$QA_BUILD == "true"'
-      when: always
+      when: on_success
 
 # sonarqube analysis
 sonarqube-qa:

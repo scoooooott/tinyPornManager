@@ -552,19 +552,27 @@ public class MovieArtworkHelper {
     }
 
     if (movie.isMultiMovieDir()) {
-      if (MovieModuleManager.SETTINGS.getDiscartFilenames().contains(MovieDiscartNaming.FILENAME_DISC)) {
+      // all *DISC namings should resolve in FILENAME_DISC
+      if (MovieModuleManager.SETTINGS.getDiscartFilenames().contains(MovieDiscartNaming.FILENAME_DISC)
+          || MovieModuleManager.SETTINGS.getDiscartFilenames().contains(MovieDiscartNaming.DISC)) {
         discartnames.add(MovieDiscartNaming.FILENAME_DISC);
       }
-      if (discartnames.isEmpty() && !MovieModuleManager.SETTINGS.getDiscartFilenames().isEmpty()) {
-        discartnames.add(MovieDiscartNaming.FILENAME_DISC);
+      // all *DISCART namings should resolve in FILENAME_DISCART
+      if (MovieModuleManager.SETTINGS.getDiscartFilenames().contains(MovieDiscartNaming.FILENAME_DISCART)
+          || MovieModuleManager.SETTINGS.getDiscartFilenames().contains(MovieDiscartNaming.DISCART)) {
+        discartnames.add(MovieDiscartNaming.FILENAME_DISCART);
       }
     }
     else if (movie.isDisc()) {
-      if (MovieModuleManager.SETTINGS.getDiscartFilenames().contains(MovieDiscartNaming.DISC)) {
+      // all *DISC namings should resolve in DISC
+      if (MovieModuleManager.SETTINGS.getDiscartFilenames().contains(MovieDiscartNaming.FILENAME_DISC)
+              || MovieModuleManager.SETTINGS.getDiscartFilenames().contains(MovieDiscartNaming.DISC)) {
         discartnames.add(MovieDiscartNaming.DISC);
       }
-      if (discartnames.isEmpty() && !MovieModuleManager.SETTINGS.getDiscartFilenames().isEmpty()) {
-        discartnames.add(MovieDiscartNaming.DISC);
+      // all *DISCART namings should resolve in DISCART
+      if (MovieModuleManager.SETTINGS.getDiscartFilenames().contains(MovieDiscartNaming.FILENAME_DISCART)
+              || MovieModuleManager.SETTINGS.getDiscartFilenames().contains(MovieDiscartNaming.DISCART)) {
+        discartnames.add(MovieDiscartNaming.DISCART);
       }
     }
     else {
