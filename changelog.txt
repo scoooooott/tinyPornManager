@@ -19,6 +19,7 @@ x do not automatically scroll down in the image chooser
 x catch occasional hiccups in the trailer panel #864
 x fixed layout of the movie settings panel
 x fixed rescaling of the tasklist #892
+x fixed special handling of discart with multi movie folders/disc images
 
 
 Version 3.1.5
