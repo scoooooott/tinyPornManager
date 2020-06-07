@@ -153,12 +153,15 @@ public class UtilsTest extends BasicTest {
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-cd0.mkv"), "");
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-cd1.mkv"), "cd1");
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-cd12.mkv"), "cd12");
+    assertEqual(Utils.getStackingMarker("Movie Name (2013)-PaRt10.mkv"), "PaRt10");
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-PaRt1.mkv"), "PaRt1");
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-PaRt12.mkv"), "PaRt12");
     assertEqual(Utils.getStackingMarker("Movie Name (2013) DvD1.mkv"), "DvD1");
     assertEqual(Utils.getStackingMarker("Movie Name (2013).disk3.mkv"), "disk3");
+    assertEqual(Utils.getStackingMarker("Movie Name (2013).disk30.mkv"), "disk30");
     assertEqual(Utils.getStackingMarker("Movie Name (2013).disk31.mkv"), "disk31");
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-cd 1.mkv"), "cd 1");
+    assertEqual(Utils.getStackingMarker("Movie Name (2013)-cd 10.mkv"), "cd 10");
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-cd 12.mkv"), "cd 12");
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-PaRt 1.mkv"), "PaRt 1");
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-PaRt 12.mkv"), "PaRt 12");
@@ -169,10 +172,12 @@ public class UtilsTest extends BasicTest {
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-cd1.mkv"), "cd1");
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-cd12.mkv"), "cd12");
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-1of2.mkv"), "1of2");
+    assertEqual(Utils.getStackingMarker("Movie Name (2013)-10of20.mkv"), "10of20");
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-12of21.mkv"), "12of21");
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-1 of 2.mkv"), "1 of 2");
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-12 of 21.mkv"), "12 of 21");
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-(1 of 2).mkv"), "1 of 2");
+    assertEqual(Utils.getStackingMarker("Movie Name (2013)-(10 of 20).mkv"), "10 of 20");
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-(12 of 21).mkv"), "12 of 21");
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-(1-2).mkv"), ""); // nah
     assertEqual(Utils.getStackingMarker("Movie Name (2013)-(12-21).mkv"), ""); // nah
