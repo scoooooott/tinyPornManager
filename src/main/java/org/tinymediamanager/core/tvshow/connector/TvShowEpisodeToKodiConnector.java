@@ -107,7 +107,14 @@ public class TvShowEpisodeToKodiConnector extends TvShowEpisodeGenericXmlConnect
       Element video = document.createElement("video");
 
       Element codec = document.createElement("codec");
-      codec.setTextContent(videoFile.getVideoCodec());
+      // workaround for h265/hevc since Kodi just "knows" hevc
+      // https://forum.kodi.tv/showthread.php?tid=354886&pid=2955329#pid2955329
+      if ("h265".equalsIgnoreCase(videoFile.getVideoCodec())) {
+        codec.setTextContent("HEVC");
+      }
+      else {
+        codec.setTextContent(videoFile.getVideoCodec());
+      }
       video.appendChild(codec);
 
       Element aspect = document.createElement("aspect");
