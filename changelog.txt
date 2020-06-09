@@ -3,6 +3,7 @@ Version 3.1.7
 x fixed detection of multipart files
 x fixed displaying of h265/hevc logo
 x fixed writing of h265/hevc to the NFO file
+x improved handshake with opensubtitles
 
 
 Version 3.1.6
