@@ -21,6 +21,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
 import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.components.TmmLabel;
 
@@ -66,7 +67,8 @@ public class MovieGenreFilter extends AbstractCheckComboBoxMovieUIFilter<MediaGe
   }
 
   private void buildAndInstallMediaGenres() {
-    setValues(MediaGenres.values());
+    // setValues(MediaGenres.values());
+    setValues(MovieList.getInstance().getUsedGenres());
   }
 
   @Override
