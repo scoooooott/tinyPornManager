@@ -19,6 +19,7 @@ package org.tinymediamanager.thirdparty.upnp;
 import java.beans.PropertyChangeSupport;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Collection;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.UUID;
@@ -127,7 +128,7 @@ public class ContentDirectoryService extends AbstractContentDirectoryService {
 
       uMovies.addContainer(grpTitles);
 
-      List<MediaGenres> mgs = MovieList.getInstance().getUsedGenres();
+      Collection<MediaGenres> mgs = MovieList.getInstance().getUsedGenres();
       GenreContainer grpGenres = new GenreContainer(uMovies.getId() + "/g", uMovies, BUNDLE.getString("metatag.genre"), "", mgs.size());
       for (MediaGenres mg : mgs) {
         GenreContainer gc = new GenreContainer(grpGenres.getId() + "/" + mg.getLocalizedName(), grpGenres, mg.getLocalizedName(), "", 0);

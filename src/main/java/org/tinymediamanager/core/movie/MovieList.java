@@ -16,6 +16,7 @@
 package org.tinymediamanager.core.movie;
 
 import static org.tinymediamanager.core.Constants.CERTIFICATION;
+import static org.tinymediamanager.core.Constants.GENRE;
 import static org.tinymediamanager.core.Constants.MEDIA_FILES;
 import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
 import static org.tinymediamanager.core.Constants.TAG;
@@ -27,6 +28,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -87,6 +90,7 @@ public class MovieList extends AbstractModelObject {
 
   private final Set<Integer>            yearsInMovies;
   private final Set<String>             tagsInMovies;
+  private final Set<MediaGenres>        genresInMovies;
   private final Set<String>             videoCodecsInMovies;
   private final Set<String>             videoContainersInMovies;
   private final Set<String>             audioCodecsInMovies;
@@ -107,6 +111,7 @@ public class MovieList extends AbstractModelObject {
 
     yearsInMovies = new CopyOnWriteArraySet<>();
     tagsInMovies = new CopyOnWriteArraySet<>();
+    genresInMovies = new CopyOnWriteArraySet<>();
     videoCodecsInMovies = new CopyOnWriteArraySet<>();
     videoContainersInMovies = new CopyOnWriteArraySet<>();
     audioCodecsInMovies = new CopyOnWriteArraySet<>();
@@ -127,6 +132,9 @@ public class MovieList extends AbstractModelObject {
           case CERTIFICATION:
             updateCertifications(movie);
             break;
+
+          case GENRE:
+            updateGenres(movie);
 
           case TAG:
             updateTags(movie);
@@ -242,16 +250,8 @@ public class MovieList extends AbstractModelObject {
    * 
    * @return MediaGenres list
    */
-  public List<MediaGenres> getUsedGenres() {
-    List<MediaGenres> gl = new ArrayList<>();
-    for (Movie movie : movieList) {
-      for (MediaGenres g : movie.getGenres()) {
-        if (!gl.contains(g)) {
-          gl.add(g);
-        }
-      }
-    }
-    return gl;
+  public Collection<MediaGenres> getUsedGenres() {
+    return Collections.unmodifiableSet(genresInMovies);
   }
 
   /**
@@ -789,6 +789,7 @@ public class MovieList extends AbstractModelObject {
   private void updateLists(Movie movie) {
     updateYear(movie);
     updateTags(movie);
+    updateGenres(movie);
     updateCertifications(movie);
     updateMediaInformationLists(movie);
   }
@@ -806,16 +807,43 @@ public class MovieList extends AbstractModelObject {
   }
 
   /**
+   * Update genres used in movies.
+   *
+   * @param movie
+   *          the movie
+   */
+  private void updateGenres(Movie movie) {
+    boolean dirty = false;
+
+    for (MediaGenres genre : movie.getGenres()) {
+      if (genresInMovies.add(genre)) {
+        dirty = true;
+      }
+    }
+
+    if (dirty) {
+      firePropertyChange(GENRE, null, genresInMovies);
+    }
+  }
+
+  /**
    * Update tags used in movies.
    * 
    * @param movie
    *          the movie
    */
   private void updateTags(Movie movie) {
+    boolean dirty = false;
+
     for (String tag : movie.getTags()) {
       if (tagsInMovies.add(tag)) {
-        firePropertyChange(TAG, null, tagsInMovies);
+        // to avoid firing the event multiple times
+        dirty = true;
       }
+    }
+
+    if (dirty) {
+      firePropertyChange(TAG, null, tagsInMovies);
     }
   }
 
