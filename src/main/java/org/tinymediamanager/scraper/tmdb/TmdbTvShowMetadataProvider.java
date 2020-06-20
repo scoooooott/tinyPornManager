@@ -694,32 +694,21 @@ class TmdbTvShowMetadataProvider {
         LOGGER.debug("checking for title fallback {}", fallbackLanguage);
 
         // get in desired localization
-        String[] val = TmdbMetadataProvider.getValuesFromTranslation(show.translations, language);
+        String[] val = new String[] { "", "" };
+        if (StringUtils.isNotBlank(show.name)) {
+          val[0] = show.name;
+        }
+        if (StringUtils.isNotBlank(show.overview)) {
+          val[1] = show.overview;
+        }
 
         // merge empty ones with fallback
         String[] temp = TmdbMetadataProvider.getValuesFromTranslation(show.translations, fallbackLanguage);
-        if (val[0].isEmpty()) {
+        if (StringUtils.isBlank(val[0])) {
           val[0] = temp[0];
         }
-        if (val[1].isEmpty()) {
+        if (StringUtils.isBlank(val[1])) {
           val[1] = temp[1];
-        }
-
-        // merge empty ones with en-US
-        temp = TmdbMetadataProvider.getValuesFromTranslation(show.translations, Locale.US);
-        if (val[0].isEmpty()) {
-          val[0] = temp[0];
-        }
-        if (val[1].isEmpty()) {
-          val[1] = temp[1];
-        }
-
-        // merge STILL empty ones with scraped
-        if (val[0].isEmpty()) {
-          val[0] = show.name;
-        }
-        if (val[1].isEmpty()) {
-          val[1] = show.overview;
         }
 
         // finally SET the values
@@ -756,32 +745,21 @@ class TmdbTvShowMetadataProvider {
         TvShow s = httpResponse.body();
 
         // get in desired localization
-        String[] val = TmdbMetadataProvider.getValuesFromTranslation(s.translations, language);
+        String[] val = new String[] { "", "" };
+        if (StringUtils.isNotBlank(show.name)) {
+          val[0] = show.name;
+        }
+        if (StringUtils.isNotBlank(show.overview)) {
+          val[1] = show.overview;
+        }
 
         // merge empty ones with fallback
         String[] temp = TmdbMetadataProvider.getValuesFromTranslation(s.translations, fallbackLanguage);
-        if (val[0].isEmpty()) {
+        if (StringUtils.isBlank(val[0])) {
           val[0] = temp[0];
         }
-        if (val[1].isEmpty()) {
+        if (StringUtils.isBlank(val[1])) {
           val[1] = temp[1];
-        }
-
-        // merge empty ones with en-US
-        temp = TmdbMetadataProvider.getValuesFromTranslation(s.translations, Locale.US);
-        if (val[0].isEmpty()) {
-          val[0] = temp[0];
-        }
-        if (val[1].isEmpty()) {
-          val[1] = temp[1];
-        }
-
-        // merge STILL empty ones with scraped
-        if (val[0].isEmpty()) {
-          val[0] = s.name;
-        }
-        if (val[1].isEmpty()) {
-          val[1] = s.overview;
         }
 
         // finally SET the values

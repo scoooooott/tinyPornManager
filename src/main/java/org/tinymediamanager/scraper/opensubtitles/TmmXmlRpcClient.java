@@ -125,7 +125,7 @@ public class TmmXmlRpcClient {
         }
 
         RequestBody body = RequestBody.create(XML, callXml);
-        Request request = new Request.Builder().url(url).header(USER_AGENT, userAgent).post(body).build();
+        Request request = new Request.Builder().url(url).header(USER_AGENT, userAgent).addHeader("Connection", "close").post(body).build();
         Response response = client.newCall(request).execute();
 
         // Try to get the status code from the connection

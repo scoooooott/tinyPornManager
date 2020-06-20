@@ -15,12 +15,16 @@
  */
 package org.tinymediamanager.ui.movies.filters;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
+import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.movie.MovieList;
 import org.tinymediamanager.core.movie.entities.Movie;
 import org.tinymediamanager.ui.components.TmmLabel;
 
@@ -30,10 +34,16 @@ import org.tinymediamanager.ui.components.TmmLabel;
  * @author Manuel Laggner
  */
 public class MovieGenreFilter extends AbstractCheckComboBoxMovieUIFilter<MediaGenres> {
+  private final Comparator<MediaGenres> comparator;
+  private final MovieList               movieList;
+
   public MovieGenreFilter() {
     super();
+    movieList = MovieList.getInstance();
+    comparator = new MediaGenres.MediaGenresComparator();
+
     buildAndInstallMediaGenres();
-    MediaGenres.addListener(evt -> SwingUtilities.invokeLater(this::buildAndInstallMediaGenres));
+    movieList.addPropertyChangeListener(Constants.GENRE, evt -> SwingUtilities.invokeLater(this::buildAndInstallMediaGenres));
   }
 
   @Override
@@ -66,7 +76,9 @@ public class MovieGenreFilter extends AbstractCheckComboBoxMovieUIFilter<MediaGe
   }
 
   private void buildAndInstallMediaGenres() {
-    setValues(MediaGenres.values());
+    ArrayList<MediaGenres> usedGenres = new ArrayList<>(movieList.getUsedGenres());
+    usedGenres.sort(comparator);
+    setValues(usedGenres);
   }
 
   @Override

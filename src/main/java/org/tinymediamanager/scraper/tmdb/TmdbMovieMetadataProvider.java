@@ -240,32 +240,21 @@ class TmdbMovieMetadataProvider {
         LOGGER.debug("checking for title fallback {} for movie {}", fallbackLanguage, movie.title);
 
         // get in desired localization
-        String[] val = TmdbMetadataProvider.getValuesFromTranslation(movie.translations, language);
+        String[] val = new String[] { "", "" };
+        if (StringUtils.isNotBlank(movie.title)) {
+          val[0] = movie.title;
+        }
+        if (StringUtils.isNotBlank(movie.overview)) {
+          val[1] = movie.overview;
+        }
 
         // merge empty ones with fallback
         String[] temp = TmdbMetadataProvider.getValuesFromTranslation(movie.translations, fallbackLanguage);
-        if (val[0].isEmpty()) {
+        if (StringUtils.isBlank(val[0])) {
           val[0] = temp[0];
         }
-        if (val[1].isEmpty()) {
+        if (StringUtils.isBlank(val[1])) {
           val[1] = temp[1];
-        }
-
-        // merge empty ones with en-US
-        temp = TmdbMetadataProvider.getValuesFromTranslation(movie.translations, Locale.US);
-        if (val[0].isEmpty()) {
-          val[0] = temp[0];
-        }
-        if (val[1].isEmpty()) {
-          val[1] = temp[1];
-        }
-
-        // merge STILL empty ones with scraped
-        if (val[0].isEmpty()) {
-          val[0] = movie.title;
-        }
-        if (val[1].isEmpty()) {
-          val[1] = movie.overview;
         }
 
         // finally SET the values
@@ -302,32 +291,21 @@ class TmdbMovieMetadataProvider {
         Movie m = httpResponse.body();
 
         // get in desired localization
-        String[] val = TmdbMetadataProvider.getValuesFromTranslation(m.translations, language);
+        String[] val = new String[] { "", "" };
+        if (StringUtils.isNotBlank(movie.title)) {
+          val[0] = movie.title;
+        }
+        if (StringUtils.isNotBlank(movie.overview)) {
+          val[1] = movie.overview;
+        }
 
         // merge empty ones with fallback
         String[] temp = TmdbMetadataProvider.getValuesFromTranslation(m.translations, fallbackLanguage);
-        if (val[0].isEmpty()) {
+        if (StringUtils.isBlank(val[0])) {
           val[0] = temp[0];
         }
-        if (val[1].isEmpty()) {
+        if (StringUtils.isBlank(val[1])) {
           val[1] = temp[1];
-        }
-
-        // merge empty ones with en-US
-        temp = TmdbMetadataProvider.getValuesFromTranslation(m.translations, Locale.US);
-        if (val[0].isEmpty()) {
-          val[0] = temp[0];
-        }
-        if (val[1].isEmpty()) {
-          val[1] = temp[1];
-        }
-
-        // merge STILL empty ones with scraped
-        if (val[0].isEmpty()) {
-          val[0] = m.title;
-        }
-        if (val[1].isEmpty()) {
-          val[1] = m.overview;
         }
 
         // finally SET the values

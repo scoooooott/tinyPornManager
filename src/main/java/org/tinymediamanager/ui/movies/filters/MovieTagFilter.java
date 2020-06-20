@@ -15,12 +15,13 @@
  */
 package org.tinymediamanager.ui.movies.filters;
 
-import java.beans.PropertyChangeListener;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
 import org.tinymediamanager.core.Constants;
 import org.tinymediamanager.core.movie.MovieList;
@@ -35,16 +36,18 @@ import org.tinymediamanager.ui.components.table.TmmTableFormat;
  * @author Manuel Laggner
  */
 public class MovieTagFilter extends AbstractCheckComboBoxMovieUIFilter<String> {
-  private TmmTableFormat.StringComparator comparator;
-  private MovieList                       movieList = MovieList.getInstance();
-  private Set<String>                     oldTags   = new HashSet<>();
+  private final Comparator<String> comparator;
+  private final MovieList          movieList;
+  private final Set<String>        oldTags;
 
   public MovieTagFilter() {
     super();
     comparator = new TmmTableFormat.StringComparator();
+    movieList = MovieList.getInstance();
+    oldTags = new HashSet<>();
+
     buildAndInstallTagsArray();
-    PropertyChangeListener propertyChangeListener = evt -> buildAndInstallTagsArray();
-    movieList.addPropertyChangeListener(Constants.TAG, propertyChangeListener);
+    movieList.addPropertyChangeListener(Constants.TAG, evt -> SwingUtilities.invokeLater(this::buildAndInstallTagsArray));
   }
 
   @Override
@@ -93,7 +96,7 @@ public class MovieTagFilter extends AbstractCheckComboBoxMovieUIFilter<String> {
       oldTags.clear();
       oldTags.addAll(tags);
 
-      setValues(ListUtils.asSortedList(tags));
+      setValues(ListUtils.asSortedList(tags, comparator));
     }
   }
 

@@ -18,6 +18,7 @@ package org.tinymediamanager.scraper.util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -130,6 +131,23 @@ public class ListUtils {
   public static <T extends Comparable<? super T>> List<T> asSortedList(Collection<T> collection) {
     List<T> list = new ArrayList<>(collection);
     Collections.sort(list);
+    return list;
+  }
+
+  /**
+   * return the provided collection as a sorted list (sorted by the given comparator)
+   *
+   * @param collection
+   *          the collection to sort
+   * @param comparator
+   *          the comparator to use
+   * @param <T>
+   *          the type
+   * @return a sorted {@link ArrayList} of the given collection
+   */
+  public static <T> List<T> asSortedList(Collection<T> collection, Comparator<T> comparator) {
+    List<T> list = new ArrayList<>(collection);
+    list.sort(comparator);
     return list;
   }
 }

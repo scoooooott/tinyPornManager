@@ -169,7 +169,14 @@ public class MovieToXbmcConnector extends MovieGenericXmlConnector {
         Element video = document.createElement("video");
 
         Element codec = document.createElement("codec");
-        codec.setTextContent(vid.getVideoCodec());
+        // workaround for h265/hevc since Kodi just "knows" hevc
+        // https://forum.kodi.tv/showthread.php?tid=354886&pid=2955329#pid2955329
+        if ("h265".equalsIgnoreCase(vid.getVideoCodec())) {
+          codec.setTextContent("HEVC");
+        }
+        else {
+          codec.setTextContent(vid.getVideoCodec());
+        }
         video.appendChild(codec);
 
         Element aspect = document.createElement("aspect");
