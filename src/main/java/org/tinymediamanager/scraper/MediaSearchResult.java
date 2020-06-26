@@ -18,6 +18,7 @@ package org.tinymediamanager.scraper;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -460,7 +461,13 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
     }
     else if (getScore() == arg0.getScore()) {
       // same score - rank on year
-      return Integer.compare(getYear(), arg0.getYear());
+      if (year == arg0.getYear()) {
+        // same year too? we just need to sort by _anything_
+        return Integer.compare(hashCode(), arg0.hashCode());
+      }
+      else {
+        return Integer.compare(getYear(), arg0.getYear());
+      }
     }
     else {
       return -1;
@@ -468,32 +475,19 @@ public class MediaSearchResult implements Comparable<MediaSearchResult> {
   }
 
   @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + ((type == null) ? 0 : type.hashCode());
-    result = prime * result + ((url == null) ? 0 : url.hashCode());
-    return result;
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
+    MediaSearchResult result = (MediaSearchResult) o;
+    return Objects.equals(providerId, result.providerId) && Objects.equals(type, result.type) && Objects.equals(title, result.title)
+        && ids.equals(result.ids);
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
-    MediaSearchResult other = (MediaSearchResult) obj;
-    if (type != other.type)
-      return false;
-    if (url == null) {
-      if (other.url != null)
-        return false;
-    }
-    else if (!url.equals(other.url))
-      return false;
-    return true;
+  public int hashCode() {
+    return Objects.hash(providerId, type, title, ids);
   }
 
   /**

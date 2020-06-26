@@ -6,6 +6,7 @@ x fixed displaying of h265/hevc logo
 x fixed writing of h265/hevc to the NFO file
 x improved handshake with opensubtitles
 x (tmdb) stricter fallback language detection #897
+x fixed deleting search results where title AND year are the same but the movie is different
 
 
 Version 3.1.6
