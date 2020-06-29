@@ -1,6 +1,7 @@
 Version 3.1.7
 =======================
 + (movie) only show used genres in the genre filter
++ added fr_CA to scraper languages
 x fixed detection of multipart files
 x fixed displaying of h265/hevc logo
 x fixed writing of h265/hevc to the NFO file
