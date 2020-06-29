@@ -30,7 +30,7 @@ If you want to help us translating tinyMediaManager, please register at [Weblate
 
 ## Feature requests
 
-Feature requests are also accepted via the [Issue Tracker][2] when made politely and a good case is made for how it will benefit a relatively broad portion of the userbase. If there is a feature or function you wish to see added primarily to suit your use case, it should be approached through a Merge Request or the comment field on the [Donation page][11].
+Feature requests are also accepted via the [Issue Tracker][2] when made politely and a good case is made for how it will benefit a relatively broad portion of the userbase.
 
 [1]: https://gitlab.com/tinyMediaManager/tinyMediaManager/issues/new?issue
 [2]: https://gitlab.com/tinyMediaManager/tinyMediaManager/issues?scope=all&state=all
@@ -41,4 +41,3 @@ Feature requests are also accepted via the [Issue Tracker][2] when made politely
 [8]: https://gitlab.com/tinyMediaManager/tinyMediaManager/merge_requests
 [9]: https://gitlab.com/tinyMediaManager/tinyMediaManager/blob/devel/changelog.txt
 [10]: https://hosted.weblate.org/projects/tinymediamanager/
-[11]: https://donorbox.org/tinymediamanager

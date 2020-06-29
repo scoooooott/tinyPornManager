@@ -177,7 +177,7 @@ public class PersonTable extends TmmTable {
               TmmUIHelper.browseUrl(person.getProfileUrl());
             }
             catch (Exception e1) {
-              LOGGER.error("Donate", e1);
+              LOGGER.error("Opening actor profile", e1);
               MessageManager.instance.pushMessage(new Message(Message.MessageLevel.ERROR, person.getProfileUrl(), "message.erroropenurl",
                   new String[] { ":", e1.getLocalizedMessage() }));
             }
