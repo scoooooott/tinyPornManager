@@ -2,9 +2,6 @@
 
 tinyMediaManager (https://www.tinymediamanager.org) full featured media manager to organize and clean up your media library. It is designed to allow you to create/view/edit the metadata, artwork and file structure for your media files used by Kodi (formerly XBMC), Plex, MediaPortal, Emby, Jellyfin and other compatible media center software. As a Java application it is truly cross-platform and will run on Windows, Linux and MacOS (and possibly more).
 
-tinyMediaManager is free to use. If you appreciate all the effort that has gone into this application then consider a donation. While it's neither expected nor required it is highly appreciated!
-[![Donate][2]][3]
-
 ## [Features][4]
 
 - Automatic updates
@@ -62,8 +59,6 @@ tinyMediaManager is compiled using Apache's build automation tool, [Maven][15]. 
 After that you will find the packaged build in the folder `dist`
 
 [1]: https://www.tinymediamanager.org
-[2]: https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif
-[3]: https://www.tinymediamanager.org/donate/
 [4]: https://www.tinymediamanager.org/features/
 [5]: https://www.tinymediamanager.org/download/
 [6]: https://www.tinymediamanager.org/download/prerelease
