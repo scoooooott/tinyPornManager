@@ -60,6 +60,7 @@ public enum MediaLanguages {
   fa("فارسی"),
   fi("Suomi"),
   fr("Française"),
+  fr_CA("Français canadien"),
   ff("Fulfulde"),
   ga("Gaeilge"),
   gl("Galego"),
