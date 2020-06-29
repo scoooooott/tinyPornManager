@@ -40,12 +40,8 @@ public class IconManager {
   public static final ImageIcon            TOOLBAR_ABOUT_HOVER         = loadImage("icn_about_hover.png");
   public static final ImageIcon            TOOLBAR_ADD_MOVIE_SET       = loadImage("icn_add_collection.png");
   public static final ImageIcon            TOOLBAR_ADD_MOVIE_SET_HOVER = loadImage("icn_add_collection_hover.png");
-  public static final ImageIcon            TOOLBAR_DONATE              = loadImage("icn_donate.png");
-  public static final ImageIcon            TOOLBAR_DONATE_HOVER        = loadImage("icn_donate_hover.png");
   public static final ImageIcon            TOOLBAR_EDIT                = loadImage("icn_edit.png");
   public static final ImageIcon            TOOLBAR_EDIT_HOVER          = loadImage("icn_edit_hover.png");
-  public static final ImageIcon            TOOLBAR_EXPORT              = loadImage("icn_export.png");
-  public static final ImageIcon            TOOLBAR_EXPORT_HOVER        = loadImage("icn_export_hover.png");
   public static final ImageIcon            TOOLBAR_LOGO                = loadImage("icn_logo_toolbar.png");
   public static final ImageIcon            TOOLBAR_REFRESH             = loadImage("icn_refresh.png");
   public static final ImageIcon            TOOLBAR_REFRESH_HOVER       = loadImage("icn_refresh_hover.png");
@@ -61,7 +57,6 @@ public class IconManager {
   // packaged icons
   public static final ImageIcon            STAR_FILLED                 = loadImage("star-filled.png");
   public static final ImageIcon            STAR_EMPTY                  = loadImage("star-empty.png");
-  public static final ImageIcon            UNWATCHED                   = loadImage("unwatched.png");
 
   // font awesome icons for actions in the popup menu
   public static final ImageIcon            ADD                         = createFontAwesomeIcon('\uF067', ICON_COLOR);

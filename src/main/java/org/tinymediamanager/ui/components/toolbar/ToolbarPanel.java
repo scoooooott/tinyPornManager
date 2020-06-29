@@ -57,7 +57,6 @@ import org.tinymediamanager.ui.actions.ClearHttpCacheAction;
 import org.tinymediamanager.ui.actions.ClearImageCacheAction;
 import org.tinymediamanager.ui.actions.CreateDesktopFileAction;
 import org.tinymediamanager.ui.actions.DocsAction;
-import org.tinymediamanager.ui.actions.DonateAction;
 import org.tinymediamanager.ui.actions.ExportLogAction;
 import org.tinymediamanager.ui.actions.FaqAction;
 import org.tinymediamanager.ui.actions.FeedbackAction;
@@ -101,7 +100,7 @@ public class ToolbarPanel extends JPanel {
     JPanel panelCenter = new JPanel();
     add(panelCenter, BorderLayout.CENTER);
     panelCenter.setOpaque(false);
-    panelCenter.setLayout(new MigLayout("insets 0", "[5lp:n][]20lp[]20lp[]20lp[]20lp[][grow][]15lp[]15lp[]15lp[]15lp[][5lp:n]", "[]1lp[]5lp"));
+    panelCenter.setLayout(new MigLayout("insets 0", "[5lp:n][]20lp[]20lp[]20lp[]20lp[][grow][]15lp[]15lp[]15lp[][5lp:n]", "[]1lp[]5lp"));
 
     panelCenter.add(new JLabel(IconManager.TOOLBAR_LOGO), "cell 1 0 1 2,alignx center");
 
@@ -130,10 +129,6 @@ public class ToolbarPanel extends JPanel {
     JButton btnInfo = new ToolbarButton(IconManager.TOOLBAR_ABOUT, IconManager.TOOLBAR_ABOUT_HOVER, infoPopupMenu);
     panelCenter.add(btnInfo, "cell 10 0,alignx center,aligny bottom");
 
-    JButton btnDonate = new ToolbarButton(IconManager.TOOLBAR_DONATE, IconManager.TOOLBAR_DONATE_HOVER);
-    btnDonate.setAction(new DonateAction());
-    panelCenter.add(btnDonate, "cell 11 0,alignx center,aligny bottom");
-
     menuUpdate = new ToolbarMenu(BUNDLE.getString("Toolbar.update"));
     panelCenter.add(menuUpdate, "cell 2 1,alignx center");
 
@@ -154,9 +149,6 @@ public class ToolbarPanel extends JPanel {
 
     ToolbarMenu menuHelp = new ToolbarMenu(BUNDLE.getString("Toolbar.help"), infoPopupMenu);
     panelCenter.add(menuHelp, "cell 10 1,alignx center");
-
-    JLabel lblDonate = new ToolbarLabel(BUNDLE.getString("Toolbar.donate"), e -> btnDonate.getAction().actionPerformed(e));
-    panelCenter.add(lblDonate, "cell 11 1,alignx center");
 
     JPanel panelEast = new JPanel();
     add(panelEast, BorderLayout.EAST);
