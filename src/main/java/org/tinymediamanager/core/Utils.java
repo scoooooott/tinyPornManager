@@ -69,7 +69,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.FileExistsException;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -80,6 +79,7 @@ import org.tinymediamanager.Globals;
 import org.tinymediamanager.LaunchUtil;
 import org.tinymediamanager.core.Message.MessageLevel;
 import org.tinymediamanager.scraper.util.StrgUtils;
+import org.tinymediamanager.scraper.util.UrlUtil;
 
 /**
  * The Class Utils.
@@ -1624,9 +1624,14 @@ public class Utils {
   }
 
   public static String getArtworkExtension(String url) {
-    String ext = FilenameUtils.getExtension(url);
+    String ext = UrlUtil.getExtension(url).toLowerCase(Locale.ROOT);
     if (StringUtils.isBlank(ext) || "tbn".equals(ext)) {
       // no extension or tbn? fall back to jpg
+      ext = "jpg";
+    }
+
+    // just cross-check for supported extensions (others will be written as jpg regardless of its real type)
+    if (!MediaFileHelper.SUPPORTED_ARTWORK_FILETYPES.contains(ext)) {
       ext = "jpg";
     }
 
