@@ -102,7 +102,7 @@ public class TheTvDbMetadataProvider implements ITvShowMetadataProvider, ITvShow
   private static final String                                 TMM_API_KEY         = ApiKey
       .decryptApikey("7bHHg4k0XhRERM8xd3l+ElhMUXOA5Ou4vQUEzYLGHt8=");
   private static final String                                 FALLBACK_LANGUAGE   = "fallbackLanguage";
-  private static final CacheMap<Integer, List<MediaMetadata>> episodeListCacheMap = new CacheMap<>(600, 5);
+  private static final CacheMap<Integer, List<MediaMetadata>> episodeListCacheMap = new CacheMap<>(60, 10);
   private static final MediaProviderInfo                      providerInfo        = createMediaProviderInfo();
 
   private TheTvdb                                             tvdb;

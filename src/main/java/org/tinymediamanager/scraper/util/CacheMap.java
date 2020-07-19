@@ -15,10 +15,11 @@
  */
 package org.tinymediamanager.scraper.util;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -61,21 +62,13 @@ public class CacheMap<K, T> {
 
     // the thread for cleanup
     if (timeToLive > 0 && cleanupInterval > 0) {
-      Thread t = new Thread(() -> {
-        try {
-          while (true) {
-            Thread.sleep(cleanupInterval * 1000);
-            cleanup();
-          }
+      Timer timer = new Timer(true);
+      timer.schedule(new TimerTask() {
+        @Override
+        public void run() {
+          cleanup();
         }
-        catch (InterruptedException ignored) {
-          // just end the thread
-          Thread.currentThread().interrupt();
-        }
-      });
-
-      t.setDaemon(true);
-      t.start();
+      }, cleanupInterval * 1000, cleanupInterval * 1000);
     }
   }
 
@@ -157,22 +150,9 @@ public class CacheMap<K, T> {
    */
   public void cleanup(boolean force) {
     long now = System.currentTimeMillis();
-    ArrayList<K> deleteKey = new ArrayList<>((cachedObjects.size() / 2) + 1);
 
     readWriteLock.writeLock().lock();
-    for (Map.Entry<K, CacheObject> entry : cachedObjects.entrySet()) {
-      K key = entry.getKey();
-      CacheObject c = entry.getValue();
-
-      if (c != null && ((now > (timeToLive * 1000 + c.lastAccessed)) || force)) {
-        deleteKey.add(key);
-      }
-    }
-
-    for (K key : deleteKey) {
-      cachedObjects.remove(key);
-      Thread.yield();
-    }
+    cachedObjects.entrySet().removeIf(entry -> (now > (timeToLive * 1000 + entry.getValue().lastAccessed)) || force);
     readWriteLock.writeLock().unlock();
   }
 }
