@@ -27,6 +27,8 @@ import static org.tinymediamanager.core.Constants.GENRE;
 import static org.tinymediamanager.core.Constants.GENRES_AS_STRING;
 import static org.tinymediamanager.core.Constants.HAS_NFO_FILE;
 import static org.tinymediamanager.core.Constants.IMDB;
+import static org.tinymediamanager.core.Constants.MEDIA_FILES;
+import static org.tinymediamanager.core.Constants.MEDIA_INFORMATION;
 import static org.tinymediamanager.core.Constants.REMOVED_EPISODE;
 import static org.tinymediamanager.core.Constants.RUNTIME;
 import static org.tinymediamanager.core.Constants.SEASON;
@@ -184,6 +186,8 @@ public class TvShow extends MediaEntity implements IMediaInformation {
 
         switch (evt.getPropertyName()) {
           case TAG:
+          case MEDIA_INFORMATION:
+          case MEDIA_FILES:
             firePropertyChange(evt);
             break;
 

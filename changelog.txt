@@ -3,6 +3,7 @@ Version 3.1.8
 x removed a memory leak in IMDB scraper
 x do not write fanarts twice in multi movie folders #956
 x fixate artwork extension if not detectable #953
+x propagate mediainformation events from episode to TV show
 
 
 Version 3.1.7
