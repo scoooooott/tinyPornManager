@@ -57,7 +57,6 @@ import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.NothingFoundException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
-import org.tinymediamanager.scraper.http.InMemoryCachedUrl;
 import org.tinymediamanager.scraper.http.OnDiskCachedUrl;
 import org.tinymediamanager.scraper.http.Url;
 import org.tinymediamanager.scraper.interfaces.IMediaArtworkProvider;
@@ -123,18 +122,11 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
     // http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=4242
     Document doc;
 
-    InMemoryCachedUrl cachedUrl;
-    try {
-      cachedUrl = new InMemoryCachedUrl("http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id);
-    }
-    catch (Exception e) {
-      LOGGER.error("failed to get TV show metadata: {}", e.getMessage());
-      throw new ScrapeException(e);
-    }
-
     try {
       trackConnections();
-      try (InputStream is = cachedUrl.getInputStream()) {
+      Url url = new OnDiskCachedUrl("http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id, 1,
+          TimeUnit.DAYS);
+      try (InputStream is = url.getInputStream()) {
         doc = Jsoup.parse(is, UrlUtil.UTF_8, "", Parser.xmlParser());
       }
     }
@@ -494,17 +486,10 @@ public class AniDBMetadataProvider implements ITvShowMetadataProvider, IMediaArt
 
     Document doc = null;
 
-    InMemoryCachedUrl url;
-    try {
-      url = new InMemoryCachedUrl("http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id);
-    }
-    catch (Exception e) {
-      LOGGER.error("error getting episode list: {}", e.getMessage());
-      throw new ScrapeException(e);
-    }
-
     try {
       trackConnections();
+      Url url = new OnDiskCachedUrl("http://api.anidb.net:9001/httpapi?request=anime&client=tinymediamanager&clientver=2&protover=1&aid=" + id, 1,
+          TimeUnit.DAYS);
       try (InputStream is = url.getInputStream()) {
         doc = Jsoup.parse(is, UrlUtil.UTF_8, "", Parser.xmlParser());
       }
