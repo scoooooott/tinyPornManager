@@ -4,6 +4,7 @@ x removed a memory leak in IMDB scraper
 x do not write fanarts twice in multi movie folders #956
 x fixate artwork extension if not detectable #953
 x propagate mediainformation events from episode to TV show
+x write cleaner trailer urls to the Kodi NFO
 x more aggressive caching of AniDB requests
 
 
