@@ -7,6 +7,7 @@ x propagate mediainformation events from episode to TV show
 x write cleaner trailer urls to the Kodi NFO
 x more aggressive caching of AniDB requests
 x do not open two windows when clicking on a link
+x do not crash at startup with an inconsistent movie set <-> linkage
 
 
 Version 3.1.7

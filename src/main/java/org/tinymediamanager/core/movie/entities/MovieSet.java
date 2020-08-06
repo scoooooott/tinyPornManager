@@ -95,7 +95,7 @@ public class MovieSet extends MediaEntity {
     // link with movies
     for (UUID uuid : movieIds) {
       Movie movie = MovieList.getInstance().lookupMovie(uuid);
-      if (movie != null) {
+      if (movie != null && movie.getMovieSet() == this) {
         movies.add(movie);
       }
     }
