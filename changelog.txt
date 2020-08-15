@@ -9,6 +9,7 @@ x more aggressive caching of AniDB requests
 x do not open two windows when clicking on a link
 x do not crash at startup with an inconsistent movie set <-> linkage
 x (tv show) added some missing menu items to the context menu #934
+x (movie) pre-select the right NFO file names in the NFO settings panel
 
 
 Version 3.1.7
