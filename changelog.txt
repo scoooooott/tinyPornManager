@@ -1,5 +1,6 @@
 Version 3.1.8
 =======================
++ updated libmediainfo to 20.08
 + updated Movie Picker template (thx @bastienpruvost)
 x removed a memory leak in IMDB scraper
 x do not write fanarts twice in multi movie folders #956
