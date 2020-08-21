@@ -32,6 +32,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tinymediamanager.Globals;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.util.AesUtil;
 
@@ -42,7 +43,6 @@ import org.tinymediamanager.scraper.util.AesUtil;
  */
 public class MediaProviderConfig {
   private static final Logger                          LOGGER        = LoggerFactory.getLogger(MediaProviderConfig.class);
-  private static final String                          CONFIG_FOLDER = "data";
   private static final String                          SALT          = "3FF2EB019C627B9652257EAAD71812269851E84295370EB132882F88C0A59A76";
   private static final String                          IV            = "E17D2C8927726ACE1E7510A1BDD3D439";
 
@@ -60,7 +60,7 @@ public class MediaProviderConfig {
    * Should be called right after defining the configuration objects!
    */
   public void load() {
-    loadFromDir(CONFIG_FOLDER);
+    loadFromDir(Globals.DATA_FOLDER);
   }
 
   /**
@@ -89,7 +89,7 @@ public class MediaProviderConfig {
   }
 
   public void save() {
-    saveToDir(CONFIG_FOLDER);
+    saveToDir(Globals.DATA_FOLDER);
   }
 
   /**
