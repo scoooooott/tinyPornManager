@@ -409,7 +409,7 @@ public class MovieArtworkHelper {
       if (MovieModuleManager.SETTINGS.getFanartFilenames().contains(MovieFanartNaming.FILENAME_FANART2)) {
         fanartnames.add(MovieFanartNaming.FILENAME_FANART2);
       }
-      if (fanartnames.isEmpty() || !MovieModuleManager.SETTINGS.getFanartFilenames().isEmpty()) {
+      if (fanartnames.isEmpty() && !MovieModuleManager.SETTINGS.getFanartFilenames().isEmpty()) {
         fanartnames.add(MovieFanartNaming.FILENAME_FANART);
       }
     }

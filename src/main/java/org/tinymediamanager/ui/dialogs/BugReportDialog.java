@@ -94,14 +94,14 @@ public class BugReportDialog extends TmmDialog {
     btnCreateIssue.addActionListener(e -> {
       // create the url for github
       String baseUrl = "https://gitlab.com/tinyMediaManager/tinyMediaManager/issues/new?issue[description]=";
-      String params = "Version: " + ReleaseInfo.getRealVersion();
-      params += "\nBuild: " + ReleaseInfo.getRealBuildDate();
-      params += "\nOS: " + System.getProperty("os.name") + " " + System.getProperty("os.version");
-      params += "\nJDK: " + System.getProperty("java.version") + " " + System.getProperty("os.arch") + " " + System.getProperty("java.vendor");
-      params += "\n\n__What is the actual behaviour?__\n\n";
-      params += "\n\n__What is the expected behaviour?__\n\n";
-      params += "\n\n__Steps to reproduce:__\n\n";
-      params += "\n\n__Additional__\nHave you attached the logfile from the day it happened?";
+      String params = "Version: " + ReleaseInfo.getRealVersion() + "  ";
+      params += "\nBuild: " + ReleaseInfo.getRealBuildDate() + "  ";
+      params += "\nOS: " + System.getProperty("os.name") + " " + System.getProperty("os.version") + "  ";
+      params += "\nJDK: " + System.getProperty("java.version") + " " + System.getProperty("os.arch") + " " + System.getProperty("java.vendor") + "  ";
+      params += "\n\n__What is the actual behaviour?__  \n\n";
+      params += "\n\n__What is the expected behaviour?__  \n\n";
+      params += "\n\n__Steps to reproduce:__  \n\n";
+      params += "\n\n__Additional__  \nHave you attached the logfile from the day it happened?";
 
       String url = "";
       try {

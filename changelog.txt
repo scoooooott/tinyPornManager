@@ -1,3 +1,21 @@
+Version 3.1.8
+=======================
++ updated libmediainfo to 20.08
++ updated Movie Picker template (thx @bastienpruvost)
+x removed a memory leak in IMDB scraper
+x do not write fanarts twice in multi movie folders #956
+x fixate artwork extension if not detectable #953
+x propagate mediainformation events from episode to TV show
+x write cleaner trailer urls to the Kodi NFO
+x more aggressive caching of AniDB requests
+x set character and path encoding at startup #930
+x do not open two windows when clicking on a link
+x do not crash at startup with an inconsistent movie set <-> linkage
+x (tv show) added some missing menu items to the context menu #934
+x (movie) pre-select the right NFO file names in the NFO settings panel
+x save scraper config in the custom data folder too #962
+
+
 Version 3.1.7
 =======================
 + (movie) only show used genres in the genre filter

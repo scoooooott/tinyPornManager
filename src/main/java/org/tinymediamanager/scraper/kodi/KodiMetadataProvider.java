@@ -34,7 +34,7 @@ public class KodiMetadataProvider implements IKodiMetadataProvider {
   public static final String                      ID           = "kodi";
   private static MediaProviderInfo                providerInfo = new MediaProviderInfo(ID, "kodi.tv", "Generic Kodi type scraper");
   // cache one hour
-  protected static final CacheMap<String, String> XML_CACHE    = new CacheMap<>(60 * 60, 60);
+  protected static final CacheMap<String, String> XML_CACHE    = new CacheMap<>(60, 10);
 
   public KodiMetadataProvider() {
     // preload scrapers

@@ -44,6 +44,9 @@ import org.w3c.dom.Element;
  */
 public class MovieToKodiConnector extends MovieGenericXmlConnector {
   private static final Logger LOGGER = LoggerFactory.getLogger(MovieToKodiConnector.class);
+  private static final Pattern YOUTUBE_VIDEO_ID_PATTERN = Pattern.compile("https?://.*youtube..*/watch\\?v=([^&]+).*$");
+  private static final Pattern HD_TRAILERS_PATTERN      = Pattern
+      .compile("https?://.*(apple.com|yahoo-redir|yahoo.com|youtube.com|moviefone.com|ign.com|hd-trailers.net|aol.com).*");
 
   public MovieToKodiConnector(Movie movie) {
     super(movie);
@@ -138,15 +141,13 @@ public class MovieToKodiConnector extends MovieGenericXmlConnector {
   private String prepareTrailerForKodi(MediaTrailer trailer) {
     // youtube trailer are stored in a special notation: plugin://plugin.video.youtube/?action=play_video&videoid=<ID>
     // parse out the ID from the url and store it in the right notation
-    Pattern pattern = Pattern.compile("https{0,1}://.*youtube..*/watch\\?v=(.*)$");
-    Matcher matcher = pattern.matcher(trailer.getUrl());
+    Matcher matcher = YOUTUBE_VIDEO_ID_PATTERN.matcher(trailer.getUrl());
     if (matcher.matches()) {
       return "plugin://plugin.video.youtube/?action=play_video&videoid=" + matcher.group(1);
     }
 
     // other urls are handled by the hd-trailers.net plugin
-    pattern = Pattern.compile("https{0,1}://.*(apple.com|yahoo-redir|yahoo.com|youtube.com|moviefone.com|ign.com|hd-trailers.net|aol.com).*");
-    matcher = pattern.matcher(trailer.getUrl());
+    matcher = HD_TRAILERS_PATTERN.matcher(trailer.getUrl());
     if (matcher.matches()) {
       try {
         return "plugin://plugin.video.hdtrailers_net/video/" + matcher.group(1) + "/" + URLEncoder.encode(trailer.getUrl(), "UTF-8");

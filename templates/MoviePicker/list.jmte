@@ -72,7 +72,7 @@
                               <b-input-group-prepend>
                                 <i class="fas fa-search"></i>
                               </b-input-group-prepend>
-                              <b-form-input class="input-group-text" placeholder="Search" v-model="search"></b-form-input>
+                              <b-form-input id='text_search' class="input-group-text" placeholder="Search" v-model="search"></b-form-input>
                             </b-input-group>
 
                             <b-button v-on:click="toggle_selected_only()">
@@ -120,8 +120,19 @@
                     <div class="text-zone">
                       <img v-bind:src="activeMovie.poster" class="poster"/>
                     	<div class="movie_details">
-                            <b-badge style="float:right;" variant="secondary" v-html="activeMovie.watched ? 'Seen' : 'Unseen'"></b-badge>
+                            <div style="float:right;">
+                              <b-badge v-if="activeMovie.imdb_id" variant="secondary">
+                                <a target="_blank" v-bind:href="'https://www.imdb.com/title/'+activeMovie.imdb_id">IMDB</a>
+                              </b-badge>
+                              <b-badge v-if="activeMovie.trakt_id" variant="secondary">
+                                <a target="_blank" v-bind:href="'https://trakt.tv/movies/'+activeMovie.trakt_id">Trakt</a>
+                              </b-badge>
+                              <b-badge v-if="activeMovie.tmdb_id" variant="secondary">
+                                <a target="_blank" v-bind:href="'https://www.themoviedb.org/movie/'+activeMovie.tmdb_id">TMDB</a>
+                              </b-badge>
+                            </div>
                             <div class="title">{{activeMovie.title}}</div>
+                            <b-badge style="float:right;" variant="secondary" v-html="activeMovie.watched ? 'Seen' : 'Unseen'"></b-badge>
 
                             <div class="subtitle">
                                 {{activeMovie.year}} | {{minutes_to_readable(activeMovie.file_duration)}} | {{activeMovie.genres}} | <i class='far fa-star'></i> {{activeMovie.rating}}
@@ -168,6 +179,9 @@
                   poster: "images/${movie;copyArtwork(type=POSTER, escape=true)}", 
                   fanart: "url('images/${movie;copyArtwork(type=FANART, escape=true)}')", 
                   file_duration: "${movie.runtime}",
+                  imdb_id:  "${movie.ids.imdb}",
+                  trakt_id: "${movie.ids.trakt}",
+                  tmdb_id:  "${movie.ids.tmdb}",
                 },
               ${end}
 			    	]
@@ -189,6 +203,9 @@
             },
             navigate: function(){ 
               currentIndex = this.result_movies.indexOf(this.clickedMovie); 
+
+              if ( document.activeElement === document.getElementById('text_search'))
+                return
 
               if ((event.keyCode == 38) || (event.keyCode == 40) || (event.keyCode == 32)) {
                 event.preventDefault();
@@ -236,6 +253,13 @@
             select_movie: function(movie){
               movie.selected = !movie.selected;
               this.$forceUpdate();
+              if ((!movie.selected) && (this.selected_only)) {
+                _.pull(result_movies, movie)
+                if (result_movies.length > 0) {
+                  this.clickedMovie = result_movies[0]
+                  this.activeMovie = result_movies[0]
+                }
+              }
             },
             toggle_selected_only: function(){
               this.selected_only = !this.selected_only;
@@ -322,11 +346,19 @@
               }
 
               if (this.sort == 'title') {
-                return _.sortBy(result_movies, this.sort);
+                result_movies = _.sortBy(result_movies, this.sort);
               }
               else {
-                return _.sortBy(result_movies, this.sort).reverse();
+                result_movies = _.sortBy(result_movies, this.sort).reverse();
               }
+
+              if ((!_.includes(result_movies, this.activeMovie)) && (result_movies.length > 0))
+                this.activeMovie = result_movies[0]
+
+              if ((!_.includes(result_movies, this.clickedMovie)) && (result_movies.length > 0))
+                this.clickedMovie = result_movies[0]
+              
+              return result_movies
               
             }
   			  }

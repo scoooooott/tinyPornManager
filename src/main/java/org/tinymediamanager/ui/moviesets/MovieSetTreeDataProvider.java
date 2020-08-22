@@ -149,9 +149,12 @@ public class MovieSetTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
       MovieSet movieSet = (MovieSet) parent.getUserObject();
       ArrayList<TmmTreeNode> nodes = new ArrayList<>();
       for (Movie movie : movieSet.getMovies()) {
-        TmmTreeNode node = new MovieTreeNode(movie, this);
-        putNodeToCache(movie, node);
-        nodes.add(node);
+        // cross check if that movie is also in the movie set
+        if (movie.getMovieSet() == movieSet) {
+          TmmTreeNode node = new MovieTreeNode(movie, this);
+          putNodeToCache(movie, node);
+          nodes.add(node);
+        }
       }
       return nodes;
     }
@@ -242,18 +245,20 @@ public class MovieSetTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
       Object userObject2 = o2.getUserObject();
 
       if (userObject1 instanceof MovieSet && userObject2 instanceof MovieSet) {
-        MovieSet MovieSet1 = (MovieSet) userObject1;
-        MovieSet MovieSet2 = (MovieSet) userObject2;
+        MovieSet movieSet1 = (MovieSet) userObject1;
+        MovieSet movieSet2 = (MovieSet) userObject2;
         if (stringCollator != null) {
-          return stringCollator.compare(MovieSet1.getTitleSortable().toLowerCase(Locale.ROOT), MovieSet2.getTitleSortable().toLowerCase(Locale.ROOT));
+          return stringCollator.compare(movieSet1.getTitleSortable().toLowerCase(Locale.ROOT), movieSet2.getTitleSortable().toLowerCase(Locale.ROOT));
         }
-        return MovieSet1.getTitleSortable().compareToIgnoreCase(MovieSet2.getTitleSortable());
+        return movieSet1.getTitleSortable().compareToIgnoreCase(movieSet2.getTitleSortable());
       }
 
       if (userObject1 instanceof Movie && userObject2 instanceof Movie) {
-        if (((Movie) userObject1).getMovieSet() != null) {
-          List<Movie> moviesInSet = ((Movie) userObject1).getMovieSet().getMovies();
-          return moviesInSet.indexOf(userObject1) - moviesInSet.indexOf(userObject2);
+        Movie movie1 = (Movie) userObject1;
+        Movie movie2 = (Movie) userObject2;
+        if (movie1.getMovieSet() != null && movie1.getMovieSet() == movie2.getMovieSet()) {
+          List<Movie> moviesInSet = movie1.getMovieSet().getMovies();
+          return moviesInSet.indexOf(movie1) - moviesInSet.indexOf(movie2);
         }
       }
 
@@ -261,7 +266,7 @@ public class MovieSetTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
     }
   }
 
-  class MovieSetTreeNode extends TmmTreeNode {
+  static class MovieSetTreeNode extends TmmTreeNode {
     private static final long serialVersionUID = -1316609340104597133L;
 
     public MovieSetTreeNode(Object userObject, TmmTreeDataProvider dataProvider) {
@@ -286,7 +291,7 @@ public class MovieSetTreeDataProvider extends TmmTreeDataProvider<TmmTreeNode> {
     }
   }
 
-  class MovieTreeNode extends TmmTreeNode {
+  static class MovieTreeNode extends TmmTreeNode {
     private static final long serialVersionUID = -5734830011018805194L;
 
     public MovieTreeNode(Object userObject, TmmTreeDataProvider dataProvider) {

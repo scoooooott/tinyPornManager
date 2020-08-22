@@ -101,7 +101,7 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       "AUDIO_TS", "JAR", "$RECYCLE.BIN", "RECYCLER", "SYSTEM VOLUME INFORMATION", "@EADIR", "ADV_OBJ");
 
   // skip folders starting with a SINGLE "." or "._" (exception for movie ".45")
-  private static final String         skipRegex      = "^[.@](?!45)[\\w@]+.*";
+  private static final String         skipRegex      = "(?i)^[.@](?!45|buelos)[\\w@]+.*";
   private static Pattern              video3DPattern = Pattern.compile("(?i)[ ._\\(\\[-]3D[ ._\\)\\]-]?");
 
   private List<String>                dataSources;

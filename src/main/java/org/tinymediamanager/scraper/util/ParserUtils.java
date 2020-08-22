@@ -48,10 +48,10 @@ public class ParserUtils {
       "cd7", "cd8", "cd9", "complete", "custom", "dc", "disc1", "disc2", "disc3", "disc4", "disc5", "disc6", "disc7", "disc8", "disc9", "divx",
       "divx5", "dl", "docu", "dsr", "dsrip", "dts", "dtv", "dubbed", "dutch", "dvd", "dvd1", "dvd2", "dvd3", "dvd4", "dvd5", "dvd6", "dvd7", "dvd8",
       "dvd9", "dvdivx", "dvdrip", "dvdscr", "dvdscreener", "emule", "etm", "extended", "fragment", "fs", "fps", "german", "h264", "hd", "hddvd",
-      "hdrip", "hdtv", "hdtvrip", "hevc", "hrhd", "hrhdtv", "ind", "internal", "ld", "limited", "ma", "md", "multi", "multisubs", "nfo", "nfofix", "ntg",
-      "ntsc", "ogg", "ogm", "pal", "pdtv", "proper", "pso", "r3", "r5", "read", "repack", "rerip", "remux", "retail", "roor", "rs", "rsvcd",
-      "screener", "se", "subbed", "svcd", "swedish", "tc", "telecine", "telesync", "ts", "truehd", "uhd", "uncut", "unrated", "vcf", "vhs", "vhsrip", 
-	  "webdl", "webrip", "workprint", "ws", "www", "x264", "xf", "xvid", "xvidvd", "xxx" };
+      "hdrip", "hdtv", "hdtvrip", "hevc", "hrhd", "hrhdtv", "ind", "internal", "ld", "limited", "ma", "md", "multi", "multisubs", "nfo", "nfofix",
+      "ntg", "ntsc", "ogg", "ogm", "pal", "pdtv", "proper", "pso", "r3", "r5", "read", "repack", "rerip", "remux", "retail", "roor", "rs", "rsvcd",
+      "screener", "se", "subbed", "svcd", "swedish", "tc", "telecine", "telesync", "ts", "truehd", "uhd", "uncut", "unrated", "vcf", "vhs", "vhsrip",
+      "webdl", "webrip", "workprint", "ws", "www", "x264", "xf", "xvid", "xvidvd", "xxx", "8bit", "10bit", "12bit" };
 
   // clean before splitting (needs delimiter in front!)
   public static final String[] CLEANWORDS = { "24\\.000", "23\\.976", "23\\.98", "24\\.00" };

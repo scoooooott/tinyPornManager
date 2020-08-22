@@ -4,54 +4,53 @@ body, html {
     margin: 0;
 }
 
-.app {
+.app{
     height: 100%;
 }
-
-.header {
-    height: 40px;
+.header{
+    height:40px;
     line-height: 40px;
     font-size: 14px;
     background-color: #171717 !important;
     color: #919191;
     position: absolute;
-    width: 100%;
+    width:100%;
     opacity: 1;
-    z-index: 999;
+    z-index:999;
     vertical-align: middle;
 }
 
-.header form {
+.header form{
     height: 100%;
     padding-left: 10px;
 }
 
-.header form.right {
+.header form.right{
     float: right;
 }
 
-.header .dropdown-menu {
+.header .dropdown-menu{
     background-color: #171717 !important;
     padding: 10px 0px;
 }
 
-.header .dropdown-item {
+.header .dropdown-item{
     background-color: #171717 !important;
     color: #919191;
     line-height: 15px;
     font-size: 15px;
 }
 
-.header .dropdown .btn {
+.header .dropdown .btn{
     background-color: transparent;
     border: none;
 }
 
-.header .btn {
+.header .btn{
     color: #919191;
 }
 
-.header select {
+.header select{
     background-color: #222 !important;
     height: 26px;
     line-height: 26px;
@@ -63,15 +62,15 @@ body, html {
     margin: 0px 10px;
 }
 
-.header .input-group-prepend {
-    background-color: #222;
-    height: 26px;
+.header .input-group-prepend{
+    background-color: #222; 
+    height: 26px; 
     padding-top: 6px;
 }
 
-.header input {
+.header input{
     font-size: 14px;
-    height: 26px;
+    height:26px;
     background-color: #222 !important;
     border: 0px solid;
     margin-right: 10px;
@@ -92,21 +91,21 @@ body, html {
     border: 0;
 }
 
-#movies_list {
+#movies_list{
     padding: 0px;
     height: 100vh;
     overflow: scroll;
-    background-color: #111111;
-    color: #919191;
+    background-color:#111111;
+    color:#919191;
     padding-top: 40px;
 }
 
-#movies_list .list-group-item {
+#movies_list .list-group-item{
     font-size: 14px;
-    height: 36px;
-    border-bottom: 1px solid #303030;
-    background-color: #111111;
-    color: #DDDDDD;
+    height:36px;
+    border-bottom:1px solid #303030;
+    background-color:#111111;
+    color:#DDDDDD;
     opacity: 0.9;
     cursor: pointer;
     white-space: nowrap;
@@ -115,46 +114,46 @@ body, html {
     padding-left: 3px;
     font-weight: 200;
     display: flex;
-    align-items: center;
+    align-items: center; 
 }
 
-#movies_list .list-group-item:hover {
+#movies_list .list-group-item:hover{
     background-color: #1C1C1C;
-    color: white;
+    color:white;
 }
 
-#movies_list .list-group-item.clicked {
+#movies_list .list-group-item.clicked{
     background-color: #1C1C1C;
     padding-left: 3px;
     font-weight: 600;
-    color: white;
+    color:white;
 }
 
-#movies_list .preselect {
+#movies_list .preselect{
     padding-right: 5px;
     line-height: 14px;
-    font-size: 14px;
+    font-size: 14px; 
     color: #6c757d;
 }
 
-#movies_list .preselect.yes {
-    color: white !important;
+#movies_list .preselect.yes{
+    color: white!important;
 }
 
 #movies_list .order {
     text-decoration: underline;
 }
 
-.row {
+.row{
     margin-left: 0px;
     margin-right: 0px;
 }
 
-.poster {
+.poster{
     vertical-align: bottom;
     margin-right: 20px;
-    height: 250px;
-    float: left;
+    height:250px;
+    float:left;
     position: relative;
     bottom: 110px;
     border: 1px solid #111111;
@@ -162,11 +161,11 @@ body, html {
 
 .title {
     font-size: 30px;
-    color: #DDDDDD;
+    color:#DDDDDD;
 }
 
 .subtitle {
-    font-size: 16px;
+    font-size:16px;
     opacity: 0.7;
 }
 
@@ -208,14 +207,18 @@ body, html {
     padding: 15px;
     margin: 15px;
     background-color: #111111;
-    color: #919191;
+    color:#919191;
     opacity: 0.9;
-    height: 170px;
+    height:170px;
     width: -webkit-fill-available;
 }
 
 .badge {
-    background-color: #111111;
+    background-color:#111111;
     border: 1px solid #919191;
+    color: #919191;
+}
+
+.badge a {
     color: #919191;
 }

@@ -122,6 +122,8 @@ class MovieScraperNfoSettingsPanel extends JPanel {
     cbMovieNfoFilename1.removeItemListener(checkBoxListener);
     cbMovieNfoFilename2.removeItemListener(checkBoxListener);
 
+    clearSelection(cbMovieNfoFilename1, cbMovieNfoFilename2);
+
     // NFO filenames
     List<MovieNfoNaming> movieNfoFilenames = settings.getNfoFilenames();
     if (movieNfoFilenames.contains(MovieNfoNaming.FILENAME_NFO)) {

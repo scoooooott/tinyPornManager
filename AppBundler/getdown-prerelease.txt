@@ -83,6 +83,7 @@ jvmarg = [windows] -Dsun.java2d.d3d=false
 jvmarg = -splash:splashscreen.png
 jvmarg = -Djava.net.preferIPv4Stack=true
 jvmarg = -Dfile.encoding=UTF-8
+jvmarg = -Dsun.jnu.encoding=UTF-8
 jvmarg = -XX:CompileCommand=exclude,ca/odell/glazedlists/impl/filter/TextMatchers,matches
 jvmarg = -XX:CompileCommand=exclude,ca/odell/glazedlists/impl/filter/BoyerMooreCaseInsensitiveTextSearchStrategy,indexOf
 jvmarg = [mac os x] -Dapple.awt.graphics.UseQuartz=true

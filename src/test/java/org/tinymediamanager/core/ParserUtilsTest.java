@@ -12,7 +12,9 @@ public class ParserUtilsTest extends BasicTest {
 
   @Test
   public void testNamingDetection() {
+    setTraceLogging();
 
+    assertEqual("Rocketman | 2019", detectTY("Rocketman-2019-MULTi-UHD-BluRay-2160p-HDR-TrueHD-Atmos-7-1-HEVC-DDR.mkv"));
     assertEqual("Harry Potter 7 Part 1", detectTY("Harry Potter 7 - Part 1.mkv")); // PartX is NOT removed
     assertEqual("Harry Potter 7 Part 2", detectTY("Harry Potter 7 - Part 2 CD1.mkv"));
     assertEqual("Safety Not Guaranteed", detectTY("Safety ,,Not Guaranteed.mkv"));
@@ -77,6 +79,7 @@ public class ParserUtilsTest extends BasicTest {
     assertEqual("Wehe Wenn Sie Losgelassen | 1958", detectTY("Wehe.wenn.sie.losgelassen.1958.German.HDTVRip.x264-AIDA"));
     assertEqual("Z For Zachariah | 2015", detectTY("Z.for.Zachariah.3D.2015.German.DL.1080p.BluRay.x264-STEREOSCOPiC"));
     assertEqual("Transformers | 2007", detectTY("Transformers.2007.2160p.BluRay.REMUX.HEVC.DTS-HD.MA.TrueHD.7.1.Atmos.mkv"));
+    // assertEqual("What the Waters Left Behind | 2017", detectTY("What.the.Waters.Left.Behind.2017.SPANISH.ENSUBBED"));
 
     // OTR recording naming
     assertEqual("Linkin Park Road To Revolution Und Live From Madison Square Garden",
@@ -90,6 +93,7 @@ public class ParserUtilsTest extends BasicTest {
     // ok, we cannot do anything for the episode numbers..
     // assertEqual("Simon & Simon S02e13", detectTY("Simon & Simon - S02E13\\VIDEO_TS\\VTS_01_1.VOB"));
     // assertEqual("", detectTY("Dexter S01E01 S01E02 S01E03\\VIDEO_TS\\VIDEO_TS.VOB"));
+    assertEqual("Sons Of Anarchy S03e09", detectTY("Sons_of_Anarchy_S03E09_10bit_1080p_BluRay_6CH.mkv"));
     assertEqual("Theshowname S01e01 Episode Name", detectTY("TheShowName S01E01 Episode Name (1920x1080) [UploaderTag].mp4"));
     assertEqual("Blblub S08e01 Messy S08e01 Messy", detectTY("BlBlub - S08E01 - Messy S08E01 - Messy.mp4"));
     assertEqual("Brooklyn Nine Nine S02e17", detectTY("Brooklyn Nine-Nine S02E17 HDTV x264 AAC E-Subs [GWC].mp4"));

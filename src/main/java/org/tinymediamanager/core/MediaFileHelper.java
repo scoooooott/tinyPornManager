@@ -1644,7 +1644,8 @@ public class MediaFileHelper {
     if (StringUtils.containsIgnoreCase(videoCodec, "MPEG")) {
       // search for the version
       try {
-        int version = Integer.parseInt(getMediaInfo(miSnapshot, MediaInfo.StreamKind.Video, 0, "Format_Version"));
+        // Version 2
+        int version = Integer.parseInt(getMediaInfo(miSnapshot, MediaInfo.StreamKind.Video, 0, "Format_Version").replaceAll("\\D*", ""));
         videoCodec = "MPEG-" + version;
       }
       catch (Exception e) {

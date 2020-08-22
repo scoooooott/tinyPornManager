@@ -149,11 +149,7 @@ public class TinyMediaManager {
       LOGGER.info("java.webswing    : true");
     }
 
-    // START character encoding debug
-    System.setProperty("file.encoding", "UTF-8");
-    System.setProperty("sun.jnu.encoding", "UTF-8");
     debugCharacterEncoding("current encoding : ");
-    // END character encoding debug
 
     // set GUI default language
     Locale.setDefault(Utils.getLocaleFromLanguage(Globals.settings.getLanguage()));
