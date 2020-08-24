@@ -14,6 +14,7 @@ x do not crash at startup with an inconsistent movie set <-> linkage
 x (tv show) added some missing menu items to the context menu #934
 x (movie) pre-select the right NFO file names in the NFO settings panel
 x save scraper config in the custom data folder too #962
+x (imdb) fixed to scrape shows without season 1
 
 
 Version 3.1.7
