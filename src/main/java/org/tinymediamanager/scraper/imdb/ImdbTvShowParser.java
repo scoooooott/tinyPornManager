@@ -455,18 +455,19 @@ public class ImdbTvShowParser extends ImdbParser {
     List<MediaMetadata> episodes = new ArrayList<>();
 
     // parse the episodes from the ratings overview page (e.g.
-    // http://www.imdb.com/title/tt0491738/epdate )
+    // http://www.imdb.com/title/tt0491738/episodes )
     String imdbId = options.getImdbId();
     if (StringUtils.isBlank(imdbId)) {
       throw new MissingIdException(MediaMetadata.IMDB);
     }
 
     // we need to parse every season for its own _._
-    // first the specials
+    // get the page for the first season (this is available in 99,9% of all cases)
+
     Document doc;
     Url url;
     try {
-      url = new InMemoryCachedUrl(IMDB_SITE + "/title/" + imdbId + "/epdate");
+      url = new InMemoryCachedUrl(IMDB_SITE + "/title/" + imdbId + "/episodes?season=1");
       url.addHeader("Accept-Language", getAcceptLanguage(options.getLanguage().getLanguage(), getCountry().getAlpha2()));
     }
     catch (Exception e) {
@@ -474,9 +475,22 @@ public class ImdbTvShowParser extends ImdbParser {
       throw new ScrapeException(e);
     }
 
+    List<String> availableSeasons = new ArrayList<>();
+
     try (InputStream is = url.getInputStream()) {
       doc = Jsoup.parse(is, "UTF-8", "");
-      parseEpisodeList(0, episodes, doc);
+      parseEpisodeList(1, episodes, doc);
+
+      // get the other seasons out of the select option
+      Element select = doc.getElementById("bySeason");
+      if (select != null) {
+        for (Element option : select.getElementsByTag("option")) {
+          String value = option.attr("value");
+          if (StringUtils.isNotBlank(value) && !"1".equals(value)) {
+            availableSeasons.add(value);
+          }
+        }
+      }
     }
     catch (InterruptedException | InterruptedIOException e) {
       // do not swallow these Exceptions
@@ -488,10 +502,19 @@ public class ImdbTvShowParser extends ImdbParser {
     }
 
     // then parse every season
-    for (int i = 1;; i++) {
+    for (String seasonAsString : availableSeasons) {
+      int season;
+      try {
+        season = Integer.parseInt(seasonAsString);
+      }
+      catch (Exception e) {
+        LOGGER.debug("could not parse season number - {}", e.getMessage());
+        continue;
+      }
+
       Url seasonUrl;
       try {
-        seasonUrl = new InMemoryCachedUrl(IMDB_SITE + "/title/" + imdbId + "/epdate?season=" + i);
+        seasonUrl = new InMemoryCachedUrl(IMDB_SITE + "/title/" + imdbId + "/epdate?season=" + season);
         seasonUrl.addHeader("Accept-Language", getAcceptLanguage(options.getLanguage().getLanguage(), getCountry().getAlpha2()));
       }
       catch (Exception e) {
@@ -502,7 +525,7 @@ public class ImdbTvShowParser extends ImdbParser {
       try (InputStream is = seasonUrl.getInputStream()) {
         doc = Jsoup.parse(is, "UTF-8", "");
         // if the given season number and the parsed one does not match, break here
-        if (!parseEpisodeList(i, episodes, doc)) {
+        if (!parseEpisodeList(season, episodes, doc)) {
           break;
         }
       }

@@ -155,6 +155,11 @@ public class OmdbMetadataProvider implements IMovieMetadataProvider, IMovieImdbM
       throw new NothingFoundException();
     }
 
+    // set ids
+    if (MetadataUtil.isValidImdbId(result.imdbID)) {
+      metadata.setId(MediaMetadata.IMDB, result.imdbID);
+    }
+
     metadata.setTitle(result.title);
     try {
       metadata.setYear(Integer.parseInt(result.year));
