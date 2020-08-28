@@ -15,6 +15,7 @@ x (tv show) added some missing menu items to the context menu #934
 x (movie) pre-select the right NFO file names in the NFO settings panel
 x save scraper config in the custom data folder too #962
 x (imdb) fixed to scrape shows without season 1
+x (omdb) set IMDB id when scraping with OMDb API
 
 
 Version 3.1.7
