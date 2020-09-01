@@ -4,7 +4,7 @@
 
 	<groupId>org.tinymediamanager</groupId>
 	<artifactId>tinyMediaManager</artifactId>
-	<version>3.1.8-SNAPSHOT</version>
+	<version>3.1.8</version>
 
 	<name>tinyMediaManager</name>
 	<description>a media management tool written in Java</description>
@@ -63,7 +63,7 @@
 		<url>https://gitlab.com/tinyMediaManager/${project.artifactId}</url>
 		<connection>scm:git:git@gitlab.com:tinyMediaManager/${project.artifactId}.git</connection>
 		<developerConnection>scm:git:git@gitlab.com:tinyMediaManager/${project.artifactId}.git</developerConnection>
-		<tag>HEAD</tag>
+		<tag>tinyMediaManager-3.1.8</tag>
 	</scm>
 	<ciManagement>
 		<system>GitLab CI</system>
