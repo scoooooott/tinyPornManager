@@ -93,74 +93,77 @@ public class TvShowArtworkHelper {
     }
 
     String url = show.getArtworkUrl(type);
-    if (StringUtils.isBlank(url)) {
-      return;
-    }
-
-    List<IFileNaming> fileNamings = new ArrayList<>();
-
-    switch (type) {
-      case FANART:
-        fileNamings.addAll(TvShowModuleManager.SETTINGS.getFanartFilenames());
-        break;
-
-      case POSTER:
-        fileNamings.addAll(TvShowModuleManager.SETTINGS.getPosterFilenames());
-        break;
-
-      case BANNER:
-        fileNamings.addAll(TvShowModuleManager.SETTINGS.getBannerFilenames());
-        break;
-
-      case LOGO:
-        fileNamings.addAll(TvShowModuleManager.SETTINGS.getLogoFilenames());
-        break;
-
-      case CLEARLOGO:
-        fileNamings.addAll(TvShowModuleManager.SETTINGS.getClearlogoFilenames());
-        break;
-
-      case CHARACTERART:
-        fileNamings.addAll(TvShowModuleManager.SETTINGS.getCharacterartFilenames());
-        break;
-
-      case CLEARART:
-        fileNamings.addAll(TvShowModuleManager.SETTINGS.getClearartFilenames());
-        break;
-
-      case THUMB:
-        fileNamings.addAll(TvShowModuleManager.SETTINGS.getThumbFilenames());
-        break;
-
-      case KEYART:
-        fileNamings.addAll(TvShowModuleManager.SETTINGS.getKeyartFilenames());
-        break;
-
-      default:
+    try {
+      if (StringUtils.isBlank(url)) {
         return;
-    }
-
-    int i = 0;
-    for (IFileNaming naming : fileNamings) {
-      boolean firstImage = false;
-      String filename = naming.getFilename("", Utils.getArtworkExtension(url));
-
-      if (StringUtils.isBlank(filename)) {
-        continue;
       }
 
-      if (++i == 1) {
-        firstImage = true;
+      List<IFileNaming> fileNamings = new ArrayList<>();
+
+      switch (type) {
+        case FANART:
+          fileNamings.addAll(TvShowModuleManager.SETTINGS.getFanartFilenames());
+          break;
+
+        case POSTER:
+          fileNamings.addAll(TvShowModuleManager.SETTINGS.getPosterFilenames());
+          break;
+
+        case BANNER:
+          fileNamings.addAll(TvShowModuleManager.SETTINGS.getBannerFilenames());
+          break;
+
+        case LOGO:
+          fileNamings.addAll(TvShowModuleManager.SETTINGS.getLogoFilenames());
+          break;
+
+        case CLEARLOGO:
+          fileNamings.addAll(TvShowModuleManager.SETTINGS.getClearlogoFilenames());
+          break;
+
+        case CHARACTERART:
+          fileNamings.addAll(TvShowModuleManager.SETTINGS.getCharacterartFilenames());
+          break;
+
+        case CLEARART:
+          fileNamings.addAll(TvShowModuleManager.SETTINGS.getClearartFilenames());
+          break;
+
+        case THUMB:
+          fileNamings.addAll(TvShowModuleManager.SETTINGS.getThumbFilenames());
+          break;
+
+        case KEYART:
+          fileNamings.addAll(TvShowModuleManager.SETTINGS.getKeyartFilenames());
+          break;
+
+        default:
+          return;
       }
 
-      // get image in thread
-      MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(show, url, MediaFileType.getMediaArtworkType(type), filename, firstImage);
-      TmmTaskManager.getInstance().addImageDownloadTask(task);
-    }
+      int i = 0;
+      for (IFileNaming naming : fileNamings) {
+        boolean firstImage = false;
+        String filename = naming.getFilename("", Utils.getArtworkExtension(url));
 
-    // if that has been a local file, remove it from the artwork urls after we've already started the download(copy) task
-    if (url.startsWith("file:")) {
-      show.removeArtworkUrl(type);
+        if (StringUtils.isBlank(filename)) {
+          continue;
+        }
+
+        if (++i == 1) {
+          firstImage = true;
+        }
+
+        // get image in thread
+        MediaEntityImageFetcherTask task = new MediaEntityImageFetcherTask(show, url, MediaFileType.getMediaArtworkType(type), filename, firstImage);
+        TmmTaskManager.getInstance().addImageDownloadTask(task);
+      }
+    }
+    finally {
+      // if that has been a local file, remove it from the artwork urls after we've already started the download(copy) task
+      if (url.startsWith("file:")) {
+        show.removeArtworkUrl(type);
+      }
     }
   }
 

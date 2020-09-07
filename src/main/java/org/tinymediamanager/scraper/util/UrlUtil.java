@@ -215,13 +215,21 @@ public class UrlUtil {
     String path = "";
     // PATH:
     // /photos-ak-snc1/v315/224/13/659629384/s659629384_752969_4472.jpg?asdf=jklo
-    try {
-      url = getURIEncoded(url).toString();
-      path = new URL(url).getPath();
+
+    // file we're facing a file:/ uri, just remove that
+    if (url.startsWith("file:/")) {
+      path = url.replace("file:/", "");
     }
-    catch (Exception e) {
-      return ret;
+    else {
+      try {
+        url = getURIEncoded(url).toString();
+        path = new URL(url).getPath();
+      }
+      catch (Exception e) {
+        return ret;
+      }
     }
+
     // Checks for both forward and/or backslash
     // NOTE:**While backslashes are not supported in URL's
     // most browsers will autoreplace them with forward slashes
