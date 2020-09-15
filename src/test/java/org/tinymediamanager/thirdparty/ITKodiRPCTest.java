@@ -41,6 +41,8 @@ public class ITKodiRPCTest {
 
   @Test
   public void testUris() {
+    testUri("smb://user:pass@localhost/videos/movie (2020)");
+    testUri("user:pass@localhost/videos/movie (2020)");
     testUri(".a");
     testUri(
         "zip:///C%3a%5cUsers%5cmamk%5cVideos%5cFilme%5cAvatar%20-%20Aufbruch%20nach%20Pandora%20(2009).zip/Avatar - Aufbruch nach Pandora (2009)/Avatar - Aufbruch nach Pandora (2009) (7.0) cd1.avi");
@@ -161,7 +163,7 @@ public class ITKodiRPCTest {
     // Upnp.getInstance().createUpnpService();
     // Upnp.getInstance().sendPlayerSearchRequest();
     try {
-      HostConfig config = new HostConfig("127.0.0.1", 8080, "kodi", "kodi");
+      HostConfig config = new HostConfig("192.168.0.4", 8080, "kodi", "kodi");
       KodiRPC.getInstance().connect(config);
     }
     catch (ApiException e) {

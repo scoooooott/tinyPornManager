@@ -167,7 +167,7 @@ public class KodiRPC {
     send(call);
     if (call.getResults() != null && !call.getResults().isEmpty()) {
       for (ListModel.SourceItem res : call.getResults()) {
-        LOGGER.trace("Kodi datasource: {}", res.file);
+        LOGGER.debug("Kodi datasource: {}", res.file);
         this.videodatasourcesAsString.add(res.file);
 
         SplitUri s = new SplitUri(res.file, "", res.label, cm.getHostConfig().getAddress());

@@ -71,6 +71,13 @@ public class SplitUri {
 
   public SplitUri(String ds, String file, String label, String ipForLocal) {
 
+    // if we have a user:pass@server format - strip it off
+    if (file.contains("@")) {
+      file = file.substring(file.indexOf('@') + 1);
+      // and since we do not have a schema, but we ARE remote, add a dummy one
+      file = "smb://" + file;
+    }
+
     // remove trailing slashes
     if (ds.matches(".*[\\\\/]$")) {
       ds = ds.substring(0, ds.length() - 1);
