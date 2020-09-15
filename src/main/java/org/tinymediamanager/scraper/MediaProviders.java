@@ -28,7 +28,6 @@ import org.tinymediamanager.scraper.hdtrailersnet.HDTrailersNetTrailerProvider;
 import org.tinymediamanager.scraper.imdb.ImdbMetadataProvider;
 import org.tinymediamanager.scraper.interfaces.IMediaProvider;
 import org.tinymediamanager.scraper.kodi.KodiMetadataProvider;
-import org.tinymediamanager.scraper.kyradb.KyradbMetadataProvider;
 import org.tinymediamanager.scraper.moviemeter.MovieMeterMetadataProvider;
 import org.tinymediamanager.scraper.mpdbtv.MpdbMetadataProvider;
 import org.tinymediamanager.scraper.ofdb.OfdbMetadataProvider;
@@ -89,7 +88,6 @@ public class MediaProviders {
     // ARTWORK
     /////////////////////////////////////////////
     loadProvider(FanartTvMetadataProvider.class);
-    loadProvider(KyradbMetadataProvider.class);
     // tmdb is already loaded in the movie block
     // tvdb is alrey loaded in the TV show block
 
