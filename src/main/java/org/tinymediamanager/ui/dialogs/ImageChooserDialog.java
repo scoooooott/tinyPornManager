@@ -1046,7 +1046,6 @@ public class ImageChooserDialog extends TmmDialog {
 
         catch (ScrapeException e) {
           LOGGER.error("getArtwork", e);
-          MessageDialog.showExceptionWindow(e);
         }
         catch (MissingIdException e) {
           LOGGER.debug("could not fetch artwork: {}", e.getIds());
