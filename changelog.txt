@@ -1,7 +1,8 @@
 Version 3.1.9
 =======================
-x take the correct artwork extension when using local files in the image chooser
 x removed kyradb.com artwork provider
+x take the correct artwork extension when using local files in the image chooser
+x several enhancements to the AniDB scraper
 
 
 Version 3.1.8
