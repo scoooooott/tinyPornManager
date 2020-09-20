@@ -72,7 +72,11 @@ After that you will find the packaged build in the folder `dist`
 [14]: /CONTRIBUTING.md
 [15]: https://maven.apache.org/
 
+## Funny things
+https://github.com/tim232385/WebVideoBot.git
+https://github.com/amrishparmar/NSFW-to-ASCII-Generator.git
 
+## Reference
 https://www.google.com/search?q=pornhub+png+logo+wiki&rlz=1C1CHBD_zh-cnUS905US905&oq=pornhub+png+logo+wiki&aqs=chrome..69i57.11373j0j1&sourceid=chrome&ie=UTF-8
 https://upload.wikimedia.org/wikipedia/commons/7/7c/Logo_of_Pornhub.png
 https://www.pornhub.com/video/search?search=%E5%90%8C%E6%B5%8E%E5%A4%A7%E5%AD%A6%E9%AB%98%E6%95%B0&p=professional&hd=1&min_duration=10&max_duration=30&page=2
