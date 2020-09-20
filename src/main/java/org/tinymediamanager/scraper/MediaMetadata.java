@@ -47,8 +47,10 @@ public class MediaMetadata {
   // some well known ids
   public static final String             IMDB                 = "imdb";
   public static final String             TMDB                 = "tmdb";
+  public static final String PORNHUB = "pornhub";
   public static final String             TVDB                 = "tvdb";
   public static final String             TMDB_SET             = "tmdbSet";
+  public static final String             PORNHUB_SET             = "pornhubSet";
 
   // some meta ids for TV show scraping
   public static final String             EPISODE_NR           = "episodeNr";

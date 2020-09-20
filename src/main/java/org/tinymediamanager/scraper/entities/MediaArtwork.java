@@ -265,6 +265,9 @@ public class MediaArtwork {
   public int getTmdbId() {
     return tmdbId;
   }
+  public int getPornhubId() {
+    return tmdbId;
+  }
 
   /**
    * Set the assigned TMDB id for this artwork
@@ -274,6 +277,9 @@ public class MediaArtwork {
    */
   public void setTmdbId(int tmdbId) {
     this.tmdbId = tmdbId;
+  }
+  public void setPornhubId(int id) {
+    this.tmdbId=id;
   }
 
   /**

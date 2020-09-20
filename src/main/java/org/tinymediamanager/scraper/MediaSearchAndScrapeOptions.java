@@ -282,6 +282,16 @@ public abstract class MediaSearchAndScrapeOptions {
     }
     return 0;
   }
+  public int getPornhubId() {
+    Integer id = getIdAsInteger(MediaMetadata.PORNHUB);
+    if (id == null || id == 0) {
+      id = getIdAsInteger("pornhubId");
+    }
+    if (id != null) {
+      return id;
+    }
+    return 0;
+  }
 
   /**
    * Set the imdb id - just a convenience method to set the Id for the provider imdb
@@ -301,6 +311,10 @@ public abstract class MediaSearchAndScrapeOptions {
    */
   public void setTmdbId(int tmdbId) {
     ids.put(MediaMetadata.TMDB, tmdbId);
+  }
+
+  public void setPornhubId(int tmdbId) {
+    ids.put(MediaMetadata.PORNHUB, tmdbId);
   }
 
   /**

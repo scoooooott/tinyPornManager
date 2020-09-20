@@ -33,6 +33,7 @@ import org.tinymediamanager.scraper.mpdbtv.MpdbMetadataProvider;
 import org.tinymediamanager.scraper.ofdb.OfdbMetadataProvider;
 import org.tinymediamanager.scraper.omdb.OmdbMetadataProvider;
 import org.tinymediamanager.scraper.opensubtitles.OpensubtitlesMetadataProvider;
+import org.tinymediamanager.scraper.pornhub.PornhubMetadataProvider;
 import org.tinymediamanager.scraper.thetvdb.TheTvDbMetadataProvider;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.scraper.trakt.TraktMetadataProvider;
@@ -64,6 +65,7 @@ public class MediaProviders {
     // MOVIE
     /////////////////////////////////////////////
     loadProvider(TmdbMetadataProvider.class);
+    loadProvider(PornhubMetadataProvider.class);
     loadProvider(ImdbMetadataProvider.class);
     loadProvider(MovieMeterMetadataProvider.class);
     loadProvider(OfdbMetadataProvider.class);
