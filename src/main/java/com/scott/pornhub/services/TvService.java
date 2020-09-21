@@ -36,20 +36,19 @@ public interface TvService {
      */
     @GET("tv/{tv_id}")
     Call<TvShow> tv(
-            @Path("tv_id") int tvShowId,
+            @Path("tv_id") String tvShowId,
             @Query("language") String language
     );
 
     /**
      * Get the primary information about a TV series by id.
-     *
-     * @param tvShowId         A Tv Show TMDb id.
+     *  @param tvShowId         A Tv Show TMDb id.
      * @param language         <em>Optional.</em> ISO 639-1 code.
      * @param appendToResponse <em>Optional.</em> extra requests to append to the result.
      */
     @GET("tv/{tv_id}")
     Call<TvShow> tv(
-            @Path("tv_id") int tvShowId,
+            @Path("tv_id") String tvShowId,
             @Query("language") String language,
             @Query("append_to_response") AppendToResponse appendToResponse
     );
@@ -156,13 +155,12 @@ public interface TvService {
 
     /**
      * Get the images (posters and backdrops) for a TV series.
-     *
-     * @param tvShowId A Tv Show TMDb id.
+     *  @param tvShowId A Tv Show TMDb id.
      * @param language <em>Optional.</em> ISO 639-1 code.
      */
     @GET("tv/{tv_id}/images")
     Call<Images> images(
-            @Path("tv_id") int tvShowId,
+            @Path("tv_id") String tvShowId,
             @Query("language") String language
     );
 
@@ -218,13 +216,12 @@ public interface TvService {
 
     /**
      * Get the videos that have been added to a TV series (trailers, opening credits, etc...)
-     *
-     * @param tvShowId A Tv Show TMDb id.
+     *  @param tvShowId A Tv Show TMDb id.
      * @param language <em>Optional.</em> ISO 639-1 code.
      */
     @GET("tv/{tv_id}/videos")
     Call<Videos> videos(
-            @Path("tv_id") int tvShowId,
+            @Path("tv_id") String tvShowId,
             @Query("language") String language
     );
 

@@ -63,20 +63,14 @@ class PornhubArtworkProvider {
     LOGGER.debug("getArtwork(): {}", options);
     MediaArtworkType artworkType = options.getArtworkType();
 
-    int pornhubId = options.getPornhubId();
-    String imdbId = options.getImdbId();
+    String pornhubId = options.getPornhubId();
 
     // for movie sets we need another if
     if (options.getMediaType() == MediaType.MOVIE_SET && options.getIdAsInt(MediaMetadata.PORNHUB_SET) > 0) {
-      pornhubId = options.getIdAsInt(MediaMetadata.PORNHUB_SET);
+      pornhubId = options.getIdAsString(MediaMetadata.PORNHUB_SET);
     }
 
-    if (pornhubId == 0 && StringUtils.isNotEmpty(imdbId)) {
-      // try to get pornhubId via imdbId
-      pornhubId = new PornhubMetadataProvider().getPornhubIdFromImdbId(imdbId, options.getMediaType());
-    }
-
-    if (pornhubId == 0) {
+    if (StringUtils.isEmpty(pornhubId)) {
       LOGGER.warn("Cannot get artwork - neither imdb/pornhub set");
       throw new MissingIdException(MediaMetadata.PORNHUB, MediaMetadata.IMDB);
     }
@@ -138,7 +132,7 @@ class PornhubArtworkProvider {
     return artwork;
   }
 
-  private List<MediaArtwork> prepareArtwork(Images pornhubArtwork, MediaArtworkType artworkType, int pornhubId,
+  private List<MediaArtwork> prepareArtwork(Images pornhubArtwork, MediaArtworkType artworkType, String pornhubId,
       ArtworkSearchAndScrapeOptions options) {
     List<MediaArtwork> artwork = new ArrayList<>();
     String baseUrl = PornhubMetadataProvider.configuration.images.base_url;

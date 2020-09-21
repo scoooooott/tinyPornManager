@@ -61,15 +61,10 @@ class PornhubTrailerProvider {
     LOGGER.debug("getTrailers(): {}", options);
     List<MediaTrailer> trailers = new ArrayList<>();
 
-    int pornhubId = options.getPornhubId();
+    String pornhubId = options.getPornhubId();
     String imdbId = options.getImdbId();
 
-    if (pornhubId == 0 && StringUtils.isNotEmpty(imdbId)) {
-      // try to get pornhubId via imdbId
-      pornhubId = new PornhubMetadataProvider().getPornhubIdFromImdbId(imdbId, options.getMediaType());
-    }
-
-    if (pornhubId == 0) {
+    if (StringUtils.isEmpty(pornhubId)) {
       LOGGER.warn("not possible to scrape from PORNHUB - no pornhubId found");
       throw new MissingIdException(MediaMetadata.PORNHUB, MediaMetadata.IMDB);
     }

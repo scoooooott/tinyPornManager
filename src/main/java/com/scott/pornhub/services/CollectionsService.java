@@ -14,13 +14,12 @@ public interface CollectionsService {
 
     /**
      * Get the basic collection information for a specific collection id.
-     *
-     * @param collectionId TMDb id.
+     *  @param collectionId TMDb id.
      * @param language     <em>Optional.</em> ISO 639-1 code.
      */
     @GET("collection/{collection_id}")
     Call<Collection> summary(
-            @Path("collection_id") int collectionId,
+            @Path("collection_id") String collectionId,
             @Query("language") String language
     );
 
@@ -56,13 +55,12 @@ public interface CollectionsService {
 
     /**
      * Get the images (posters and backdrops) for a specific collection id.
-     *
-     * @param collectionId TMDb id.
+     *  @param collectionId TMDb id.
      * @param language     <em>Optional.</em> ISO 639-1 code.
      */
     @GET("collection/{collection_id}/images")
     Call<Images> images(
-            @Path("collection_id") int collectionId,
+            @Path("collection_id") String collectionId,
             @Query("language") String language
     );
 }

@@ -34,15 +34,14 @@ public interface TvSeasonsService {
 
     /**
      * Get the primary information about a TV season by its season number.
-     *
-     * @param tvShowId           A Tv Show TvSeason TMDb id.
+     *  @param tvShowId           A Tv Show TvSeason TMDb id.
      * @param tvShowSeasonNumber TvSeason Number.
      * @param language           <em>Optional.</em> ISO 639-1 code.
      * @param appendToResponse   <em>Optional.</em> extra requests to append to the result.
      */
     @GET("tv/{tv_id}/season/{season_number}")
     Call<TvSeason> season(
-            @Path("tv_id") int tvShowId,
+            @Path("tv_id") String tvShowId,
             @Path("season_number") int tvShowSeasonNumber,
             @Query("language") String language,
             @Query("append_to_response") AppendToResponse appendToResponse

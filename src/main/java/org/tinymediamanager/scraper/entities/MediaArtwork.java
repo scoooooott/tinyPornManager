@@ -38,7 +38,7 @@ import org.tinymediamanager.scraper.util.StrgUtils;
 public class MediaArtwork {
   private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages", new UTF8Control());
 
-  /**
+    /**
    * The different types of artwork we know
    * 
    * @author Manuel Laggner
@@ -126,6 +126,7 @@ public class MediaArtwork {
   }
 
   private String                imdbId;
+  private String                pornhubId;
   private int                   tmdbId;
   private int                   season     = -1;
   private String                previewUrl = "";
@@ -265,8 +266,8 @@ public class MediaArtwork {
   public int getTmdbId() {
     return tmdbId;
   }
-  public int getPornhubId() {
-    return tmdbId;
+  public String getPornhubId() {
+    return pornhubId;
   }
 
   /**
@@ -278,8 +279,8 @@ public class MediaArtwork {
   public void setTmdbId(int tmdbId) {
     this.tmdbId = tmdbId;
   }
-  public void setPornhubId(int id) {
-    this.tmdbId=id;
+  public void setPornhubId(String id) {
+    this.pornhubId=id;
   }
 
   /**

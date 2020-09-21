@@ -282,15 +282,12 @@ public abstract class MediaSearchAndScrapeOptions {
     }
     return 0;
   }
-  public int getPornhubId() {
-    Integer id = getIdAsInteger(MediaMetadata.PORNHUB);
-    if (id == null || id == 0) {
-      id = getIdAsInteger("pornhubId");
-    }
+  public String getPornhubId() {
+    Object id = ids.get(MediaMetadata.PORNHUB);
     if (id != null) {
-      return id;
+      return (String)id;
     }
-    return 0;
+    return null;
   }
 
   /**
@@ -313,8 +310,8 @@ public abstract class MediaSearchAndScrapeOptions {
     ids.put(MediaMetadata.TMDB, tmdbId);
   }
 
-  public void setPornhubId(int tmdbId) {
-    ids.put(MediaMetadata.PORNHUB, tmdbId);
+  public void setPornhubId(String pornhubId) {
+    ids.put(MediaMetadata.PORNHUB, pornhubId);
   }
 
   /**

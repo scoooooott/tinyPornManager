@@ -20,6 +20,7 @@ import com.scott.pornhub.entities.Status;
 import com.scott.pornhub.entities.Translations;
 import com.scott.pornhub.entities.Videos;
 import java.util.Map;
+import org.jsoup.nodes.Document;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -50,9 +51,9 @@ public interface MoviesService {
      * @param language         <em>Optional.</em> ISO 639-1 code.
      * @param appendToResponse <em>Optional.</em> extra requests to append to the result. <b>Accepted Value(s):</b> alternative_titles, changes, credits, images, keywords, release_dates, videos, translations, recommendations, similar, reviews, lists
      */
-    @GET("movie/{movie_id}")
-    Call<Movie> summary(
-            @Path("movie_id") int movieId,
+    @GET("view_video.php")
+    Call<Document> summary(
+            @Query("viewkey") String movieId,
             @Query("language") String language,
             @Query("append_to_response") AppendToResponse appendToResponse
     );
@@ -143,13 +144,12 @@ public interface MoviesService {
 
     /**
      * Get the images (posters and backdrops) for a specific movie id.
-     *
-     * @param movieId  A Movie TMDb id.
+     *  @param movieId  A Movie TMDb id.
      * @param language <em>Optional.</em> ISO 639-1 code.
      */
     @GET("movie/{movie_id}/images")
     Call<Images> images(
-            @Path("movie_id") int movieId,
+            @Path("movie_id") String movieId,
             @Query("language") String language
     );
 
@@ -246,13 +246,12 @@ public interface MoviesService {
 
     /**
      * Get the videos (trailers, teasers, clips, etc...) for a specific movie id.
-     *
-     * @param movieId  A Movie TMDb id.
+     *  @param movieId  A Movie TMDb id.
      * @param language <em>Optional.</em> ISO 639-1 code.
      */
     @GET("movie/{movie_id}/videos")
     Call<Videos> videos(
-            @Path("movie_id") int movieId,
+            @Path("movie_id") String movieId,
             @Query("language") String language
     );
 

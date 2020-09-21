@@ -7,6 +7,7 @@ import com.scott.pornhub.entities.MediaResultsPage;
 import com.scott.pornhub.entities.MovieResultsPage;
 import com.scott.pornhub.entities.PersonResultsPage;
 import com.scott.pornhub.entities.TvShowResultsPage;
+import org.jsoup.nodes.Document;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -56,7 +57,7 @@ public interface SearchService {
      * @see <a href="https://developers.themoviedb.org/3/search/search-movies">Documentation</a>
      */
     @GET("video/search")
-    Call<String> movie(
+    Call<Document> movie(
         @Query("search") String query,
         @Query("page") Integer page,
         @Query("hd") Integer isHd,

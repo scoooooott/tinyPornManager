@@ -33,7 +33,7 @@ public interface TvEpisodesService {
      */
     @GET("tv/{tv_id}/season/{season_number}/episode/{episode_number}")
     Call<TvEpisode> episode(
-            @Path("tv_id") int tvShowId,
+            @Path("tv_id") String tvShowId,
             @Path("season_number") int tvShowSeasonNumber,
             @Path("episode_number") int tvShowEpisodeNumber,
             @Query("language") String language
@@ -126,14 +126,13 @@ public interface TvEpisodesService {
     /**
      * Get the images (episode stills) for a TV episode by combination of a season and episode number. Since episode
      * stills don't have a language, this call will always return all images.
-     *
-     * @param tvShowId            A Tv Show TMDb id.
+     *  @param tvShowId            A Tv Show TMDb id.
      * @param tvShowSeasonNumber  TvSeason Number.
      * @param tvShowEpisodeNumber TvEpisode Number.
      */
     @GET("tv/{tv_id}/season/{season_number}/episode/{episode_number}/images")
     Call<Images> images(
-            @Path("tv_id") int tvShowId,
+            @Path("tv_id") String tvShowId,
             @Path("season_number") int tvShowSeasonNumber,
             @Path("episode_number") int tvShowEpisodeNumber
     );

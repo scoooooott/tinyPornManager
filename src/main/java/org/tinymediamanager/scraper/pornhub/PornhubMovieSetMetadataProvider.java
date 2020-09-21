@@ -170,9 +170,9 @@ class PornhubMovieSetMetadataProvider {
     MediaMetadata md = new MediaMetadata(PornhubMetadataProvider.providerInfo.getId());
 
     // pornhubId from option
-    int pornhubId = options.getPornhubId();
+    String pornhubId = options.getPornhubId();
 
-    if (pornhubId == 0) {
+    if (StringUtils.isEmpty(pornhubId)) {
       LOGGER.warn("not possible to scrape from PORNHUB - no pornhubId found");
       throw new MissingIdException(MediaMetadata.PORNHUB_SET);
     }

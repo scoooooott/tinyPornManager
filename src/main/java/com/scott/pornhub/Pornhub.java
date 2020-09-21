@@ -35,6 +35,7 @@ import javax.annotation.Nullable;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
+import retrofit2.Converter;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -57,7 +58,6 @@ public class Pornhub {
      * API Related Information
      */
     public static final String API_HOST = "www.pornhub.com";
-    public static final String API_VERSION = "3";
     public static final String API_URL = "https://" + API_HOST + "/";
 
     /**
@@ -170,8 +170,9 @@ public class Pornhub {
     protected Retrofit.Builder retrofitBuilder() {
         return new Retrofit.Builder()
             .baseUrl(API_URL)
-            .addConverterFactory(ScalarsConverterFactory.create()).addConverterFactory(GsonConverterFactory.create())
 //            .addConverterFactory(GsonConverterFactory.create(PornhubHelper.getGsonBuilder().create()))
+//            .addConverterFactory(ScalarsConverterFactory.create()).addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(HtmlConverterFactory.create(API_URL))
             .client(okHttpClient());
     }
 

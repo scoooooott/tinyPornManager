@@ -39,7 +39,7 @@ import org.tinymediamanager.scraper.util.StrgUtils;
 
 /**
  * The Class MediaMetadata. This is the main class to transport meta data.
- * 
+ *
  * @author Manuel Laggner
  * @since 2.0
  */
@@ -58,7 +58,7 @@ public class MediaMetadata {
   public static final String             EPISODE_NR_DVD       = "dvdEpisodeNr";
   public static final String             SEASON_NR_DVD        = "dvdSeasonNr";
 
-  private final String                   providerId;
+    private final String                   providerId;
 
   // this map contains all set ids
   private final HashMap<String, Object>  ids                  = new HashMap<>();
@@ -106,7 +106,7 @@ public class MediaMetadata {
 
   /**
    * Instantiates a new media metadata for the given provider.
-   * 
+   *
    * @param providerId
    *          the provider id
    */
@@ -117,7 +117,7 @@ public class MediaMetadata {
   /**
    * merges all entries from other MD into ours, IF VALUES ARE EMPTY<br>
    * <b>needs testing!</b>
-   * 
+   *
    * @param md
    *          other MediaMetadata
    */
@@ -211,7 +211,7 @@ public class MediaMetadata {
 
   /**
    * Gets the provider id.
-   * 
+   *
    * @return the provider id
    */
   public String getProviderId() {
@@ -220,7 +220,7 @@ public class MediaMetadata {
 
   /**
    * Gets the genres.
-   * 
+   *
    * @return the genres
    */
   public List<MediaGenres> getGenres() {
@@ -229,7 +229,7 @@ public class MediaMetadata {
 
   /**
    * Sets all given genres
-   * 
+   *
    * @param genres
    *          a list of all genres to be set
    */
@@ -242,7 +242,7 @@ public class MediaMetadata {
 
   /**
    * Gets the cast members for a given type.
-   * 
+   *
    * @param type
    *          the type
    * @return the cast members
@@ -254,7 +254,7 @@ public class MediaMetadata {
 
   /**
    * Gets the media art.
-   * 
+   *
    * @param type
    *          the type
    * @return the media art
@@ -270,7 +270,7 @@ public class MediaMetadata {
 
   /**
    * Adds the genre.
-   * 
+   *
    * @param genre
    *          the genre
    */
@@ -282,7 +282,7 @@ public class MediaMetadata {
 
   /**
    * Adds the cast member.
-   * 
+   *
    * @param castMember
    *          the cast member
    */
@@ -295,7 +295,7 @@ public class MediaMetadata {
 
   /**
    * get all set artwork
-   * 
+   *
    * @return a list of all artworks
    */
   public List<MediaArtwork> getMediaArt() {
@@ -304,7 +304,7 @@ public class MediaMetadata {
 
   /**
    * set all given artwork
-   * 
+   *
    * @param artwork
    *          a list of all artwork to set
    */
@@ -317,7 +317,7 @@ public class MediaMetadata {
 
   /**
    * Adds the media art.
-   * 
+   *
    * @param ma
    *          the ma
    */
@@ -336,7 +336,7 @@ public class MediaMetadata {
 
   /**
    * Adds the media art.
-   * 
+   *
    * @param art
    *          the art
    */
@@ -346,7 +346,7 @@ public class MediaMetadata {
 
   /**
    * Get all cast members.
-   * 
+   *
    * @return the cast members
    */
   public List<Person> getCastMembers() {
@@ -355,7 +355,7 @@ public class MediaMetadata {
 
   /**
    * set all given cast members
-   * 
+   *
    * @param castMembers
    *          a list of cast members to be set
    */
@@ -380,7 +380,7 @@ public class MediaMetadata {
 
   /**
    * Get all subitems
-   * 
+   *
    * @return a list of all sub items
    */
   public List<MediaMetadata> getSubItems() {
@@ -389,7 +389,7 @@ public class MediaMetadata {
 
   /**
    * Contains cast member.
-   * 
+   *
    * @param castMember
    *          the cm
    * @return true, if successful
@@ -400,7 +400,7 @@ public class MediaMetadata {
 
   /**
    * Adds the certification.
-   * 
+   *
    * @param certification
    *          the certification
    */
@@ -412,7 +412,7 @@ public class MediaMetadata {
 
   /**
    * Gets the certifications.
-   * 
+   *
    * @return the certifications
    */
   public List<MediaCertification> getCertifications() {
@@ -421,7 +421,7 @@ public class MediaMetadata {
 
   /**
    * set the given certifications
-   * 
+   *
    * @param certifications
    *          a list of all certifications to set
    */
@@ -434,7 +434,7 @@ public class MediaMetadata {
 
   /**
    * Adds the trailer. To use only when scraping the metadata also provides the trailers
-   * 
+   *
    * @param trailer
    *          the trailer
    */
@@ -446,7 +446,7 @@ public class MediaMetadata {
 
   /**
    * Gets the trailers.
-   * 
+   *
    * @return the trailers
    */
   public List<MediaTrailer> getTrailers() {
@@ -455,7 +455,7 @@ public class MediaMetadata {
 
   /**
    * set all given trailers
-   * 
+   *
    * @param trailers
    *          a list of all trailers to be set
    */
@@ -468,7 +468,7 @@ public class MediaMetadata {
 
   /**
    * Sets an ID.
-   * 
+   *
    * @param key
    *          the ID-key
    * @param object
@@ -488,7 +488,7 @@ public class MediaMetadata {
 
   /**
    * Gets an ID.
-   * 
+   *
    * @param key
    *          the ID-key
    * @return the id
@@ -503,7 +503,7 @@ public class MediaMetadata {
 
   /**
    * Gets all IDs.
-   * 
+   *
    * @return the IDs
    */
   public Map<String, Object> getIds() {
@@ -512,7 +512,7 @@ public class MediaMetadata {
 
   /**
    * Get all production companies
-   * 
+   *
    * @return a list of all production companies
    */
   public List<String> getProductionCompanies() {
@@ -521,7 +521,7 @@ public class MediaMetadata {
 
   /**
    * Set the production companies
-   * 
+   *
    * @param productionCompanies
    *          set the given list of production companies
    */
@@ -534,7 +534,7 @@ public class MediaMetadata {
 
   /**
    * Add a production company
-   * 
+   *
    * @param productionCompany
    *          add the given production company if it is not yet present
    */
@@ -550,7 +550,7 @@ public class MediaMetadata {
 
   /**
    * Removes the given production company
-   * 
+   *
    * @param productionCompany
    *          the production company to be removed
    */
@@ -560,7 +560,7 @@ public class MediaMetadata {
 
   /**
    * Get a list of all spoken languages (2 digit: ISO 639-1)
-   * 
+   *
    * @return a list of all spoken languages
    */
   public List<String> getSpokenLanguages() {
@@ -569,7 +569,7 @@ public class MediaMetadata {
 
   /**
    * Set the spoken languages (2 digit: ISO 639-1)
-   * 
+   *
    * @param spokenLanguages
    *          the spoken languages to be set
    */
@@ -582,7 +582,7 @@ public class MediaMetadata {
 
   /**
    * Adds the given language if it is not present (2 digit: ISO 639-1)
-   * 
+   *
    * @param language
    *          the language to be set
    */
@@ -598,7 +598,7 @@ public class MediaMetadata {
 
   /**
    * Removes the given language
-   * 
+   *
    * @param language
    *          the language to be removed
    */
@@ -608,7 +608,7 @@ public class MediaMetadata {
 
   /**
    * Get the list of all countries
-   * 
+   *
    * @return a list of all countries
    */
   public List<String> getCountries() {
@@ -617,7 +617,7 @@ public class MediaMetadata {
 
   /**
    * Set the countries
-   * 
+   *
    * @param countries
    *          the countries to be set
    */
@@ -630,7 +630,7 @@ public class MediaMetadata {
 
   /**
    * Add the country if it is not present
-   * 
+   *
    * @param country
    *          the country to be added
    */
@@ -646,7 +646,7 @@ public class MediaMetadata {
 
   /**
    * Remove the given country
-   * 
+   *
    * @param country
    *          the country to be removed
    */
@@ -656,7 +656,7 @@ public class MediaMetadata {
 
   /**
    * Get the title
-   * 
+   *
    * @return the title
    */
   public String getTitle() {
@@ -665,7 +665,7 @@ public class MediaMetadata {
 
   /**
    * Set the title
-   * 
+   *
    * @param title
    *          the title to be set
    */
@@ -675,7 +675,7 @@ public class MediaMetadata {
 
   /**
    * Get the original title
-   * 
+   *
    * @return the original title
    */
   public String getOriginalTitle() {
@@ -684,7 +684,7 @@ public class MediaMetadata {
 
   /**
    * Set the original title
-   * 
+   *
    * @param originalTitle
    *          the origial title to be set
    */
@@ -713,7 +713,7 @@ public class MediaMetadata {
 
   /**
    * Get the year
-   * 
+   *
    * @return the year
    */
   public int getYear() {
@@ -744,7 +744,7 @@ public class MediaMetadata {
 
   /**
    * Get the release date
-   * 
+   *
    * @return the release date
    */
   public Date getReleaseDate() {
@@ -775,7 +775,7 @@ public class MediaMetadata {
 
   /**
    * Get the plot
-   * 
+   *
    * @return the plot
    */
   public String getPlot() {
@@ -784,7 +784,7 @@ public class MediaMetadata {
 
   /**
    * Set the plot
-   * 
+   *
    * @param plot
    *          the plot to be set
    */
@@ -794,7 +794,7 @@ public class MediaMetadata {
 
   /**
    * Get the tagline
-   * 
+   *
    * @return the tagline
    */
   public String getTagline() {
@@ -803,7 +803,7 @@ public class MediaMetadata {
 
   /**
    * Set the tagline
-   * 
+   *
    * @param tagline
    *          the tagline to be set
    */
@@ -813,7 +813,7 @@ public class MediaMetadata {
 
   /**
    * Get the collection name
-   * 
+   *
    * @return the collection name
    */
   public String getCollectionName() {
@@ -822,7 +822,7 @@ public class MediaMetadata {
 
   /**
    * Set the collection name
-   * 
+   *
    * @param collectionName
    *          the collection name to be set
    */
@@ -832,7 +832,7 @@ public class MediaMetadata {
 
   /**
    * Get the runtime in minutes
-   * 
+   *
    * @return the runtime in minutes
    */
   public int getRuntime() {
@@ -863,7 +863,7 @@ public class MediaMetadata {
 
   /**
    * Get the ratings
-   * 
+   *
    * @return the ratings
    */
   public List<MediaRating> getRatings() {
@@ -872,7 +872,7 @@ public class MediaMetadata {
 
   /**
    * Set the ratings
-   * 
+   *
    * @param newRatings
    *          the ratings to be set
    */
@@ -898,7 +898,7 @@ public class MediaMetadata {
 
   /**
    * Get the place in the top 250 or 0 if not set
-   * 
+   *
    * @return the place in top 250 or 0
    */
   public int getTop250() {
@@ -929,7 +929,7 @@ public class MediaMetadata {
 
   /**
    * Get the episode number (or -1 if not set)
-   * 
+   *
    * @return the episode number (or -1 if not set)
    */
   public int getEpisodeNumber() {
@@ -960,7 +960,7 @@ public class MediaMetadata {
 
   /**
    * Get the season number (or -1 if not set)
-   * 
+   *
    * @return the season number (or -1 if not set)
    */
   public int getSeasonNumber() {
@@ -991,7 +991,7 @@ public class MediaMetadata {
 
   /**
    * Get the DVD episode number (or -1 if not set)
-   * 
+   *
    * @return the DVD episode number (or -1 if not set)
    */
   public int getDvdEpisodeNumber() {
@@ -1022,7 +1022,7 @@ public class MediaMetadata {
 
   /**
    * Get the DVD season number (or -1 if not set)
-   * 
+   *
    * @return the DVD season number (or -1 if not set)
    */
   public int getDvdSeasonNumber() {
@@ -1053,7 +1053,7 @@ public class MediaMetadata {
 
   /**
    * Get the display-episode number (or -1 if not set)
-   * 
+   *
    * @return the display-episode number (or -1 if not set)
    */
   public int getDisplayEpisodeNumber() {
@@ -1084,7 +1084,7 @@ public class MediaMetadata {
 
   /**
    * Get the display-season number (or -1 if not set)
-   * 
+   *
    * @return the display-season number (or -1 if not set)
    */
   public int getDisplaySeasonNumber() {
@@ -1115,7 +1115,7 @@ public class MediaMetadata {
 
   /**
    * Get the absolute number (or -1 if not set)
-   * 
+   *
    * @return the absolute number (or -1 if not set)
    */
   public int getAbsoluteNumber() {
@@ -1146,7 +1146,7 @@ public class MediaMetadata {
 
   /**
    * Get the airing status
-   * 
+   *
    * @return the airing status
    */
   public MediaAiredStatus getStatus() {
@@ -1175,7 +1175,7 @@ public class MediaMetadata {
 
   /**
    * Get all extra data. Handy key/value store to pass extra data inside a scraper
-   * 
+   *
    * @return the key/value store
    */
   public Map<String, Object> getExtraData() {
@@ -1184,7 +1184,7 @@ public class MediaMetadata {
 
   /**
    * Add an extra data. Handy key/value store to pass extra data inside a scraper
-   * 
+   *
    * @param key
    *          the key
    * @param value
@@ -1198,7 +1198,7 @@ public class MediaMetadata {
 
   /**
    * Get an extra data. Handy key/value store to pass extra data inside a scraper
-   * 
+   *
    * @param key
    *          the key
    * @return the value or null
@@ -1209,7 +1209,7 @@ public class MediaMetadata {
 
   /**
    * Get the tags
-   * 
+   *
    * @return a list containing all tags
    */
   public List<String> getTags() {
@@ -1218,7 +1218,7 @@ public class MediaMetadata {
 
   /**
    * Set tags
-   * 
+   *
    * @param tags
    *          the tags to be set
    */
@@ -1231,7 +1231,7 @@ public class MediaMetadata {
 
   /**
    * Add a new tag
-   * 
+   *
    * @param tag
    *          the tag
    */
@@ -1247,7 +1247,7 @@ public class MediaMetadata {
 
   /**
    * Remove the given tag
-   * 
+   *
    * @param tag
    *          the tag to be removed
    */
@@ -1257,7 +1257,7 @@ public class MediaMetadata {
 
   /**
    * Add a season name
-   * 
+   *
    * @param seasonNumber
    *          the season number
    * @param name
@@ -1271,7 +1271,7 @@ public class MediaMetadata {
 
   /**
    * get all set season names
-   * 
+   *
    * @return the season names
    */
   public Map<Integer, String> getSeasonNames() {
@@ -1282,7 +1282,7 @@ public class MediaMetadata {
    * <p>
    * Uses <code>ReflectionToStringBuilder</code> to generate a <code>toString</code> for the specified object.
    * </p>
-   * 
+   *
    * @return the String result
    * @see ReflectionToStringBuilder#toString(Object)
    */

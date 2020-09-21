@@ -5,7 +5,7 @@ import java.util.List;
 
 public class BaseTvShow extends BaseRatingObject {
 
-    public Integer id;
+    public String id;
     public String original_name;
     public String original_language;
     public String overview;

@@ -31,4 +31,8 @@ public class Movie extends BaseMovie {
     public ReviewResultsPage reviews;
     public Videos videos;
 
+    public Movie() {
+        this.adult = true;
+    }
+
 }

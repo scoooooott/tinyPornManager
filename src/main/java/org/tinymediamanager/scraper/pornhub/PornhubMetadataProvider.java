@@ -254,7 +254,8 @@ public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSe
    *          the MediaType to look for (we cannot search for movie, and take the TV entry!
    * @return the pornhubId or 0 if nothing has been found
    */
-  public int getPornhubIdFromImdbId(String imdbId, MediaType type) {
+  @Deprecated
+  public String getPornhubIdFromImdbId(String imdbId, MediaType type) {
     try {
       // lazy initialization of the api
       initAPI();
@@ -277,7 +278,7 @@ public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSe
       LOGGER.debug("failed to get pornhub id: {}", e.getMessage());
     }
 
-    return 0;
+    return null;
   }
 
   /**

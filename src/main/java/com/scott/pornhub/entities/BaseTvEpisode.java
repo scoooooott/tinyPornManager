@@ -11,7 +11,7 @@ public class BaseTvEpisode extends BaseTvEpisodeRatingObject {
     public String still_path;
     public Double vote_average;
     public Integer vote_count;
-    public Integer id;
+    public String id;
 
     public Date air_date;
     public Integer episode_number;
