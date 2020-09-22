@@ -4,5 +4,6 @@ public class Genre {
 
     public Integer id;
     public String name;
+    public String href;
 
 }

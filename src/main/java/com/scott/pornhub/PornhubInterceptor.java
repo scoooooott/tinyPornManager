@@ -41,7 +41,6 @@ public class PornhubInterceptor implements Interceptor {
 
         // add (or replace) the API key query parameter
         HttpUrl.Builder urlBuilder = request.url().newBuilder();
-        urlBuilder.setEncodedQueryParameter(Pornhub.PARAM_API_KEY, pornhub.apiKey());
 
         if (pornhub.isLoggedIn()) {
             // add auth only for paths that require it

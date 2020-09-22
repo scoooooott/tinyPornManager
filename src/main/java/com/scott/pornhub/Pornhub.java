@@ -75,8 +75,6 @@ public class Pornhub {
     @Nullable private OkHttpClient okHttpClient;
     @Nullable private Retrofit retrofit;
 
-    private String apiKey;
-
     private boolean useGuestSession = false;
     private boolean useAccountSession = false;
 
@@ -84,15 +82,6 @@ public class Pornhub {
     @Nullable private String password;
     @Nullable private String sessionId;
     @Nullable private String guestSessionId;
-
-    /**
-     * Create a new manager instance.
-     *
-     * @param apiKey Your TMDB API key.
-     */
-    public Pornhub(String apiKey) {
-        this.apiKey = apiKey;
-    }
 
     public void accountSession(String username, String password) {
         this.username = username;
@@ -151,14 +140,6 @@ public class Pornhub {
 
     public boolean isLoggedIn() {
         return getSessionId() != null || getGuestSessionId() != null;
-    }
-
-    public void apiKey(String apiKey) {
-        this.apiKey = apiKey;
-    }
-
-    public String apiKey() {
-        return apiKey;
     }
 
     /**

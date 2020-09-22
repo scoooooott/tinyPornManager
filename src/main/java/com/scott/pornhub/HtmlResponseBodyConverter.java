@@ -1,5 +1,6 @@
 package com.scott.pornhub;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import okhttp3.ResponseBody;
 import org.jsoup.Jsoup;
@@ -14,12 +15,17 @@ public class HtmlResponseBodyConverter implements Converter<ResponseBody, Docume
     }
 
     @Override
-    public Document convert(ResponseBody value) throws
-        IOException {
+    public Document convert(ResponseBody value) throws IOException {
+        BufferedInputStream myStream = new BufferedInputStream(value.byteStream());
         try {
-            return Jsoup.parse(value.byteStream(), "UTF-8", baseUrl);
-        } finally {
+            return Jsoup.parse(myStream, "UTF-8", baseUrl);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
             value.close();
         }
+        return new Document(baseUrl);
     }
 }
