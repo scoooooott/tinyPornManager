@@ -18,7 +18,6 @@ package org.tinymediamanager.scraper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +32,8 @@ import org.tinymediamanager.scraper.mpdbtv.MpdbMetadataProvider;
 import org.tinymediamanager.scraper.ofdb.OfdbMetadataProvider;
 import org.tinymediamanager.scraper.omdb.OmdbMetadataProvider;
 import org.tinymediamanager.scraper.opensubtitles.OpensubtitlesMetadataProvider;
-import org.tinymediamanager.scraper.pornhub.PornhubMetadataProvider;
+import org.tinymediamanager.scraper.pornhub.v1.PornhubMetadataProvider;
+import org.tinymediamanager.scraper.pornhub.v2.Ph2MovieMetadataProvider;
 import org.tinymediamanager.scraper.thetvdb.TheTvDbMetadataProvider;
 import org.tinymediamanager.scraper.tmdb.TmdbMetadataProvider;
 import org.tinymediamanager.scraper.trakt.TraktMetadataProvider;
@@ -65,7 +65,6 @@ public class MediaProviders {
     // MOVIE
     /////////////////////////////////////////////
     loadProvider(TmdbMetadataProvider.class);
-    loadProvider(PornhubMetadataProvider.class);
     loadProvider(ImdbMetadataProvider.class);
     loadProvider(MovieMeterMetadataProvider.class);
     loadProvider(OfdbMetadataProvider.class);
@@ -74,6 +73,12 @@ public class MediaProviders {
     loadProvider(KodiMetadataProvider.class);
     loadProvider(TraktMetadataProvider.class);
     loadProvider(UniversalMovieMetadataProvider.class);
+
+    /////////////////////////////////////////////
+    // PORN
+    /////////////////////////////////////////////
+    loadProvider(PornhubMetadataProvider.class);
+    loadProvider(Ph2MovieMetadataProvider.class);
 
     // register all compatible scrapers in the universal scraper
     MEDIA_PROVIDERS.forEach((key, value) -> UniversalMovieMetadataProvider.addProvider(value));

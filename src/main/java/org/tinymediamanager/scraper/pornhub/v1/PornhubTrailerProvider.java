@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.scraper.pornhub;
+package org.tinymediamanager.scraper.pornhub.v1;
+
+import static org.tinymediamanager.scraper.pornhub.v1.PornhubMetadataProvider.getRequestLanguage;
 
 import com.scott.pornhub.Pornhub;
 import com.scott.pornhub.entities.Videos;
@@ -32,15 +34,14 @@ import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.util.ListUtils;
 
-import static org.tinymediamanager.scraper.pornhub.PornhubMetadataProvider.getRequestLanguage;
-
 /**
  * The class PornhubTrailerProvider. For managing all trailer provided tasks with pornhub
  */
 class PornhubTrailerProvider {
+
   private static final Logger LOGGER = LoggerFactory.getLogger(PornhubTrailerProvider.class);
 
-  private final Pornhub          api;
+  private final Pornhub api;
 
   PornhubTrailerProvider(Pornhub api) {
     this.api = api;
@@ -49,15 +50,13 @@ class PornhubTrailerProvider {
   /**
    * get the trailer for the given type/id
    *
-   * @param options
-   *          the options for getting the trailers
+   * @param options the options for getting the trailers
    * @return a list of all found trailers
-   * @throws ScrapeException
-   *           any exception which can be thrown while scraping
-   * @throws MissingIdException
-   *           indicates that there was no usable id to scrape
+   * @throws ScrapeException    any exception which can be thrown while scraping
+   * @throws MissingIdException indicates that there was no usable id to scrape
    */
-  List<MediaTrailer> getTrailers(TrailerSearchAndScrapeOptions options) throws ScrapeException, MissingIdException {
+  List<MediaTrailer> getTrailers(TrailerSearchAndScrapeOptions options)
+      throws ScrapeException, MissingIdException {
     LOGGER.debug("getTrailers(): {}", options);
     List<MediaTrailer> trailers = new ArrayList<>();
 
@@ -91,8 +90,7 @@ class PornhubTrailerProvider {
           videos.addAll(pornhubVideos.results);
           videos.addAll(pornhubVideosWoLang.results);
         }
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         LOGGER.debug("failed to get trailer: {}", e.getMessage());
         throw new ScrapeException(e);
       }
@@ -104,7 +102,7 @@ class PornhubTrailerProvider {
       }
       MediaTrailer trailer = new MediaTrailer();
       trailer.setName(video.name);
-      trailer.setQuality(String.valueOf(video.size) + "p");
+      trailer.setQuality(video.size + "p");
       trailer.setProvider(video.site);
       trailer.setUrl(video.key);
 

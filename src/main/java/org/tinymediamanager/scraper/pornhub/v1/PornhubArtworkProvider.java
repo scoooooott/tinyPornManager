@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.scraper.pornhub;
+package org.tinymediamanager.scraper.pornhub.v1;
 
 import com.scott.pornhub.Pornhub;
 import com.scott.pornhub.entities.Image;
@@ -42,9 +42,10 @@ import org.tinymediamanager.scraper.util.ListUtils;
  * The class PornhubArtworkProvider. For managing all artwork provided tasks with pornhub
  */
 class PornhubArtworkProvider {
+
   private static final Logger LOGGER = LoggerFactory.getLogger(PornhubArtworkProvider.class);
 
-  private final Pornhub          api;
+  private final Pornhub api;
 
   public PornhubArtworkProvider(Pornhub api) {
     this.api = api;
@@ -53,20 +54,20 @@ class PornhubArtworkProvider {
   /**
    * get the artwork for the given type/id
    *
-   * @param options
-   *          the options for getting the artwork
+   * @param options the options for getting the artwork
    * @return a list of all found artworks
-   * @throws ScrapeException
-   *           any exception which can be thrown while scraping
+   * @throws ScrapeException any exception which can be thrown while scraping
    */
-  List<MediaArtwork> getArtwork(ArtworkSearchAndScrapeOptions options) throws ScrapeException, MissingIdException {
+  List<MediaArtwork> getArtwork(ArtworkSearchAndScrapeOptions options)
+      throws ScrapeException, MissingIdException {
     LOGGER.debug("getArtwork(): {}", options);
     MediaArtworkType artworkType = options.getArtworkType();
 
     String pornhubId = options.getPornhubId();
 
     // for movie sets we need another if
-    if (options.getMediaType() == MediaType.MOVIE_SET && options.getIdAsInt(MediaMetadata.PORNHUB_SET) > 0) {
+    if (options.getMediaType() == MediaType.MOVIE_SET
+        && options.getIdAsInt(MediaMetadata.PORNHUB_SET) > 0) {
       pornhubId = options.getIdAsString(MediaMetadata.PORNHUB_SET);
     }
 
@@ -97,15 +98,14 @@ class PornhubArtworkProvider {
             int episodeNr = options.getIdAsIntOrDefault(MediaMetadata.EPISODE_NR, -1);
 
             if (seasonNr > -1 && episodeNr > -1) {
-              images = api.tvEpisodesService().images(pornhubId, seasonNr, episodeNr).execute().body();
+              images = api.tvEpisodesService().images(pornhubId, seasonNr, episodeNr).execute()
+                  .body();
             }
             break;
         }
-      }
-      catch (PornhubNotFoundException e) {
+      } catch (PornhubNotFoundException e) {
         LOGGER.info("nothing found");
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         LOGGER.debug("failed to get artwork: {}", e.getMessage());
 
         // if the thread has been interrupted, to no rethrow that exception
@@ -132,7 +132,8 @@ class PornhubArtworkProvider {
     return artwork;
   }
 
-  private List<MediaArtwork> prepareArtwork(Images pornhubArtwork, MediaArtworkType artworkType, String pornhubId,
+  private List<MediaArtwork> prepareArtwork(Images pornhubArtwork, MediaArtworkType artworkType,
+      String pornhubId,
       ArtworkSearchAndScrapeOptions options) {
     List<MediaArtwork> artwork = new ArrayList<>();
     String baseUrl = PornhubMetadataProvider.configuration.images.base_url;
@@ -143,16 +144,19 @@ class PornhubArtworkProvider {
 
     // first sort the artwork
     if (pornhubArtwork.posters != null) {
-      Collections.sort(pornhubArtwork.posters, new ImageComparator(options.getLanguage().toLocale()));
+      Collections
+          .sort(pornhubArtwork.posters, new ImageComparator(options.getLanguage().toLocale()));
     }
     if (pornhubArtwork.backdrops != null) {
-      Collections.sort(pornhubArtwork.backdrops, new ImageComparator(options.getLanguage().toLocale()));
+      Collections
+          .sort(pornhubArtwork.backdrops, new ImageComparator(options.getLanguage().toLocale()));
     }
 
     // prepare posters
     if (artworkType == MediaArtworkType.POSTER || artworkType == MediaArtworkType.ALL) {
       for (Image image : ListUtils.nullSafe(pornhubArtwork.posters)) {
-        MediaArtwork ma = new MediaArtwork(PornhubMetadataProvider.providerInfo.getId(), MediaArtworkType.POSTER);
+        MediaArtwork ma = new MediaArtwork(PornhubMetadataProvider.providerInfo.getId(),
+            MediaArtworkType.POSTER);
         ma.setPreviewUrl(baseUrl + "w185" + image.file_path);
         ma.setLanguage(image.iso_639_1);
         ma.setPornhubId(pornhubId);
@@ -162,15 +166,18 @@ class PornhubArtworkProvider {
         ma.addImageSize(image.width, image.height, baseUrl + "original" + image.file_path);
         // w500
         if (500 < image.width) {
-          ma.addImageSize(500, image.height * 500 / image.width, baseUrl + "w500" + image.file_path);
+          ma.addImageSize(500, image.height * 500 / image.width,
+              baseUrl + "w500" + image.file_path);
         }
         // w342
         if (342 < image.width) {
-          ma.addImageSize(342, image.height * 342 / image.width, baseUrl + "w342" + image.file_path);
+          ma.addImageSize(342, image.height * 342 / image.width,
+              baseUrl + "w342" + image.file_path);
         }
         // w185
         if (185 < image.width) {
-          ma.addImageSize(185, image.height * 185 / image.width, baseUrl + "w185" + image.file_path);
+          ma.addImageSize(185, image.height * 185 / image.width,
+              baseUrl + "w185" + image.file_path);
         }
 
         // categorize image size and write default url
@@ -182,7 +189,8 @@ class PornhubArtworkProvider {
 
     if (artworkType == MediaArtworkType.BACKGROUND || artworkType == MediaArtworkType.ALL) {
       for (Image image : ListUtils.nullSafe(pornhubArtwork.backdrops)) {
-        MediaArtwork ma = new MediaArtwork(PornhubMetadataProvider.providerInfo.getId(), MediaArtworkType.BACKGROUND);
+        MediaArtwork ma = new MediaArtwork(PornhubMetadataProvider.providerInfo.getId(),
+            MediaArtworkType.BACKGROUND);
         ma.setPreviewUrl(baseUrl + "w300" + image.file_path);
         ma.setLanguage(image.iso_639_1);
         ma.setPornhubId(pornhubId);
@@ -192,11 +200,13 @@ class PornhubArtworkProvider {
         ma.addImageSize(image.width, image.height, baseUrl + "original" + image.file_path);
         // 1280x720
         if (1280 < image.width) {
-          ma.addImageSize(1280, image.height * 1280 / image.width, baseUrl + "w1280" + image.file_path);
+          ma.addImageSize(1280, image.height * 1280 / image.width,
+              baseUrl + "w1280" + image.file_path);
         }
         // w300
         if (300 < image.width) {
-          ma.addImageSize(300, image.height * 300 / image.width, baseUrl + "w300" + image.file_path);
+          ma.addImageSize(300, image.height * 300 / image.width,
+              baseUrl + "w300" + image.file_path);
         }
 
         // categorize image size and write default url
@@ -304,13 +314,13 @@ class PornhubArtworkProvider {
    * local helper classes
    *****************************************************************************************/
   private static class ImageComparator implements Comparator<Image> {
-    private String preferredLangu;
+
+    private final String preferredLangu;
 
     private ImageComparator(Locale locale) {
       if (locale == null) {
         this.preferredLangu = null;
-      }
-      else {
+      } else {
         this.preferredLangu = locale.getLanguage();
       }
     }
@@ -321,12 +331,14 @@ class PornhubArtworkProvider {
     @Override
     public int compare(Image arg0, Image arg1) {
       // check if first image is preferred langu
-      if (Objects.equals(preferredLangu, arg0.iso_639_1) && !Objects.equals(preferredLangu, arg1.iso_639_1)) {
+      if (Objects.equals(preferredLangu, arg0.iso_639_1) && !Objects
+          .equals(preferredLangu, arg1.iso_639_1)) {
         return -1;
       }
 
       // check if second image is preferred langu
-      if (!Objects.equals(preferredLangu, arg0.iso_639_1) && Objects.equals(preferredLangu, arg1.iso_639_1)) {
+      if (!Objects.equals(preferredLangu, arg0.iso_639_1) && Objects
+          .equals(preferredLangu, arg1.iso_639_1)) {
         return 1;
       }
 

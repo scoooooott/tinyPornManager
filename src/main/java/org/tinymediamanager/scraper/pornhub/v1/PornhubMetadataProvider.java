@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.scraper.pornhub;
+package org.tinymediamanager.scraper.pornhub.v1;
 
 import com.scott.pornhub.Pornhub;
 import com.scott.pornhub.PornhubInterceptor;
@@ -26,6 +26,8 @@ import com.scott.pornhub.enumerations.ExternalSource;
 import java.util.List;
 import java.util.Locale;
 import java.util.SortedSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.LocaleUtils;
@@ -33,16 +35,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.entities.MediaGenres;
-import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.MovieSetSearchAndScrapeOptions;
-import org.tinymediamanager.core.tvshow.TvShowEpisodeSearchAndScrapeOptions;
-import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.ArtworkSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.TrailerSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
@@ -53,38 +51,44 @@ import org.tinymediamanager.scraper.http.TmmHttpClient;
 import org.tinymediamanager.scraper.interfaces.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.interfaces.IMovieImdbMetadataProvider;
 import org.tinymediamanager.scraper.interfaces.IMovieMetadataProvider;
-import org.tinymediamanager.scraper.interfaces.IMovieSetMetadataProvider;
 import org.tinymediamanager.scraper.interfaces.IMoviePornhubMetadataProvider;
-import org.tinymediamanager.scraper.interfaces.IMovieTrailerProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieSetMetadataProvider;
 import org.tinymediamanager.scraper.interfaces.ITvShowArtworkProvider;
-import org.tinymediamanager.scraper.interfaces.ITvShowMetadataProvider;
-import org.tinymediamanager.scraper.interfaces.ITvShowTrailerProvider;
 import org.tinymediamanager.scraper.util.ApiKey;
 
 /**
- * The Class PornhubMetadataProvider. A meta data, artwork and trailer provider for the site themoviedb.org
+ * The Class PornhubMetadataProvider. A meta data, artwork and trailer provider for the site
+ * themoviedb.org
  *
  * @author Manuel Laggner
  */
-public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSetMetadataProvider, ITvShowMetadataProvider, IMovieArtworkProvider,
-    ITvShowArtworkProvider, IMovieTrailerProvider, ITvShowTrailerProvider, IMoviePornhubMetadataProvider, IMovieImdbMetadataProvider {
-  public static final String    ID           = "pornhub";
+public class PornhubMetadataProvider
+    implements IMovieMetadataProvider, IMovieSetMetadataProvider, IMovieArtworkProvider,
+    ITvShowArtworkProvider, IMoviePornhubMetadataProvider,
+    IMovieImdbMetadataProvider {
 
-  private static final Logger   LOGGER       = LoggerFactory.getLogger(PornhubMetadataProvider.class);
-  private static final String   TMM_API_KEY  = ApiKey.decryptApikey("dj5KmN0AO0eFDMF1tybX3H+zxGpfm4pUQAlEhM3iah/g2kuCzUQVZiiJ+ceCP2DO");
+  public static final String ID = "pornhub";
+  static final ExecutorService executor = Executors.newFixedThreadPool(4);
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(PornhubMetadataProvider.class);
+  private static final String TMM_API_KEY = ApiKey
+      .decryptApikey("dj5KmN0AO0eFDMF1tybX3H+zxGpfm4pUQAlEhM3iah/g2kuCzUQVZiiJ+ceCP2DO");
 
   // Use primary translations, not just our internal MediaLanguages (we need the country!)
   // https://api.themoviedb.org/3/configuration/primary_translations?api_key=XXXX
   // And keep on duplicate languages the main country on first position!
-  private static final String[] PT           = new String[] { "ar-AE", "ar-SA", "be-BY", "bg-BG", "bn-BD", "ca-ES", "ch-GU", "cs-CZ", "da-DK",
-      "de-DE", "el-GR", "en-US", "en-AU", "en-CA", "en-GB", "eo-EO", "es-ES", "es-MX", "eu-ES", "fr-FR", "fa-IR", "fi-FI", "fr-CA", "gl-ES", "he-IL",
-      "hi-IN", "hu-HU", "id-ID", "it-IT", "ja-JP", "ka-GE", "kn-IN", "ko-KR", "lt-LT", "ml-IN", "nb-NO", "nl-NL", "no-NO", "pl-PL", "pt-BR", "pt-PT",
-      "ro-RO", "ru-RU", "si-LK", "sk-SK", "sl-SI", "sr-RS", "sv-SE", "ta-IN", "te-IN", "th-TH", "tr-TR", "uk-UA", "vi-VN", "zh-CN", "zh-HK",
-      "zh-TW" };
+  private static final String[] PT = new String[]{"ar-AE", "ar-SA", "be-BY", "bg-BG", "bn-BD",
+      "ca-ES", "ch-GU", "cs-CZ", "da-DK", "de-DE", "el-GR",
+      "en-US", "en-AU", "en-CA", "en-GB", "eo-EO", "es-ES", "es-MX", "eu-ES", "fr-FR", "fa-IR",
+      "fi-FI", "fr-CA", "gl-ES", "he-IL", "hi-IN", "hu-HU",
+      "id-ID", "it-IT", "ja-JP", "ka-GE", "kn-IN", "ko-KR", "lt-LT", "ml-IN", "nb-NO", "nl-NL",
+      "no-NO", "pl-PL", "pt-BR", "pt-PT", "ro-RO", "ru-RU",
+      "si-LK", "sk-SK", "sl-SI", "sr-RS", "sv-SE", "ta-IN", "te-IN", "th-TH", "tr-TR", "uk-UA",
+      "vi-VN", "zh-CN", "zh-HK", "zh-TW"};
 
-  static Pornhub                   api;
-  static MediaProviderInfo      providerInfo = createMediaProviderInfo();
-  static Configuration          configuration;
+  static Pornhub api;
+  static MediaProviderInfo providerInfo = createMediaProviderInfo();
+  static Configuration configuration;
 
   private static MediaProviderInfo createMediaProviderInfo() {
     MediaProviderInfo providerInfo = new MediaProviderInfo(ID, "pornhub.com",
@@ -139,8 +143,7 @@ public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSe
         if (configuration == null) {
           throw new Exception("Invalid PORNHUB API key");
         }*/
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         LOGGER.error("could not initialize the API: {}", e.getMessage());
         // force re-initialization the next time this will be called
         api = null;
@@ -160,7 +163,8 @@ public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSe
   }
 
   @Override
-  public SortedSet<MediaSearchResult> search(MovieSearchAndScrapeOptions options) throws ScrapeException {
+  public SortedSet<MediaSearchResult> search(MovieSearchAndScrapeOptions options)
+      throws ScrapeException {
     LOGGER.debug("search(): {}", options);
     // lazy initialization of the api
     initAPI();
@@ -168,15 +172,8 @@ public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSe
   }
 
   @Override
-  public SortedSet<MediaSearchResult> search(TvShowSearchAndScrapeOptions options) throws ScrapeException {
-    LOGGER.debug("search(): {}", options);
-    // lazy initialization of the api
-    initAPI();
-    return new PornhubTvShowMetadataProvider(api).search(options);
-  }
-
-  @Override
-  public List<MediaSearchResult> search(MovieSetSearchAndScrapeOptions options) throws ScrapeException {
+  public List<MediaSearchResult> search(MovieSetSearchAndScrapeOptions options)
+      throws ScrapeException {
     LOGGER.debug("search(): {}", options);
     // lazy initialization of the api
     initAPI();
@@ -184,21 +181,8 @@ public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSe
   }
 
   @Override
-  public List<MediaMetadata> getEpisodeList(TvShowSearchAndScrapeOptions options) throws ScrapeException, MissingIdException {
-    // lazy initialization of the api
-    initAPI();
-    return new PornhubTvShowMetadataProvider(api).getEpisodeList(options);
-  }
-
-  @Override
-  public List<MediaMetadata> getEpisodeList(TvShowEpisodeSearchAndScrapeOptions options) throws ScrapeException, MissingIdException {
-    // lazy initialization of the api
-    initAPI();
-    return new PornhubTvShowMetadataProvider(api).getEpisodeList(options);
-  }
-
-  @Override
-  public MediaMetadata getMetadata(MovieSearchAndScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
+  public MediaMetadata getMetadata(MovieSearchAndScrapeOptions options)
+      throws ScrapeException, MissingIdException, NothingFoundException {
     LOGGER.debug("getMetadata(): {}", options);
     // lazy initialization of the api
     initAPI();
@@ -206,23 +190,8 @@ public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSe
   }
 
   @Override
-  public MediaMetadata getMetadata(TvShowSearchAndScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
-    LOGGER.debug("getMetadata(): {}", options);
-    // lazy initialization of the api
-    initAPI();
-    return new PornhubTvShowMetadataProvider(api).getTvShowMetadata(options);
-  }
-
-  @Override
-  public MediaMetadata getMetadata(TvShowEpisodeSearchAndScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
-    LOGGER.debug("getMetadata(): {}", options);
-    // lazy initialization of the api
-    initAPI();
-    return new PornhubTvShowMetadataProvider(api).getEpisodeMetadata(options);
-  }
-
-  @Override
-  public MediaMetadata getMetadata(MovieSetSearchAndScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
+  public MediaMetadata getMetadata(MovieSetSearchAndScrapeOptions options)
+      throws ScrapeException, MissingIdException, NothingFoundException {
     LOGGER.debug("getMetadata(): {}", options);
     // lazy initialization of the api
     initAPI();
@@ -230,28 +199,19 @@ public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSe
   }
 
   @Override
-  public List<MediaArtwork> getArtwork(ArtworkSearchAndScrapeOptions options) throws ScrapeException, MissingIdException {
+  public List<MediaArtwork> getArtwork(ArtworkSearchAndScrapeOptions options)
+      throws ScrapeException, MissingIdException {
     LOGGER.debug("getArwork(): {}", options);
     // lazy initialization of the api
     initAPI();
     return new PornhubArtworkProvider(api).getArtwork(options);
   }
 
-  @Override
-  public List<MediaTrailer> getTrailers(TrailerSearchAndScrapeOptions options) throws ScrapeException, MissingIdException {
-    // lazy initialization of the api
-    initAPI();
-
-    return new PornhubTrailerProvider(api).getTrailers(options);
-  }
-
   /**
    * get the pornhubId via the imdbId
    *
-   * @param imdbId
-   *          the imdbId
-   * @param type
-   *          the MediaType to look for (we cannot search for movie, and take the TV entry!
+   * @param imdbId the imdbId
+   * @param type   the MediaType to look for (we cannot search for movie, and take the TV entry!
    * @return the pornhubId or 0 if nothing has been found
    */
   @Deprecated
@@ -260,21 +220,23 @@ public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSe
       // lazy initialization of the api
       initAPI();
 
-      FindResults findResults = api.findService().find(imdbId, ExternalSource.IMDB_ID, null).execute().body();
+      FindResults findResults = api.findService().find(imdbId, ExternalSource.IMDB_ID, null)
+          .execute().body();
       // movie
-      if (findResults != null && findResults.movie_results != null && !findResults.movie_results.isEmpty()
-          && (type == MediaType.MOVIE || type == MediaType.MOVIE_SET)) {
+      if (findResults != null && findResults.movie_results != null && !findResults.movie_results
+          .isEmpty() && (type == MediaType.MOVIE
+          || type == MediaType.MOVIE_SET)) {
         return findResults.movie_results.get(0).id;
       }
 
       // tv show
       if (findResults != null && findResults.tv_results != null && !findResults.tv_results.isEmpty()
-          && (type == MediaType.TV_SHOW || type == MediaType.TV_EPISODE)) {
+          && (type == MediaType.TV_SHOW
+          || type == MediaType.TV_EPISODE)) {
         return findResults.tv_results.get(0).id;
       }
 
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOGGER.debug("failed to get pornhub id: {}", e.getMessage());
     }
 
@@ -282,8 +244,8 @@ public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSe
   }
 
   /**
-   * tries to find correct title & overview from all the translations<br>
-   * everything can be null/empty
+   * tries to find correct title & overview from all the translations<br> everything can be
+   * null/empty
    *
    * @param translations
    * @param locale
@@ -292,10 +254,12 @@ public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSe
   private static Translation getTranslationForLocale(Translations translations, Locale locale) {
     Translation ret = null;
 
-    if (translations != null && translations.translations != null && !translations.translations.isEmpty()) {
+    if (translations != null && translations.translations != null && !translations.translations
+        .isEmpty()) {
       for (Translation tr : translations.translations) {
         // check with language AND country
-        if (tr.iso_639_1.equals(locale.getLanguage()) && tr.iso_3166_1.equals(locale.getCountry())) {
+        if (tr.iso_639_1.equals(locale.getLanguage()) && tr.iso_3166_1
+            .equals(locale.getCountry())) {
           ret = tr;
           break;
         }
@@ -304,7 +268,8 @@ public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSe
       if (ret == null) {
         // did not find exact translation, check again with language OR country
         for (Translation tr : translations.translations) {
-          if (tr.iso_639_1.equals(locale.getLanguage()) || tr.iso_3166_1.equals(locale.getCountry())) {
+          if (tr.iso_639_1.equals(locale.getLanguage()) || tr.iso_3166_1
+              .equals(locale.getCountry())) {
             ret = tr;
             break;
           }
@@ -316,16 +281,14 @@ public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSe
   }
 
   /**
-   * 0 is title(movie) or name(show)<br>
-   * 1 is overview<br>
-   * both may be empty, but never null
+   * 0 is title(movie) or name(show)<br> 1 is overview<br> both may be empty, but never null
    *
    * @param translations
    * @param locale
    * @return
    */
   public static String[] getValuesFromTranslation(Translations translations, Locale locale) {
-    String[] ret = new String[] { "", "" };
+    String[] ret = new String[]{"", ""};
 
     Translation tr = getTranslationForLocale(translations, locale);
     if (tr == null || tr.data == null) {
@@ -465,12 +428,13 @@ public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSe
   }
 
   /**
-   * pornhub works better if we send a "real" language tag (containing language AND country); since we have only the language tag we do the same hack as
-   * described in the pornhub api (By default, a bare ISO-639-1 language will default to its matching pair, ie. pt-PT - source
-   * https://developers.themoviedb.org/3/getting-started/languages), but without the bug they have ;)
-   * 
-   * @param language
-   *          the {@link MediaLanguages} to parse
+   * pornhub works better if we send a "real" language tag (containing language AND country); since
+   * we have only the language tag we do the same hack as described in the pornhub api (By default,
+   * a bare ISO-639-1 language will default to its matching pair, ie. pt-PT - source
+   * https://developers.themoviedb.org/3/getting-started/languages), but without the bug they have
+   * ;)
+   *
+   * @param language the {@link MediaLanguages} to parse
    * @return a {@link String} containing the language and country code
    */
   static String getRequestLanguage(MediaLanguages language) {
@@ -481,8 +445,7 @@ public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSe
     if (name.length() > 2) {
       // language tag is longer than 2 characters -> we have the country
       locale = language.toLocale();
-    }
-    else {
+    } else {
       // try to get the right locale with the language tag in front an end (e.g. de-DE)
       locale = new Locale(name, name.toUpperCase(Locale.ROOT));
       // now check if the resulting locale is valid
