@@ -15,6 +15,8 @@
  */
 package org.tinymediamanager.scraper.pornhub.v1;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.scott.pornhub.Pornhub;
 import com.scott.pornhub.entities.BaseCompany;
 import com.scott.pornhub.entities.BaseKeyword;
@@ -30,6 +32,7 @@ import com.scott.pornhub.entities.ReleaseDatesResult;
 import com.scott.pornhub.entities.SpokenLanguage;
 import com.scott.pornhub.exceptions.PornhubNotFoundException;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -64,6 +67,7 @@ import org.tinymediamanager.scraper.entities.MediaType;
 import org.tinymediamanager.scraper.exceptions.MissingIdException;
 import org.tinymediamanager.scraper.exceptions.NothingFoundException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
+import org.tinymediamanager.scraper.pornhub.v1.dto.LDJson;
 import org.tinymediamanager.scraper.util.LanguageUtils;
 import org.tinymediamanager.scraper.util.ListUtils;
 import org.tinymediamanager.scraper.util.MetadataUtil;
@@ -83,7 +87,9 @@ class PornhubMovieMetadataProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PornhubMovieMetadataProvider.class);
 
-    private final String searchResultCSSSelector = "#videoSearchResult .pcVideoListItem a[href]:not(.img)";
+    private final String searchResultCSSSelector = "#videoSearchResult .pcVideoListItem .title a[href]";
+
+    private static final Pattern LD_JSON_DURATION = Pattern.compile("PT(\\d{2})H(\\d{2})M(\\d{2})S");
 
     private final String TITLE = ".title-container .title .inlineFree";
     private final String VIEWS = ".count";
@@ -92,17 +98,17 @@ class PornhubMovieMetadataProvider {
     private final String PERCENT = ".percent";
     private final String AUTHOR = ".video-detailed-info .usernameBadgesWrapper a";
     private final String AUTHOR_SUBSCRIBER = ".video-detailed-info .subscribers-count";
-    private final String PORNSTARS = ".pornstarsWrapper .pstar-list-btn";
+    private final String PORN_STAR_LIST = ".pornstarsWrapper .pstar-list-btn";
     private final String CATEGORIES = ".categoriesWrapper a:not(.add-btn-small)";
     private final String TAGS = ".tagsWrapper a:not(.add-btn-small)";
     private final String PRODUCTION = ".productionWrapper";
     private final String DURATION = "meta[property=video:duration]";
     private final String NUMBER_OF_COMMENT = "#cmtWrapper h2 span";
-    private final String UPLOAD_DATE = "script[type=application/ld+json]";
-    private final String DESCRIPTION = "script[type=application/ld+json]";
-    private final String THUMBNAIL_URL = "script[type=application/ld+json]";
+    private final String SELECTOR_LD_JSON = "script[type=application/ld+json]";
 
     private final Pornhub api;
+
+    private final ObjectMapper mapper = new ObjectMapper();
 
     PornhubMovieMetadataProvider(Pornhub api) {
         this.api = api;
@@ -125,25 +131,16 @@ class PornhubMovieMetadataProvider {
         if (StringUtils.isNotEmpty(options.getSearchQuery())) {
             searchString = Utils.removeSortableName(options.getSearchQuery());
         }
-//        searchString = MetadataUtil.removeNonSearchCharacters(searchString);
+        /*
+        searchString = MetadataUtil.removeNonSearchCharacters(searchString);
 
-        /*Pattern videoNamePattern = Pattern.compile(".*?\\s?-\\s(.*)$");
+        Pattern videoNamePattern = Pattern.compile(".*?\\s?-\\s(.*)$");
         Matcher matcher = videoNamePattern.matcher(searchString);
         if (matcher.find()) {
             searchString = matcher.group(1);
         }*/
 
-        String imdbId = options.getImdbId();
-        if (!MetadataUtil.isValidImdbId(imdbId)) {
-            imdbId = "";
-        }
-        if (MetadataUtil.isValidImdbId(searchString)) {
-            imdbId = searchString;
-        }
-
         String pornhubId = options.getPornhubId();
-
-        boolean adult = providerInfo.getConfig().getValueAsBool("includeAdult");
 
         String language = getRequestLanguage(options.getLanguage());
 
@@ -157,10 +154,12 @@ class PornhubMovieMetadataProvider {
                     Document document = Jsoup.connect(String.format("https://www.pornhub.com/view_video.php?viewkey=%s", pornhubId))
                         .proxy("127.0.0.1", 10809)
                         .get();
-                    Movie movie = document2Movie(document);
+                    Movie movie = parseDocument(document);
                     verifyMovieTitleLanguage(Locale.forLanguageTag(language), movie);
                     MediaSearchResult result = morphMovieToSearchResult(movie, options);
-                    results.add(result);
+                    if (result != null) {
+                        results.add(result);
+                    }
                     LOGGER.debug("found {} results with PORNHUB id", results.size());
                 }
                 catch (Exception e) {
@@ -177,7 +176,7 @@ class PornhubMovieMetadataProvider {
 
                     // get all result pages
                     do {
-                        Document document = Jsoup.connect(String.format("https://www.pornhub.com/video/search?search=%s&page=%s", searchString, page))
+                        Document document = Jsoup.connect(String.format("https://www.pornhub.com/video/search?search=%s&page=%s", URLEncoder.encode(searchString, "utf-8"), page))
                             .proxy("127.0.0.1", 10809)
                             .get();
                         // search result
@@ -186,13 +185,14 @@ class PornhubMovieMetadataProvider {
                             Movie movie = searchResult2Movie(e);
                             verifyMovieTitleLanguage(Locale.forLanguageTag(language), movie);
                             MediaSearchResult r = morphMovieToSearchResult(movie, options);
-                            if (r != null)
+                            if (r != null) {
                                 results.add(r);
+                            }
                         }
                         Element maxPageElement = document.selectFirst(".page_next_set");
-                        if (maxPageElement != null)
+                        if (maxPageElement != null) {
                             maxPage = Integer.parseInt(maxPageElement.text());
-
+                        }
                         page++;
                     }
                     while (page <= maxPage);
@@ -200,7 +200,6 @@ class PornhubMovieMetadataProvider {
                     LOGGER.debug("found {} results with search string", results.size());
                 }
                 catch (Exception e) {
-                    e.printStackTrace();
                     LOGGER.warn("problem getting data from pornhub: {}", e.getMessage());
                     savedException = e;
                 }
@@ -210,7 +209,7 @@ class PornhubMovieMetadataProvider {
             if (results.isEmpty()) {
                 searchString = searchString.replaceFirst("\\s\\d{4}$", "");
                 try {
-                    Document document = Jsoup.connect(String.format("https://www.pornhub.com/video/search?search=%s&page=%s", searchString, 1))
+                    Document document = Jsoup.connect(String.format("https://www.pornhub.com/video/search?search=%s&page=%s", URLEncoder.encode(searchString, "utf-8"), 1))
                         .proxy("127.0.0.1", 10809)
                         .get();
                     Elements searchResult = document.select(searchResultCSSSelector);
@@ -219,14 +218,14 @@ class PornhubMovieMetadataProvider {
                             Movie movie = searchResult2Movie(e);
                             verifyMovieTitleLanguage(Locale.forLanguageTag(language), movie);
                             MediaSearchResult r = morphMovieToSearchResult(movie, options);
-                            if (r != null)
+                            if (r != null) {
                                 results.add(morphMovieToSearchResult(movie, options));
+                            }
                         }
                     }
                     LOGGER.debug("found {} results with search string without year", results.size());
                 }
                 catch (Exception e) {
-                    e.printStackTrace();
                     LOGGER.warn("problem getting data from pornhub: {}", e.getMessage());
                     savedException = e;
                 }
@@ -250,12 +249,11 @@ class PornhubMovieMetadataProvider {
      */
     private void verifyMovieTitleLanguage(Locale language, Movie movie) throws IOException {
         // always doing a fallback scrape when overview empty, regardless of setting!
-        if (providerInfo.getConfig().getValueAsBool("titleFallback") || StringUtils
-            .isEmpty(movie.overview)) {
-            Locale fallbackLanguage = Locale
-                .forLanguageTag(providerInfo.getConfig().getValue("titleFallbackLanguage"));
-            if ((movie.title.equals(movie.original_title) && !movie.original_language
-                .equals(language.getLanguage()))
+        if (providerInfo.getConfig().getValueAsBool("titleFallback") ||
+            StringUtils.isEmpty(movie.overview)) {
+            Locale fallbackLanguage = Locale.forLanguageTag(providerInfo.getConfig().getValue("titleFallbackLanguage"));
+            if ((movie.title.equals(movie.original_title) &&
+                !movie.original_language.equals(language.getLanguage()))
                 && !language.equals(fallbackLanguage)) {
                 LOGGER.debug("checking for title fallback {} for movie {}", fallbackLanguage, movie.title);
 
@@ -371,19 +369,13 @@ class PornhubMovieMetadataProvider {
                     Document document = Jsoup.connect(String.format("https://www.pornhub.com/view_video.php?viewkey=%s", pornhubId))
                         .proxy("127.0.0.1", 10809)
                         .get();
-//                    Response<Document> httpResponse = api.moviesService().summary(pornhubId, null, null)
-//                        .execute();
-//                    if (!httpResponse.isSuccessful()) {
-//                        throw new HttpException(httpResponse.code(), httpResponse.message());
-//                    }
-                    movie = document2Movie(document);
+                    movie = parseDocument(document);
                     verifyMovieTitleLanguage(Locale.forLanguageTag(language), movie);
                 }
                 catch (PornhubNotFoundException e) {
                     LOGGER.info("nothing found");
                 }
                 catch (Exception e) {
-                    e.printStackTrace();
                     LOGGER.warn("problem getting data from pornhub: {}", e.getMessage());
                     savedException = e;
                 }
@@ -413,13 +405,11 @@ class PornhubMovieMetadataProvider {
         return md;
     }
 
-    private MediaSearchResult morphMovieToSearchResult(BaseMovie movie,
-        MovieSearchAndScrapeOptions query) {
+    private MediaSearchResult morphMovieToSearchResult(BaseMovie movie, MovieSearchAndScrapeOptions query) {
         MediaSearchResult searchResult = new MediaSearchResult(providerInfo.getId(), MediaType.MOVIE);
         searchResult.setId(movie.id);
         searchResult.setTitle(movie.title);
-        searchResult
-            .setOverview(movie.overview); // empty overview tells us that we have no translation?
+        searchResult.setOverview(movie.overview); // empty overview tells us that we have no translation?
         searchResult.setOriginalTitle(movie.original_title);
         searchResult.setOriginalLanguage(movie.original_language);
 
@@ -447,8 +437,8 @@ class PornhubMovieMetadataProvider {
             searchResult.setScore(1);
         }
         else if (matcher.find() &&
-            (matcher.group(0).equals(searchResult.getOriginalTitle()) ||
-                matcher.group(1).equals(searchResult.getOriginalTitle()))) {
+            (matcher.group(0).equalsIgnoreCase(searchResult.getOriginalTitle()) ||
+                matcher.group(1).equalsIgnoreCase(searchResult.getOriginalTitle()))) {
             searchResult.setScore(1);
         }
         else {
@@ -468,13 +458,47 @@ class PornhubMovieMetadataProvider {
         return searchResult;
     }
 
-    private Movie document2Movie(Document document) {
+    private Movie parseDocument(Document document) {
         if (document == null) {
             return null;
         }
-//        LOGGER.debug(document.html());
+        LOGGER.debug(document.html());
+
         Movie movie = new Movie();
-        Element originUrl = document.selectFirst("[property=og:url]");
+        LDJson json = null;
+        try {
+            json = mapper.readValue(document.selectFirst(SELECTOR_LD_JSON).html(), LDJson.class);
+        }
+        catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        if (json != null) {
+            movie.homepage = json.getEmbedUrl();
+            Pattern pattern1 = Pattern.compile(".*viewkey=(.*)$");
+            Matcher matcher1 = pattern1.matcher(movie.homepage);
+            if (matcher1.find()) {
+                movie.id = matcher1.group(1);
+            }
+            movie.original_language = "en_US";
+            movie.original_title = json.getName();
+            movie.title = movie.original_title;
+            movie.poster_path = json.getThumbnailUrl();
+            movie.release_date = json.getUploadDate();
+            movie.overview = json.getDescription();
+
+            Matcher matcher2 = LD_JSON_DURATION.matcher(json.getDuration());
+            if (matcher2.find()) {
+                int hours = Integer.parseInt(matcher2.group(1));
+                int minutes = Integer.parseInt(matcher2.group(2));
+                int seconds = Integer.parseInt(matcher2.group(3));
+                movie.runtime = hours * 60 * 60 + minutes * 60 + seconds;
+            }
+        }
+        movie.vote_average = Double.parseDouble(document.selectFirst(PERCENT).text().replace("%", ""));
+        movie.vote_count = Integer.parseInt(document.selectFirst(UP_VOTES).text()) + Integer.parseInt(document.selectFirst(DOWN_VOTES).text());
+
+
+        /*Element originUrl = document.selectFirst("[property=og:url]");
         if (originUrl != null) {
             movie.homepage = originUrl.attr("content");
             Pattern pattern1 = Pattern.compile(".*viewkey=(.*)$");
@@ -486,75 +510,76 @@ class PornhubMovieMetadataProvider {
                 movie.id = null;
             }
         }
-
         movie.original_title = document.selectFirst("[property=og:title]").attr("content");
         movie.title = movie.original_title;
+        movie.poster_path = document.selectFirst("#videoElementPoster").absUrl("src");
         movie.overview = document.selectFirst("[property=og:description]").attr("content");
         String runtime = document.selectFirst("[property=video:duration]").text();
         movie.runtime = StringUtils.isBlank(runtime) ? 0 : Integer.parseInt(runtime);
+        */
 
-        movie.genres = new ArrayList<>();
         document.select(CATEGORIES).forEach(e -> {
+            LOGGER.debug(e.html());
+            if (movie.genres == null) {
+                movie.genres = new ArrayList<>();
+            }
             Genre genre = new Genre();
             genre.id = 0;
             genre.name = e.text();
             genre.href = e.absUrl("href");
             movie.genres.add(genre);
-            LOGGER.debug(e.text());
         });
-        //        movie.recommendations
-        //        movie.release_date=document.selectFirst(UPLOAD_DATE).text();
+
         Element videoDetailInfo = document.selectFirst(".video-detailed-info");
-        Credits credits = new Credits();
-        movie.credits = credits;
+        movie.credits = new Credits();
         CrewMember crewMember = new CrewMember();
         crewMember.id = 1;
         crewMember.credit_id = "";
-        crewMember.profile_path = videoDetailInfo.selectFirst(".userAvatar img").absUrl("src");
+        Element userAvatarElement = videoDetailInfo.selectFirst(".userAvatar img");
+        if (userAvatarElement != null) {
+            crewMember.profile_path = userAvatarElement.absUrl("src");
+        }
         Element userNameBadge = videoDetailInfo.selectFirst(".usernameBadgesWrapper");
-        if (userNameBadge != null)
+        if (userNameBadge != null) {
             crewMember.name = userNameBadge.text();
-        credits.crew = Collections.singletonList(crewMember);
-
-        credits.cast = new ArrayList<>();
-        document.select(PORNSTARS).forEach(e -> {
+        }
+        movie.credits.crew = Collections.singletonList(crewMember);
+        document.select(PORN_STAR_LIST).forEach(e -> {
+            if (movie.credits.cast == null) {
+                movie.credits.cast = new ArrayList<>();
+            }
             CastMember cast = new CastMember();
 //            cast.id = 1;
 //            cast.cast_id = 1;
             cast.name = e.text();
             cast.character = cast.name;
-            cast.order = credits.cast.size() + 1;
+            cast.order = movie.credits.cast.size() + 1;
             cast.profile_path = e.selectFirst(".avatar").absUrl("href");
-            credits.cast.add(cast);
+            movie.credits.cast.add(cast);
         });
-
-        movie.original_language = "en_US";
-        movie.poster_path = document.selectFirst("#videoElementPoster").absUrl("src");
-        movie.vote_average = Double.parseDouble(document.selectFirst(PERCENT).text().replace("%", ""));
-        movie.vote_count = Integer.parseInt(document.selectFirst(UP_VOTES).text()) + Integer.parseInt(document.selectFirst(DOWN_VOTES).text());
         return movie;
     }
 
     private Movie searchResult2Movie(Element e) {
+        if (e == null) {
+            return null;
+        }
+        LOGGER.debug(e.outerHtml());
         Movie movie = new Movie();
         movie.homepage = e.absUrl("href");
-
         Pattern pattern1 = Pattern.compile(".*viewkey=(.*)$");
-        assert movie.homepage != null;
         Matcher matcher1 = pattern1.matcher(movie.homepage);
         if (matcher1.find()) {
             movie.id = matcher1.group(1);
         }
-        else {
-            movie.id = null;
-        }
+        movie.original_language = "en_US";
         movie.original_title = e.attr("title");
         movie.title = movie.original_title;
 
-        movie.original_language = "en_US";
         Element posterElement = e.selectFirst("img");
-        if (posterElement != null)
+        if (posterElement != null) {
             movie.poster_path = posterElement.absUrl("src");
+        }
         Element durationElement = e.selectFirst(".duration");
         if (durationElement != null) {
             String duration = durationElement.text();

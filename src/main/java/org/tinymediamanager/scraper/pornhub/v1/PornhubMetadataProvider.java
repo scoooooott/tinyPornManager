@@ -26,8 +26,6 @@ import com.scott.pornhub.enumerations.ExternalSource;
 import java.util.List;
 import java.util.Locale;
 import java.util.SortedSet;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.LocaleUtils;
@@ -35,16 +33,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.entities.MediaGenres;
-import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.MovieSetSearchAndScrapeOptions;
-import org.tinymediamanager.core.tvshow.TvShowEpisodeSearchAndScrapeOptions;
-import org.tinymediamanager.core.tvshow.TvShowSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.ArtworkSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaSearchResult;
-import org.tinymediamanager.scraper.TrailerSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
@@ -53,30 +47,21 @@ import org.tinymediamanager.scraper.exceptions.NothingFoundException;
 import org.tinymediamanager.scraper.exceptions.ScrapeException;
 import org.tinymediamanager.scraper.http.TmmHttpClient;
 import org.tinymediamanager.scraper.interfaces.IMovieArtworkProvider;
-import org.tinymediamanager.scraper.interfaces.IMovieImdbMetadataProvider;
 import org.tinymediamanager.scraper.interfaces.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.interfaces.IMoviePornhubMetadataProvider;
 import org.tinymediamanager.scraper.interfaces.IMovieSetMetadataProvider;
-import org.tinymediamanager.scraper.interfaces.IMovieTrailerProvider;
-import org.tinymediamanager.scraper.interfaces.ITvShowArtworkProvider;
-import org.tinymediamanager.scraper.interfaces.ITvShowMetadataProvider;
-import org.tinymediamanager.scraper.interfaces.ITvShowTrailerProvider;
-import org.tinymediamanager.scraper.util.ApiKey;
 
 /**
  * The Class PornhubMetadataProvider. A meta data, artwork and trailer provider for the site themoviedb.org
  *
  * @author Manuel Laggner
  */
-public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSetMetadataProvider, ITvShowMetadataProvider, IMovieArtworkProvider,
-    ITvShowArtworkProvider, IMovieTrailerProvider, ITvShowTrailerProvider, IMoviePornhubMetadataProvider, IMovieImdbMetadataProvider {
+public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSetMetadataProvider, IMovieArtworkProvider,
+    IMoviePornhubMetadataProvider {
 
     public static final String ID = "pornhub";
-    static final ExecutorService executor = Executors.newFixedThreadPool(4);
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PornhubMetadataProvider.class);
-    private static final String TMM_API_KEY = ApiKey
-        .decryptApikey("dj5KmN0AO0eFDMF1tybX3H+zxGpfm4pUQAlEhM3iah/g2kuCzUQVZiiJ+ceCP2DO");
 
     // Use primary translations, not just our internal MediaLanguages (we need the country!)
     // https://api.themoviedb.org/3/configuration/primary_translations?api_key=XXXX
@@ -100,18 +85,15 @@ public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSe
             "<html><h3>Pornhub</h3><br />The largest free movie database maintained by the community. It provides metadata and artwork<br />in many different languages. Thus it is the first choice for non english users<br /><br />Available languages: multiple</html>",
             PornhubMetadataProvider.class.getResource("/org/tinymediamanager/scraper/pornhub.png"));
 
-        providerInfo.getConfig().addText("apiKey", "", true);
-        providerInfo.getConfig().addBoolean("includeAdult", false);
         providerInfo.getConfig().addBoolean("scrapeLanguageNames", true);
         providerInfo.getConfig().addBoolean("titleFallback", false);
         providerInfo.getConfig().addSelect("titleFallbackLanguage", PT, "en-US");
         providerInfo.getConfig().load();
-
         return providerInfo;
     }
 
     // thread safe initialization of the API
-    private static synchronized void initAPI() throws ScrapeException {
+    private static synchronized void init() throws ScrapeException {
         // create a new instance of the pornhub api
         try {
             api = new Pornhub() {
@@ -150,7 +132,7 @@ public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSe
         throws ScrapeException {
         LOGGER.debug("search(): {}", options);
         // lazy initialization of the api
-        initAPI();
+        init();
         return new PornhubMovieMetadataProvider(api).search(options);
     }
 
@@ -159,7 +141,7 @@ public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSe
         throws ScrapeException {
         LOGGER.debug("search(): {}", options);
         // lazy initialization of the api
-        initAPI();
+        init();
         return new PornhubMovieSetMetadataProvider(api).search(options);
     }
 
@@ -168,7 +150,7 @@ public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSe
         throws ScrapeException, MissingIdException, NothingFoundException {
         LOGGER.debug("getMetadata(): {}", options);
         // lazy initialization of the api
-        initAPI();
+        init();
         return new PornhubMovieMetadataProvider(api).getMetadata(options);
     }
 
@@ -177,7 +159,7 @@ public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSe
         throws ScrapeException, MissingIdException, NothingFoundException {
         LOGGER.debug("getMetadata(): {}", options);
         // lazy initialization of the api
-        initAPI();
+        init();
         return new PornhubMovieSetMetadataProvider(api).getMetadata(options);
     }
 
@@ -186,7 +168,7 @@ public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSe
         throws ScrapeException, MissingIdException {
         LOGGER.debug("getArwork(): {}", options);
         // lazy initialization of the api
-        initAPI();
+        init();
         return new PornhubArtworkProvider(api).getArtwork(options);
     }
 
@@ -201,7 +183,7 @@ public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSe
     public String getPornhubIdFromImdbId(String imdbId, MediaType type) {
         try {
             // lazy initialization of the api
-            initAPI();
+            init();
 
             FindResults findResults = api.findService().find(imdbId, ExternalSource.IMDB_ID, null)
                 .execute().body();
@@ -403,6 +385,8 @@ public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSe
             case 37:
                 g = MediaGenres.WESTERN;
                 break;
+            default:
+                break;
         }
         if (g == null) {
             g = MediaGenres.getGenre(genre.name);
@@ -445,32 +429,4 @@ public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSe
         return locale.toLanguageTag();
     }
 
-    @Override public List<MediaTrailer> getTrailers(
-        TrailerSearchAndScrapeOptions options) throws ScrapeException, MissingIdException {
-        return null;
-    }
-
-    @Override public MediaMetadata getMetadata(
-        TvShowSearchAndScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
-        return null;
-    }
-
-    @Override public MediaMetadata getMetadata(
-        TvShowEpisodeSearchAndScrapeOptions options) throws ScrapeException, MissingIdException, NothingFoundException {
-        return null;
-    }
-
-    @Override public SortedSet<MediaSearchResult> search(TvShowSearchAndScrapeOptions options) throws ScrapeException {
-        return null;
-    }
-
-    @Override public List<MediaMetadata> getEpisodeList(
-        TvShowSearchAndScrapeOptions options) throws ScrapeException, MissingIdException {
-        return null;
-    }
-
-    @Override public List<MediaMetadata> getEpisodeList(
-        TvShowEpisodeSearchAndScrapeOptions options) throws ScrapeException, MissingIdException {
-        return null;
-    }
 }
