@@ -83,7 +83,7 @@ class PornhubMovieMetadataProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PornhubMovieMetadataProvider.class);
 
-    private final String searchResultCSSSelector = "#videoSearchResult .pcVideoListItem a[href]";
+    private final String searchResultCSSSelector = "#videoSearchResult .pcVideoListItem a[href]:not(.img)";
 
     private final String TITLE = ".title-container .title .inlineFree";
     private final String VIEWS = ".count";
@@ -173,7 +173,7 @@ class PornhubMovieMetadataProvider {
             if (results.isEmpty()) {
                 try {
                     int page = 1;
-                    int maxPage;
+                    int maxPage = 1;
 
                     // get all result pages
                     do {
@@ -185,10 +185,13 @@ class PornhubMovieMetadataProvider {
                         for (Element e : searchResult) {
                             Movie movie = searchResult2Movie(e);
                             verifyMovieTitleLanguage(Locale.forLanguageTag(language), movie);
-                            results.add(morphMovieToSearchResult(movie, options));
+                            MediaSearchResult r = morphMovieToSearchResult(movie, options);
+                            if (r != null)
+                                results.add(r);
                         }
-
-                        maxPage = Integer.parseInt(document.selectFirst(".page_next_set").text());
+                        Element maxPageElement = document.selectFirst(".page_next_set");
+                        if (maxPageElement != null)
+                            maxPage = Integer.parseInt(maxPageElement.text());
 
                         page++;
                     }
@@ -197,6 +200,7 @@ class PornhubMovieMetadataProvider {
                     LOGGER.debug("found {} results with search string", results.size());
                 }
                 catch (Exception e) {
+                    e.printStackTrace();
                     LOGGER.warn("problem getting data from pornhub: {}", e.getMessage());
                     savedException = e;
                 }
@@ -214,7 +218,9 @@ class PornhubMovieMetadataProvider {
                         for (Element e : searchResult) {
                             Movie movie = searchResult2Movie(e);
                             verifyMovieTitleLanguage(Locale.forLanguageTag(language), movie);
-                            results.add(morphMovieToSearchResult(movie, options));
+                            MediaSearchResult r = morphMovieToSearchResult(movie, options);
+                            if (r != null)
+                                results.add(morphMovieToSearchResult(movie, options));
                         }
                     }
                     LOGGER.debug("found {} results with search string without year", results.size());
@@ -546,12 +552,17 @@ class PornhubMovieMetadataProvider {
         movie.title = movie.original_title;
 
         movie.original_language = "en_US";
-        movie.poster_path = e.selectFirst("img").absUrl("src");
-        String duration = e.selectFirst(".duration").text();
-        Pattern pattern = Pattern.compile("^(\\d+):(\\d{2})$");
-        Matcher matcher = pattern.matcher(duration);
-        if (matcher.find()) {
-            movie.runtime = Integer.parseInt(matcher.group(1)) * 60 + Integer.parseInt(matcher.group(2));
+        Element posterElement = e.selectFirst("img");
+        if (posterElement != null)
+            movie.poster_path = posterElement.absUrl("src");
+        Element durationElement = e.selectFirst(".duration");
+        if (durationElement != null) {
+            String duration = durationElement.text();
+            Pattern pattern = Pattern.compile("^(\\d+):(\\d{2})$");
+            Matcher matcher = pattern.matcher(duration);
+            if (matcher.find()) {
+                movie.runtime = Integer.parseInt(matcher.group(1)) * 60 + Integer.parseInt(matcher.group(2));
+            }
         }
         movie.vote_average = 0.0;
         movie.vote_count = 0;
