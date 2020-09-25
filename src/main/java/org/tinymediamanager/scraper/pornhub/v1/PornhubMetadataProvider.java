@@ -33,12 +33,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinymediamanager.core.entities.MediaGenres;
+import org.tinymediamanager.core.entities.MediaTrailer;
 import org.tinymediamanager.core.movie.MovieSearchAndScrapeOptions;
 import org.tinymediamanager.core.movie.MovieSetSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.ArtworkSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.MediaMetadata;
 import org.tinymediamanager.scraper.MediaProviderInfo;
 import org.tinymediamanager.scraper.MediaSearchResult;
+import org.tinymediamanager.scraper.TrailerSearchAndScrapeOptions;
 import org.tinymediamanager.scraper.entities.MediaArtwork;
 import org.tinymediamanager.scraper.entities.MediaLanguages;
 import org.tinymediamanager.scraper.entities.MediaType;
@@ -50,14 +52,14 @@ import org.tinymediamanager.scraper.interfaces.IMovieArtworkProvider;
 import org.tinymediamanager.scraper.interfaces.IMovieMetadataProvider;
 import org.tinymediamanager.scraper.interfaces.IMoviePornhubMetadataProvider;
 import org.tinymediamanager.scraper.interfaces.IMovieSetMetadataProvider;
+import org.tinymediamanager.scraper.interfaces.IMovieTrailerProvider;
 
 /**
  * The Class PornhubMetadataProvider. A meta data, artwork and trailer provider for the site themoviedb.org
  *
  * @author Manuel Laggner
  */
-public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSetMetadataProvider, IMovieArtworkProvider,
-    IMoviePornhubMetadataProvider {
+public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSetMetadataProvider, IMovieArtworkProvider, IMovieTrailerProvider, IMoviePornhubMetadataProvider {
 
     public static final String ID = "pornhub";
 
@@ -429,4 +431,8 @@ public class PornhubMetadataProvider implements IMovieMetadataProvider, IMovieSe
         return locale.toLanguageTag();
     }
 
+    @Override public List<MediaTrailer> getTrailers(
+        TrailerSearchAndScrapeOptions options) throws ScrapeException, MissingIdException {
+        return null;
+    }
 }

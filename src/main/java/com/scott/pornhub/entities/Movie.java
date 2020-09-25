@@ -30,6 +30,7 @@ public class Movie extends BaseMovie {
     public MovieResultsPage recommendations;
     public ReviewResultsPage reviews;
     public Videos videos;
+    public List<String> tags;
 
     public Movie() {
         this.adult = true;

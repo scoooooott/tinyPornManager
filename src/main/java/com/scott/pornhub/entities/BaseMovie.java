@@ -3,7 +3,7 @@ package com.scott.pornhub.entities;
 import java.util.Date;
 import java.util.List;
 
-public class BaseMovie extends BaseRatingObject {
+public class BaseMovie{
 
     public String id;
 
@@ -23,6 +23,7 @@ public class BaseMovie extends BaseRatingObject {
     public String title;
     public Double vote_average;
     public Integer vote_count;
+    public Double rating;
 
     public String media_type;
 
