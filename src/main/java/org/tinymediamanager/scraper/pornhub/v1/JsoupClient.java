@@ -32,7 +32,6 @@ public class JsoupClient {
             .data(params)
             .proxy("127.0.0.1", 10809)
             .get();
-        System.out.println(a.outerHtml());
         if (a.html().contains("RNKEY")) {
             RnkeyUtils.genRnKey(a.outerHtml());
             return getForDocument(path, params);

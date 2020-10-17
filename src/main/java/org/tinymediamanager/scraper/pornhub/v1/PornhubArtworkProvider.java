@@ -26,6 +26,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,7 +83,15 @@ class PornhubArtworkProvider {
                 // posters and fanart
                 switch (options.getMediaType()) {
                     case MOVIE:
-                        images = api.moviesService().images(pornhubId, null).execute().body();
+//                        images = api.moviesService().images(pornhubId, null).execute().body();
+                        images = new Images();
+                        images.posters = options.getMetadata().getMediaArt(MediaArtworkType.POSTER).stream().map(p -> {
+                            Image i = new Image();
+                            i.width=640;
+                            i.height=360;
+                            i.file_path = p.getDefaultUrl();
+                            return i;
+                        }).collect(Collectors.toList());
                         break;
 
                     case MOVIE_SET:
@@ -140,7 +149,7 @@ class PornhubArtworkProvider {
         String pornhubId,
         ArtworkSearchAndScrapeOptions options) {
         List<MediaArtwork> artwork = new ArrayList<>();
-        String baseUrl = PornhubMetadataProvider.configuration.images.base_url;
+        /*String baseUrl = PornhubMetadataProvider.configuration.images.base_url;*/
 
         if (pornhubArtwork == null) {
             return artwork;
@@ -148,12 +157,10 @@ class PornhubArtworkProvider {
 
         // first sort the artwork
         if (pornhubArtwork.posters != null) {
-            Collections
-                .sort(pornhubArtwork.posters, new ImageComparator(options.getLanguage().toLocale()));
+            pornhubArtwork.posters.sort(new ImageComparator(options.getLanguage().toLocale()));
         }
         if (pornhubArtwork.backdrops != null) {
-            Collections
-                .sort(pornhubArtwork.backdrops, new ImageComparator(options.getLanguage().toLocale()));
+            pornhubArtwork.backdrops.sort(new ImageComparator(options.getLanguage().toLocale()));
         }
 
         // prepare posters
@@ -161,14 +168,14 @@ class PornhubArtworkProvider {
             for (Image image : ListUtils.nullSafe(pornhubArtwork.posters)) {
                 MediaArtwork ma = new MediaArtwork(PornhubMetadataProvider.providerInfo.getId(),
                     MediaArtworkType.POSTER);
-                ma.setPreviewUrl(baseUrl + "w185" + image.file_path);
+                ma.setPreviewUrl(image.file_path);
                 ma.setLanguage(image.iso_639_1);
                 ma.setPornhubId(pornhubId);
 
                 // add different sizes
                 // original
-                ma.addImageSize(image.width, image.height, baseUrl + "original" + image.file_path);
-                // w500
+                ma.addImageSize(image.width, image.height, image.file_path);
+                /*// w500
                 if (500 < image.width) {
                     ma.addImageSize(500, image.height * 500 / image.width,
                         baseUrl + "w500" + image.file_path);
@@ -182,7 +189,7 @@ class PornhubArtworkProvider {
                 if (185 < image.width) {
                     ma.addImageSize(185, image.height * 185 / image.width,
                         baseUrl + "w185" + image.file_path);
-                }
+                }*/
 
                 // categorize image size and write default url
                 prepareDefaultPoster(ma, options);
@@ -191,7 +198,7 @@ class PornhubArtworkProvider {
             }
         }
 
-        if (artworkType == MediaArtworkType.BACKGROUND || artworkType == MediaArtworkType.ALL) {
+        /*if (artworkType == MediaArtworkType.BACKGROUND || artworkType == MediaArtworkType.ALL) {
             for (Image image : ListUtils.nullSafe(pornhubArtwork.backdrops)) {
                 MediaArtwork ma = new MediaArtwork(PornhubMetadataProvider.providerInfo.getId(),
                     MediaArtworkType.BACKGROUND);
@@ -218,7 +225,7 @@ class PornhubArtworkProvider {
 
                 artwork.add(ma);
             }
-        }
+        }*/
 
         return artwork;
     }
