@@ -592,6 +592,11 @@ public class MovieUpdateDatasourceTask extends TmmThreadPool {
       }
     }
 
+    // todo: 临时方案
+    if(videoName.matches("^[P|p]h(\\S+)(?:\\s\\S.+)?")){
+      movie.setTitle(videoName);
+    }
+
     if (movie.getTitle().isEmpty()) {
       // get the "cleaner" name/year combo
       String[] video = ParserUtils.detectCleanTitleAndYear(movieDir.getFileName().toString(), MovieModuleManager.SETTINGS.getBadWord());

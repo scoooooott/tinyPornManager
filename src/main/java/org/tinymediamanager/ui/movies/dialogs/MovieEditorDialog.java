@@ -296,7 +296,7 @@ public class MovieEditorDialog extends TmmDialog {
       tfProductionCompanies.setText(movieToEdit.getProductionCompany());
       tfSpokenLanguages.setText(movieToEdit.getSpokenLanguages());
       tfCountry.setText(movieToEdit.getCountry());
-      spRating.setModel(new SpinnerNumberModel(userMediaRating.getRating(), 0.0, 10.0, 0.1));
+      spRating.setModel(new SpinnerNumberModel(userMediaRating.getRating(), 0.0, 100.0, 0.1));
       tfNote.setText(movieToEdit.getNote());
 
       for (Person origCast : movieToEdit.getActors()) {
