@@ -220,7 +220,7 @@
 		<echo message="=====================================================" />
 		<copy file="${build.dir}/digest.txt" todir="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/" />
 		<copy file="${build.dir}/digest2.txt" todir="${dist.dir}/mac/tinyMediaManager.app/Contents/Resources/Java/" />
-		<zip destfile="${dist.dir}/tmm_${tmmVersion}_mac.zip" level="9">
+		<zip destfile="${dist.dir}/tpm_${tmmVersion}_mac.zip" level="9">
 			<zipfileset dir="${dist.dir}/mac" excludes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh" />
 			<zipfileset filemode="755" dir="${dist.dir}/mac"
 						includes="**/JavaApplicationStub,**/tinyMediaManagerOSX.sh, **/tinyMediaManagerCMD-OSX.sh, **/tinyMediaManagerUpdaterCMD-OSX.sh"/>
@@ -231,7 +231,7 @@
 		<echo message="=====================================================" />
 		<copy file="${build.dir}/digest.txt" todir="${dist.dir}/win" />
 		<copy file="${build.dir}/digest2.txt" todir="${dist.dir}/win" />
-		<zip destfile="${dist.dir}/tmm_${tmmVersion}_win.zip" level="9">
+		<zip destfile="${dist.dir}/tpm_${tmmVersion}_win.zip" level="9">
 			<zipfileset filemode="755" dir="${dist.dir}/win" />
 		</zip>
 
@@ -240,7 +240,7 @@
 		<echo message="=====================================================" />
 		<copy file="${build.dir}/digest.txt" todir="${dist.dir}/linux" />
 		<copy file="${build.dir}/digest2.txt" todir="${dist.dir}/linux" />
-		<tar compression="gzip" destfile="${dist.dir}/tmm_${tmmVersion}_linux.tar.gz">
+		<tar compression="gzip" destfile="${dist.dir}/tpm_${tmmVersion}_linux.tar.gz">
 			<tarfileset dir="${dist.dir}/linux" excludes="*.sh" />
 			<tarfileset filemode="755" dir="${dist.dir}/linux" includes="*.sh" />
 		</tar>
@@ -258,7 +258,7 @@
 		<!-- create checksums -->
 		<checksum algorithm="SHA-1" fileext=".sha1">
 			<fileset dir="${dist.dir}">
-				<include name="tmm**"/>
+				<include name="tpm**"/>
 			</fileset>
 		</checksum>
 

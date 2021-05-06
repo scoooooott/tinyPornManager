@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.tinymediamanager</groupId>
-	<artifactId>tinyMediaManager</artifactId>
-	<version>3.1.10-SNAPSHOT</version>
+	<groupId>com.github</groupId>
+	<artifactId>tinyPornManager</artifactId>
+	<version>2021.05.06-SNAPSHOT</version>
 
-	<name>tinyMediaManager</name>
-	<description>a media management tool written in Java</description>
-	<url>https://www.tinymediamanager.org/</url>
+	<name>tinyPornManager</name>
+	<description>a porn management tool written in Java</description>
+	<url>https://github.com/SoapCanFly/tinyPornManager</url>
 	<inceptionYear>2012</inceptionYear>
 	<organization>
-		<name>tinyMediaManager</name>
-		<url>https://www.tinymediamanager.org</url>
+		<name>SoapCanFly</name>
+		<url>https://github.com/SoapCanFly</url>
 	</organization>
 	<licenses>
 		<license>
@@ -62,7 +64,8 @@
 	<scm>
 		<url>https://gitlab.com/tinyMediaManager/${project.artifactId}</url>
 		<connection>scm:git:git@gitlab.com:tinyMediaManager/${project.artifactId}.git</connection>
-		<developerConnection>scm:git:git@gitlab.com:tinyMediaManager/${project.artifactId}.git</developerConnection>
+		<developerConnection>scm:git:git@gitlab.com:tinyMediaManager/${project.artifactId}.git
+		</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
 	<ciManagement>
@@ -112,6 +115,12 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-text</artifactId>
 			<version>1.6</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-lang3</artifactId>
+					<groupId>org.apache.commons</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
@@ -127,6 +136,12 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>1.2.3</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>slf4j-api</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.janino</groupId>
@@ -136,7 +151,7 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>2.6</version>
+			<version>2.7</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jsoup</groupId>
@@ -156,6 +171,10 @@
 				<exclusion>
 					<artifactId>okhttp</artifactId>
 					<groupId>com.squareup.okhttp3</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>retrofit</artifactId>
+					<groupId>com.squareup.retrofit2</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -196,22 +215,58 @@
 			<groupId>com.uwetrottmann.tmdb2</groupId>
 			<artifactId>tmdb-java</artifactId>
 			<version>2.2.0</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>okhttp</artifactId>
+					<groupId>com.squareup.okhttp3</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>converter-gson</artifactId>
+					<groupId>com.squareup.retrofit2</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.uwetrottmann.thetvdb-java</groupId>
 			<artifactId>thetvdb-java</artifactId>
 			<version>2.3.0</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>converter-gson</artifactId>
+					<groupId>com.squareup.retrofit2</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
 			<groupId>org.tinymediamanager</groupId>
 			<artifactId>kodi-json-rpc</artifactId>
 			<version>3.0</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-lang3</artifactId>
+					<groupId>org.apache.commons</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>slf4j-api</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.uwetrottmann.trakt5</groupId>
 			<artifactId>trakt-java</artifactId>
 			<version>6.4.0</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>retrofit</artifactId>
+					<groupId>com.squareup.retrofit2</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>converter-gson</artifactId>
+					<groupId>com.squareup.retrofit2</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>it.tidalwave.betterbeansbinding</groupId>
@@ -301,6 +356,16 @@
 			<groupId>org.mp4parser</groupId>
 			<artifactId>muxer</artifactId>
 			<version>1.9.39</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>junit</artifactId>
+					<groupId>junit</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>slf4j-api</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -323,12 +388,24 @@
 			<artifactId>mockwebserver</artifactId>
 			<version>${okhttp.version}</version>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>junit</artifactId>
+					<groupId>junit</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
 			<groupId>com.squareup.retrofit2</groupId>
 			<artifactId>converter-scalars</artifactId>
 			<version>2.1.0</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>retrofit</artifactId>
+					<groupId>com.squareup.retrofit2</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 	</dependencies>
@@ -547,7 +624,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin><!-- call our ant file, since it's too complicated to do our packaging 
+			<plugin><!-- call our ant file, since it's too complicated to do our packaging
 					solely in maven -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
@@ -564,13 +641,13 @@
 				<configuration>
 					<exportAntProperties>true</exportAntProperties>
 					<target>
-						<property name="tmmName" value="${project.artifactId}" />
-						<property name="tmmVersion" value="${project.version}" />
-						<property name="tmmRevision" value="${buildNumber}" />
-						<property name="tmmTimestamp" value="${timestamp}" />
+						<property name="tmmName" value="${project.artifactId}"/>
+						<property name="tmmVersion" value="${project.version}"/>
+						<property name="tmmRevision" value="${buildNumber}"/>
+						<property name="tmmTimestamp" value="${timestamp}"/>
 
 						<ant antfile="${project.basedir}/ant-package.xml">
-							<target name="package-app" />
+							<target name="package-app"/>
 						</ant>
 					</target>
 				</configuration>
@@ -641,17 +718,17 @@
 								<configuration>
 									<artifacts>
 										<artifact>
-											<file>dist/tmm_${project.version}_win.zip</file>
+											<file>dist/tpm_${project.version}_win.zip</file>
 											<type>zip</type>
 											<classifier>win</classifier>
 										</artifact>
 										<artifact>
-											<file>dist/tmm_${project.version}_mac.zip</file>
+											<file>dist/tpm_${project.version}_mac.zip</file>
 											<type>zip</type>
 											<classifier>mac</classifier>
 										</artifact>
 										<artifact>
-											<file>dist/tmm_${project.version}_linux.tar.gz</file>
+											<file>dist/tpm_${project.version}_linux.tar.gz</file>
 											<type>tar.gz</type>
 											<classifier>linux</classifier>
 										</artifact>
@@ -701,7 +778,7 @@
 							<failOnViolation>false</failOnViolation>
 							<!-- more https://github.com/policeman-tools/forbidden-apis/wiki/BundledSignatures -->
 							<bundledSignatures>
-								<!-- This will automatically choose the right signatures based on 
+								<!-- This will automatically choose the right signatures based on
 									'maven.compiler.target': -->
 								<bundledSignature>jdk-deprecated</bundledSignature>
 								<bundledSignature>jdk-non-portable</bundledSignature>
@@ -713,7 +790,8 @@
 							</bundledSignatures>
 							<signaturesFiles>
 								<!-- use ours b/c of resourcebundle without locale -->
-								<signaturesFile>src/test/resources/jdk-unsafe-tmm.txt</signaturesFile>
+								<signaturesFile>src/test/resources/jdk-unsafe-tmm.txt
+								</signaturesFile>
 							</signaturesFiles>
 						</configuration>
 						<executions>
