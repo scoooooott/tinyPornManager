@@ -35,12 +35,12 @@ tinyPornManager developed based on tinyMediaManager (https://www.tinymediamanage
 
 ## Building from source
 
-tinyMediaManager is compiled using Apache's build automation tool, [Maven][15]. Check that you have it installed (and git, of course) before attempting a build.
+tinyPornManager is compiled using Apache's build automation tool, [Maven][15]. Check that you have it installed (and git, of course) before attempting a build.
 
 1. Clone this repository to your computer
 
    ```bash
-   git clone https://gitlab.com/tinyMediaManager/tinyMediaManager.git
+   git clone https://github.com/SoapCanFly/tinyPornManager.git
    ```
 
 1. Build using maven
