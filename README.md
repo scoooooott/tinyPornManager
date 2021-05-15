@@ -1,6 +1,5 @@
 ![movies01](resources/image/logo.png)
 
-
 # [tinyPornManager][1]
 
 tinyPornManager developed based on tinyMediaManager (https://www.tinymediamanager.org). Made for manage your porn videos from adult sites(eg: Pornhub).
@@ -28,6 +27,23 @@ tinyPornManager developed based on tinyMediaManager (https://www.tinymediamanage
 - [ ] Refactor code to optimize performance and efficiency
 - [ ] Docking more website
 - [ ] Design a solution for the anti-crawler methods that the target website may use
+
+## [Usage]
+
+1. download latest [tinyPornManager][https://github.com/SoapCanFly/tinyPornManager/releases]
+  > For the reason of identifying the uniqueness of your file, the file name should conform to a certain format.
+  - **The _PORNHUB_ID_ part should be easy to locate(with regular expressions)**
+  - "ph1234abcd.mp4"
+  - "ph1234abcd-Super Hot Lily Potter.mp4"
+  - "ph1234abcd Super Hot Lily Potter.mp4"
+  - "[ph1234abcd]Super Hot Lily Potter.mp4"
+3. download your favritate from website([Tampermonkey script for Pornhub][16])
+4. open tinyPornManager > Settings > Movies > Data Sources, select your porn folder, close Settings window
+5. click "Update sources" to load your resources  
+6. click "Search & scrape" or submenu to began scraping
+- For the file you just downloaded(new file), use "Search & scrape selected movies" or "Search & scrape selected movie(s)-force best match" or "Search & scrape all unscraped movie(s)-force best match"
+- For the file that already scraped(old file), use "Scrape metadata for selected movie(s)"
+- **Sometime website will delete video, and scraper will get a 404 repsonse**
 
 ## [Screenshots][13]
 
@@ -64,3 +80,4 @@ After that you will find the packaged build in the folder `dist`
 [13]: https://www.tinymediamanager.org/screenshots/
 [14]: /CONTRIBUTING.md
 [15]: https://maven.apache.org/
+[16]: https://gist.github.com/SoapCanFly/530976648121f5725a1c45b5ad313cb7
