@@ -1,0 +1,44 @@
+/*
+ * Copyright 2012 - 2020 Manuel Laggner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.tinymediamanager.scraper.spisample;
+
+import org.tinymediamanager.scraper.interfaces.IMediaProvider;
+import org.tinymediamanager.scraper.spi.IAddonProvider;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class SampleAddonProvider implements IAddonProvider {
+
+  @Override
+  public List<Class<? extends IMediaProvider>> getAddonClasses() {
+    List<Class<? extends IMediaProvider>> addons = new ArrayList<>();
+
+    // this is the detailed example
+    addons.add(SampleMovieMetadataProvider.class);
+
+    // these are just empty classes to show how multiple sub-scrapers can be passed to tmm
+    addons.add(SampleMovieArtworkProvider.class);
+    addons.add(SampleMovieTrailerProvider.class);
+    addons.add(SampleMovieSubtitleProvider.class);
+    addons.add(SampleTvShowMetadataProvider.class);
+    addons.add(SampleTvShowArtworkProvider.class);
+    addons.add(SampleTvShowTrailerProvider.class);
+    addons.add(SampleTvShowSubtitleProvider.class);
+
+    return addons;
+  }
+}
