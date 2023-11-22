@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinymediamanager.scraper.spisample;
+package xyz.ifnotnull.tmm.scraper.pornhub;
 
 import org.tinymediamanager.scraper.interfaces.IMediaProvider;
 import org.tinymediamanager.scraper.spi.IAddonProvider;
@@ -21,24 +21,14 @@ import org.tinymediamanager.scraper.spi.IAddonProvider;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SampleAddonProvider implements IAddonProvider {
+public class PornhubAddonProvider implements IAddonProvider {
 
   @Override
   public List<Class<? extends IMediaProvider>> getAddonClasses() {
     List<Class<? extends IMediaProvider>> addons = new ArrayList<>();
 
-    // this is the detailed example
-    addons.add(SampleMovieMetadataProvider.class);
-
-    // these are just empty classes to show how multiple sub-scrapers can be passed to tmm
-    addons.add(SampleMovieArtworkProvider.class);
-    addons.add(SampleMovieTrailerProvider.class);
-    addons.add(SampleMovieSubtitleProvider.class);
-    addons.add(SampleTvShowMetadataProvider.class);
-    addons.add(SampleTvShowArtworkProvider.class);
-    addons.add(SampleTvShowTrailerProvider.class);
-    addons.add(SampleTvShowSubtitleProvider.class);
-
+    addons.add(PornhubMovieMetadataProvider.class);
+    addons.add(PornhubMovieArtworkProvider.class);
     return addons;
   }
 }
